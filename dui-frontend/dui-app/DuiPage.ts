@@ -1,39 +1,38 @@
-import type { DuiPageOptions } from './DuiPageOptions'
 import { DuiField } from './DuiField'
-import type { DuiConfig } from './config/DuiConfig'
-import { DuiRestEndpoint } from './DuiRestEndpoint'
+import type { DuiPageOptions } from './DuiPageOptions'
 import type { DuiPageType } from './DuiPageType'
-import type { DuiParameter } from '../configurations/ButtonOptions'
-import { DuiAction } from './DuiAction'
+import { DuiRestEndpoint } from './DuiRestEndpoint'
+import type { DuiConfig } from './config/DuiConfig'
+
+import type { DuiParameter } from './DuiParamater'
+import type { DuiAction } from './actions/DuiAction'
+import type { DuiButtonAction } from './actions/DuiButtonAction'
 
 export class DuiPage<Config extends DuiConfig = DuiConfig> {
   route: string
   type: DuiPageType
-  readDataFrom?: DuiRestEndpoint<Config>
-  submitDataTo?: DuiRestEndpoint<Config>
 
-  postSubmit: DuiAction[] = []
+  onSubmit?: DuiAction<Config>[]
+
+  readDataFrom?: DuiRestEndpoint<Config>
+
   component: any
   fields: DuiField<Config>[]
 
-  actions: DuiAction[]
+  actions: DuiButtonAction<Config>[]
 
-  constructor(
-    { route, type, readDataFrom, submitDataTo, postSubmit, fields, actions }: DuiPageOptions<Config>,
-    config: Config
-  ) {
+  constructor({ route, type, readDataFrom, onSubmit, fields, actions }: DuiPageOptions<Config>, config: Config) {
     console.log('creating page', route, type)
     this.route = route
     this.type = type
     this.readDataFrom = readDataFrom && new DuiRestEndpoint(readDataFrom)
-    this.submitDataTo = submitDataTo && new DuiRestEndpoint(submitDataTo)
-    this.postSubmit = postSubmit ? postSubmit.map((x) => new DuiAction(x)) : []
+    this.onSubmit = config.actionFactory(onSubmit)
+
     this.fields = fields.map((x) => new DuiField<Config>(x, config))
     //TODO handle different variants instead of just using default
-    console.log('getting component for', type, config.components)
     this.component = config.components[type].default
 
-    this.actions = (actions || []).map((x) => new DuiAction(x))
+    this.actions = config.buttonActionFactory(actions)
   }
 
   matches = (route: string): boolean => {
@@ -54,10 +53,10 @@ export class DuiPage<Config extends DuiConfig = DuiConfig> {
 
   getParam = (param: DuiParameter, route: string): string => {
     const routeParts = route.split('/').filter((x) => !!x)
-    const pageRouteParts = this.route.split('/').filter((x) => !!x)
+    const templateParts = this.route.split('/').filter((x) => !!x)
 
-    const part = pageRouteParts.find((x) => x === `{${param.fieldName}}`)
-    const index = part ? pageRouteParts.indexOf(part) : -1
+    const templatePart = templateParts.find((x) => x === `{${param.valueFieldName}}`)
+    const index = templatePart ? templateParts.indexOf(templatePart) : -1
 
     return index >= 0 ? routeParts[index] : ''
   }

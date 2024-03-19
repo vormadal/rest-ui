@@ -1,4 +1,4 @@
-import type { DuiParameter } from '../configurations/ButtonOptions'
+import type { DuiParameterOptions } from './DuiParamaterOptions'
 import type { DuiConfig } from './config/DuiConfig'
 
 export interface DuiRestEndpointOptions<Config extends DuiConfig = DuiConfig> {
@@ -6,5 +6,5 @@ export interface DuiRestEndpointOptions<Config extends DuiConfig = DuiConfig> {
   method: string // GET POST PUT
   dataField?: string
 
-  paramaters?: DuiParameter[]
+  paramaters?: DuiParameterOptions[]
 }

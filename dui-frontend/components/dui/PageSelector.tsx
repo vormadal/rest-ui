@@ -1,5 +1,6 @@
 import { VBtn } from 'vuetify/components'
 import type { DuiApp } from '../../dui-app/DuiApp'
+import type { DuiActionContext } from '../../dui-app/actions/DuiActionContext'
 
 interface Props {
   app: DuiApp
@@ -18,7 +19,6 @@ export function PageSelector({ app, route }: Props) {
   const dataRoute = page.readDataFrom?.getRoute(page, null, route) || ''
 
   const fetcher = () => {
-    console.log('data route', dataRoute.substring(1))
     return app
       .fetch(page.readDataFrom?.method || 'GET', dataRoute)
       .then((res) => res.json())
@@ -36,25 +36,36 @@ export function PageSelector({ app, route }: Props) {
   }
 
   async function submit(data: any) {
-    const endpoint = page?.submitDataTo?.getRoute(page, data, route)
-    if (!endpoint) return
-    if (!page) return
+    if (!page?.onSubmit) return
 
-    const result = await app.fetch(page.submitDataTo?.method || 'POST', endpoint, data).then((x) => x.json())
-
-    for (const action of page.postSubmit) {
-      console.log('run action', action, result)
-      await action.run(router, result)
+    const context: DuiActionContext = {
+      app,
+      page,
+      path: router.currentRoute.value.fullPath ?? '',
+      router,
+      data
     }
-    console.log('submitting', JSON.stringify(data))
+
+    for (const action of page.onSubmit) {
+      console.log('run action', action)
+      const result = await action.run(context)
+      context.data = result
+    }
   }
 
   const Component = page.component
+  const ActionsComponent = app.actionsComponent
   return (
     <>
-      {page.actions.map((x) => (
-        <VBtn to={x.to}>{x.label}</VBtn>
-      ))}
+      <ActionsComponent
+        actions={page.actions}
+        context={{
+          app,
+          page,
+          path: router.currentRoute.value.fullPath ?? '',
+          router
+        }}
+      />
       <Component
         page={page}
         fetch={fetcher}

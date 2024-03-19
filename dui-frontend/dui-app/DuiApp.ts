@@ -9,8 +9,11 @@ export class DuiApp<Config extends DuiConfig = DuiConfig> {
     component: any
     pages: DuiPage<Config>[]
   }
+  actionsComponent: any
+
   constructor(options: DuiAppOptions<Config>, config: Config) {
     this.baseUrl = options.baseUrl
+    this.actionsComponent = config.components.actions
     this.pages = options.pages.map((x) => new DuiPage<Config>(x, config))
     this.dashboard = {
       component: config.components.dashboard,

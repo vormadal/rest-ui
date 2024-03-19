@@ -141,7 +141,8 @@ const app = createDuiApp({
       },
       actions: [
         {
-          to: '/employees/create',
+          type: 'redirect',
+          urlTemplate: '/employees/create',
           label: 'Create'
         }
       ]
@@ -172,7 +173,7 @@ const app = createDuiApp({
         path: "employee/{id}",
         dataField: "data",
         paramaters: [{
-          fieldName: 'id',
+          valueFieldName: 'id',
           name: 'id',
           from: 'path'
         }]
@@ -181,19 +182,20 @@ const app = createDuiApp({
     {
       type: DuiPageType.createForm,
       route: "employees/create",
-      submitDataTo: {
-        method: 'POST',
-        path: "employees"
-      },
-      postSubmit: [
+      onSubmit: [
         {
-          label: "",
-          to: "/employee/{id}",
-          dataField: "data",
-          parameters: [
+          type: 'api',
+          method: 'POST',
+          routeTemplate: 'employees',
+        },
+        {
+          type: 'redirect',
+          urlTemplate: "/employee/{id}",
+          paramaters: [
             {
-              fieldName: 'id',
               name: 'id',
+              valueFieldName: 'data.id',
+              from: 'data'
             }
           ]
         }
@@ -229,10 +231,16 @@ const app = createDuiApp({
     {
       route: "employee/{id}/edit",
       type: DuiPageType.updateForm,
-      submitDataTo: {
+      onSubmit: [{
+        type: 'api',
         method: 'PUT',
-        path: "employee/{id}"
-      },
+        routeTemplate: "employee/{id}",
+        paramaters: [{
+          name: 'id',
+          valueFieldName: 'id',
+          from: 'path'
+        }]
+      }],
       fields: [
         {
           displayName: "Name",
@@ -265,7 +273,7 @@ const app = createDuiApp({
         path: "employee/{id}",
         dataField: "data",
         paramaters: [{
-          fieldName: 'id',
+          valueFieldName: 'id',
           name: 'id',
           from: 'path'
         }]

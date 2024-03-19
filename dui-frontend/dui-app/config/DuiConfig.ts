@@ -16,6 +16,14 @@ import DefaultDateField from '../../components/fields/DefaultDateField.vue'
 import DefaultTimeField from '../../components/fields/DefaultTimeField.vue'
 import DefaultNumberField from '../../components/fields/DefaultNumberField.vue'
 import DefaultEditForm from '../../components/DefaultEditForm.vue'
+import type { DuiActionOptions } from '../actions/DuiActionOptions'
+import type { DuiAction } from '../actions/DuiAction'
+import { DuiApiAction } from '../actions/DuiApiAction'
+import { DuiRedirectAction } from '../actions/DuiRedirectAction'
+import type { DuiButtonActionOptions } from '../actions/DuiButtonActionOptions'
+import { DuiApiButtonAction } from '../actions/DuiApiButtonAction'
+import { DuiRedirectButtonAction } from '../actions/DuiRedirectButtonAction'
+import DefaultActions from '../../components/DefaultActions.vue'
 
 const locale = 'da-dk'
 
@@ -34,6 +42,7 @@ export interface IDuiConfigValueFormatter<V = any, O = any> {
 
 export interface IDuiConfig {
   components: {
+    actions: ComponentType
     dashboard: ComponentType
     fields: {
       [DataType.BUTTON]: IDuiConfigComponent
@@ -53,10 +62,38 @@ export interface IDuiConfig {
   valueFormatters: {
     [key: PropertyKey]: IDuiConfigValueFormatter
   }
+
+  actionFactory: <T extends DuiConfig = DuiConfig>(options?: DuiActionOptions<T>[]) => DuiAction<T>[]
+  buttonActionFactory: <T extends DuiConfig = DuiConfig>(options?: DuiButtonActionOptions<T>[]) => DuiAction<T>[]
 }
 
 export class DuiConfig implements IDuiConfig {
+  buttonActionFactory<T extends DuiConfig = DuiConfig>(options?: DuiButtonActionOptions<T>[] | undefined) {
+    if (!options) return []
+
+    return options.map((x) => {
+      switch (x.type) {
+        case 'api':
+          return new DuiApiButtonAction<T>(x)
+        case 'redirect':
+          return new DuiRedirectButtonAction<T>(x)
+      }
+    })
+  }
+  actionFactory<T extends DuiConfig = DuiConfig>(options?: DuiActionOptions<T>[] | undefined) {
+    if (!options) return []
+
+    return options.map((x) => {
+      switch (x.type) {
+        case 'api':
+          return new DuiApiAction<T>(x)
+        case 'redirect':
+          return new DuiRedirectAction<T>(x)
+      }
+    })
+  }
   components = {
+    actions: DefaultActions,
     dashboard: DefaultDashboard,
     fields: {
       [DataType.BUTTON]: {
