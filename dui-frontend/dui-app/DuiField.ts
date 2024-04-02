@@ -15,7 +15,6 @@ export class DuiField<Config extends IDuiConfig = DuiConfig> {
   component?: any
 
   constructor({ displayName, name, type, formatter, hidden, options }: DuiFieldOptions<Config>, config: Config) {
-    console.log('creating field', name, type)
     this.displayName = displayName
     this.name = name
     this.type = type
@@ -25,8 +24,6 @@ export class DuiField<Config extends IDuiConfig = DuiConfig> {
 
     //TODO handle override and variants
     this.component = config.components.fields[this.type]?.default
-
-    console.log('using component', this.component)
   }
 
   format = (data: any) => {

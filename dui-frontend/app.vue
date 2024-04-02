@@ -11,6 +11,7 @@
 import { createServer } from 'miragejs';
 import { createDuiApp } from './configurations/AppConfig';
 import { DuiPageType } from './dui-app/DuiPageType';
+import { DataType } from './configurations/DataType';
 
 const employeeData = [
   { "id": 1, "employee_name": "Tiger Nixon", "employee_salary": 320800, "employee_age": 61, "profile_image": "", "dateTime": new Date() },
@@ -94,23 +95,23 @@ const app = createDuiApp({
         {
           displayName: "ID",
           name: "id",
-          type: "string",
+          type: DataType.STRING,
           hidden: true
         },
         {
           displayName: "Name",
           name: "employee_name",
-          type: "string"
+          type: DataType.STRING
         },
         {
           displayName: 'Salary',
           name: 'employee_salary',
-          type: 'number',
+          type: DataType.NUMBER,
         },
         {
           displayName: "Edit",
           name: "edit",
-          type: 'button',
+          type: DataType.BUTTON,
           options: {
             linkTo: "employee/{id}/edit",
             parameters: [{
@@ -123,7 +124,7 @@ const app = createDuiApp({
         {
           displayName: "Show",
           name: "show",
-          type: 'button',
+          type: DataType.BUTTON,
           options: {
             linkTo: "employee/{id}",
             parameters: [{
@@ -154,18 +155,18 @@ const app = createDuiApp({
         {
           displayName: "ID",
           name: "id",
-          type: "string",
+          type: DataType.STRING,
           hidden: true
         },
         {
           displayName: "Name",
           name: "employee_name",
-          type: "string"
+          type: DataType.STRING
         },
         {
           displayName: 'Salary',
           name: 'employee_salary',
-          type: 'number',
+          type: DataType.NUMBER,
         }
       ],
       readDataFrom: {
@@ -204,27 +205,27 @@ const app = createDuiApp({
         {
           displayName: "Name",
           name: "employee_name",
-          type: "string"
+          type: DataType.STRING
         },
         {
           displayName: 'Salary',
           name: 'employee_salary',
-          type: 'number',
+          type: DataType.NUMBER,
         },
         {
           displayName: 'Birthday',
           name: 'dateTime',
-          type: 'date'
+          type: DataType.DATE
         },
         {
           displayName: 'Date Time',
           name: 'dateTime',
-          type: 'dateTime'
+          type: DataType.DATE_TIME
         },
         {
           displayName: 'Time',
           name: 'dateTime',
-          type: 'time'
+          type: DataType.TIME
         }
       ]
     },
@@ -245,27 +246,27 @@ const app = createDuiApp({
         {
           displayName: "Name",
           name: "employee_name",
-          type: "string"
+          type: DataType.STRING
         },
         {
           displayName: 'Salary',
           name: 'employee_salary',
-          type: 'number',
+          type: DataType.NUMBER,
         },
         {
           displayName: 'Birthday',
           name: 'dateTime',
-          type: 'date'
+          type: DataType.DATE
         },
         {
           displayName: 'Date Time',
           name: 'dateTime',
-          type: 'dateTime'
+          type: DataType.DATE_TIME
         },
         {
           displayName: 'Time',
           name: 'dateTime',
-          type: 'time'
+          type: DataType.TIME
         }
       ],
       readDataFrom: {

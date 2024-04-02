@@ -1,3 +1,4 @@
+import type { DataType } from '../configurations/DataType'
 import type { DuiConfig, IDuiConfig } from './config/DuiConfig'
 
 export interface DuiFieldOptions<Config extends IDuiConfig = DuiConfig> {
