@@ -1,4 +1,3 @@
-import { VBtn } from 'vuetify/components'
 import type { DuiApp } from '../../dui-app/DuiApp'
 import type { DuiActionContext } from '../../dui-app/actions/DuiActionContext'
 
@@ -15,36 +14,19 @@ export function PageSelector({ app, route }: Props) {
     return <p>page not found</p>
   }
 
-  //resolve path
-  const dataRoute = page.readDataFrom?.getRoute(page, null, route) || ''
-
-  const fetcher = () => {
-    return app
-      .fetch(page.readDataFrom?.method || 'GET', dataRoute)
-      .then((res) => res.json())
-      .then((json) => {
-        console.log('fetching...', json)
-        if (page.readDataFrom?.dataField) {
-          return json[page.readDataFrom?.dataField]
-        }
-
-        return json
-      })
-      .catch((e) => {
-        console.log('fetch error', e)
-      })
+  const context: DuiActionContext = {
+    app,
+    page,
+    path: router.currentRoute.value.fullPath ?? '',
+    router
   }
+
+  const fetcher = () => page.dataSource?.run(context)
 
   async function submit(data: any) {
     if (!page?.onSubmit) return
 
-    const context: DuiActionContext = {
-      app,
-      page,
-      path: router.currentRoute.value.fullPath ?? '',
-      router,
-      data
-    }
+    context.data = data
 
     for (const action of page.onSubmit) {
       console.log('run action', action)
@@ -59,15 +41,10 @@ export function PageSelector({ app, route }: Props) {
     <>
       <ActionsComponent
         actions={page.actions}
-        context={{
-          app,
-          page,
-          path: router.currentRoute.value.fullPath ?? '',
-          router
-        }}
+        context={context}
       />
       <Component
-        page={page}
+        context={context}
         fetch={fetcher}
         fields={page.visibleFields}
         submit={submit}

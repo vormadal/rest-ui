@@ -1,7 +1,8 @@
-import { useDate } from 'vuetify'
 import { DataType } from '../configurations/DataType'
+import type { ValueConfigOptions } from '../configurations/ValueConfigOptions'
 import { merge } from '../configurations/utilities'
 import type { DuiFieldOptions } from './DuiFieldOptions'
+import type { DuiActionContext } from './actions/DuiActionContext'
 import type { DuiConfig, IDuiConfig, IDuiConfigValueFormatter } from './config/DuiConfig'
 
 export class DuiField<Config extends IDuiConfig = DuiConfig> {
@@ -32,8 +33,17 @@ export class DuiField<Config extends IDuiConfig = DuiConfig> {
   }
 
   getInputValue = (data: any) => {
-    if(!data) return null
+    if (!data) return null
+
+    //TODO this is kinda a hack - should have a better solution such as parsing the json string and converting date strings directly to dates
+    if ([DataType.DATE_TIME, DataType.DATE, DataType.TIME].includes(this.type)) {
+      return new Date(data[this.name])
+    }
 
     return data[this.name]
+  }
+
+  getComponentProperties = (context: DuiActionContext, handleChange?: (field: DuiField, value: any) => void): any => {
+    return { field: this, value: this.getInputValue(context.data), handleChange }
   }
 }

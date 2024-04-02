@@ -1,11 +1,11 @@
 import { DuiField } from './DuiField'
 import type { DuiPageOptions } from './DuiPageOptions'
 import type { DuiPageType } from './DuiPageType'
-import { DuiRestEndpoint } from './DuiRestEndpoint'
 import type { DuiConfig } from './config/DuiConfig'
 
 import type { DuiParameter } from './DuiParamater'
 import type { DuiAction } from './actions/DuiAction'
+import { DuiApiAction } from './actions/DuiApiAction'
 import type { DuiButtonAction } from './actions/DuiButtonAction'
 
 export class DuiPage<Config extends DuiConfig = DuiConfig> {
@@ -14,21 +14,21 @@ export class DuiPage<Config extends DuiConfig = DuiConfig> {
 
   onSubmit?: DuiAction<Config>[]
 
-  readDataFrom?: DuiRestEndpoint<Config>
+  dataSource?: DuiApiAction<Config>
 
   component: any
   fields: DuiField<Config>[]
 
   actions: DuiButtonAction<Config>[]
 
-  constructor({ route, type, readDataFrom, onSubmit, fields, actions }: DuiPageOptions<Config>, config: Config) {
+  constructor({ route, type, dataSource, onSubmit, fields, actions }: DuiPageOptions<Config>, config: Config) {
     console.log('creating page', route, type)
     this.route = route
     this.type = type
-    this.readDataFrom = readDataFrom && new DuiRestEndpoint(readDataFrom)
+    this.dataSource = dataSource && new DuiApiAction(dataSource)
     this.onSubmit = config.actionFactory(onSubmit)
 
-    this.fields = fields.map((x) => new DuiField<Config>(x, config))
+    this.fields = config.fieldFactory(fields, config)
     //TODO handle different variants instead of just using default
     this.component = config.components[type].default
 

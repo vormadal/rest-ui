@@ -1,6 +1,6 @@
 <template>
     <v-form :if="!!data" @submit.prevent="handleSubmit">
-        <DuiFieldSelector v-for="field in fields" :app="app" :page="page" :field="field" :data="data"
+        <DuiFieldSelector v-for="field in fields" :context="context" :field="field" :data="data"
             :handleChange="onChange" />
         <v-btn type="submit" :loading="disabled">Save</v-btn>
     </v-form>
@@ -8,17 +8,15 @@
 
 <script setup lang="ts">
 import type { DuiField } from '~/dui-app/DuiField';
-import { DuiApp } from '../dui-app/DuiApp';
-import type { DuiPage } from '~/dui-app/DuiPage';
+import type { DuiActionContext } from '../dui-app/actions/DuiActionContext';
 
 const props = defineProps<{
     fetch: () => Promise<any>,
-    page: DuiPage,
+    context: DuiActionContext,
     fields: DuiField[],
     submit: (data: any) => Promise<void>,
 }>()
 const data = ref<any>()
-const app = inject<DuiApp>('dui-app')!
 
 const disabled = ref(false)
 

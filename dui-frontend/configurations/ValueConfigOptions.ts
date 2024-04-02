@@ -1,1 +1,2 @@
-type ValueConfigOptions = StringValueOptions | DateTimeValueOptions | NumberValueOptions | ButtonOptions
+
+export type ValueConfigOptions = StringValueOptions | DateTimeValueOptions | NumberValueOptions

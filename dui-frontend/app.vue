@@ -112,32 +112,29 @@ const app = createDuiApp({
           displayName: "Edit",
           name: "edit",
           type: DataType.BUTTON,
-          options: {
-            linkTo: "employee/{id}/edit",
-            parameters: [{
-              name: "id",
-              fieldName: "id"
-            }]
 
-          }
+          linkTo: "employee/{id}/edit",
+          parameters: [{
+            name: "id",
+            valueFieldName: "id"
+          }]
+
+
         },
         {
           displayName: "Show",
           name: "show",
           type: DataType.BUTTON,
-          options: {
-            linkTo: "employee/{id}",
-            parameters: [{
-              name: "id",
-              fieldName: "id"
-            }]
-
-          }
+          linkTo: "employee/{id}",
+          parameters: [{
+            name: "id",
+            valueFieldName: "id"
+          }]
         }
       ],
-      readDataFrom: {
+      dataSource: {
         method: "GET",
-        path: "/employees",
+        routeTemplate: "/employees",
         dataField: "data"
       },
       actions: [
@@ -169,9 +166,9 @@ const app = createDuiApp({
           type: DataType.NUMBER,
         }
       ],
-      readDataFrom: {
+      dataSource: {
         method: "GET",
-        path: "employee/{id}",
+        routeTemplate: "employee/{id}",
         dataField: "data",
         paramaters: [{
           valueFieldName: 'id',
@@ -269,9 +266,9 @@ const app = createDuiApp({
           type: DataType.TIME
         }
       ],
-      readDataFrom: {
+      dataSource: {
         method: "GET",
-        path: "employee/{id}",
+        routeTemplate: "employee/{id}",
         dataField: "data",
         paramaters: [{
           valueFieldName: 'id',

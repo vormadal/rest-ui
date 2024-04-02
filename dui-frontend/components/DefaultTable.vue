@@ -10,7 +10,7 @@
         <tbody>
             <tr v-for="row in data">
                 <td v-for="field in props.fields">
-                    <FieldSelector :app="app" :page="page" :data="row" :field="field" />
+                    <FieldSelector :context="context" :data="row" :field="field" />
                 </td>
             </tr>
         </tbody>
@@ -19,11 +19,11 @@
 
 <script setup lang="ts">
 import type { DuiField } from '~/dui-app/DuiField';
+import type { DuiActionContext } from '../dui-app/actions/DuiActionContext';
 import { DuiApp } from '../dui-app/DuiApp';
 import FieldSelector from './dui/FieldSelector';
-import type { DuiPage } from '~/dui-app/DuiPage';
 
-const props = defineProps<{ fetch: () => Promise<any[]>, fields: DuiField[], page: DuiPage }>()
+const props = defineProps<{ fetch: () => Promise<any[]>, fields: DuiField[], context: DuiActionContext }>()
 const data = ref<any[]>([])
 const app = inject<DuiApp>('dui-app')!
 

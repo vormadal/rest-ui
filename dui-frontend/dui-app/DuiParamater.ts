@@ -1,3 +1,4 @@
+import { extractField } from '../utils/objectUtils'
 import type { DuiParameterOptions } from './DuiParamaterOptions'
 import type { DuiActionContext } from './actions/DuiActionContext'
 
@@ -17,12 +18,7 @@ export class DuiParameter {
     let value = ''
     switch (this.from) {
       case 'data':
-        const fields = this.valueFieldName.split('.')
-        let tmp = context.data
-        for (const field of fields) {
-          tmp = tmp[field]
-        }
-        value = tmp
+        value = extractField(context.data, this.valueFieldName)
         break
       case 'path':
         value = context.page.getParam(this, context.path)

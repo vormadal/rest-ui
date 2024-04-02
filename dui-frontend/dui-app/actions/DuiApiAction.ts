@@ -1,3 +1,4 @@
+import { extractField } from '../../utils/objectUtils'
 import { DuiParameter } from '../DuiParamater'
 import type { DuiConfig } from '../config/DuiConfig'
 import type { DuiAction } from './DuiAction'
@@ -8,10 +9,12 @@ export class DuiApiAction<Config extends DuiConfig = DuiConfig> implements DuiAc
   method: string
   routeTemplate: string
   parameters: DuiParameter[]
+  dataField?: string
 
-  constructor({ method, routeTemplate, paramaters }: DuiApiActionOptions) {
+  constructor({ method, routeTemplate, dataField, paramaters }: DuiApiActionOptions) {
     this.routeTemplate = routeTemplate
     this.method = method
+    this.dataField = dataField
     this.parameters = paramaters?.map((x) => new DuiParameter(x)) ?? []
   }
 
@@ -25,6 +28,6 @@ export class DuiApiAction<Config extends DuiConfig = DuiConfig> implements DuiAc
     const response = await context.app.fetch(this.method, route, data)
     const content = await response.json()
 
-    return content
+    return extractField(content, this.dataField)
   }
 }
