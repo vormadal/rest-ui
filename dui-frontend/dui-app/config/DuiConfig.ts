@@ -19,9 +19,13 @@ import { defaultStringFormatter } from '../../configurations/defaultFormatters/d
 import { defaultTimeFormatter } from '../../configurations/defaultFormatters/defaultTimeFormatter'
 import type { DuiAction } from '../actions/DuiAction'
 import type { DuiActionOptions } from '../actions/DuiActionOptions'
+import type { DuiActionOptionsValues } from '../actions/DuiActionOptionValues'
 import { DuiApiAction } from '../actions/DuiApiAction'
+import type { DuiApiActionOptions } from '../actions/DuiApiActionOptions'
 import { DuiCompositeAction } from '../actions/DuiCompositeAction'
+import type { DuiCompositeActionOptions } from '../actions/DuiCompositeActionOptions'
 import { DuiRedirectAction } from '../actions/DuiRedirectAction'
+import type { DuiRedirectActionOptions } from '../actions/DuiRedirectActionOptions'
 import { DuiButtonField } from '../DuiButtonField'
 import { DuiField } from '../DuiField'
 import type { DuiFieldOptions } from '../DuiFieldOptions'
@@ -67,34 +71,34 @@ export interface IDuiConfig {
     [key: PropertyKey]: IDuiConfigValueFormatter
   }
 
-  actionFactory: <T extends IDuiConfig>(options: DuiActionOptions[], config: T) => DuiAction[]
-  fieldFactory: <T extends IDuiConfig>(options: DuiFieldOptions<T>[], config: T) => DuiField<T>[]
+  actionFactory: <T extends IDuiConfig>(options: DuiActionOptionsValues[], config: T) => DuiAction[]
+  fieldFactory: <T extends IDuiConfig>(options: DuiFieldOptions<T>[], config: T) => DuiField[]
 }
 
 export class DuiConfig implements IDuiConfig {
-  actionFactory<T extends IDuiConfig>(options: DuiActionOptions[] | undefined, config: T) {
+  actionFactory<T extends IDuiConfig>(options: DuiActionOptionsValues[] | undefined, config: T) {
     if (!options) return []
 
     return options.map((x) => {
       switch (x.type) {
         case 'api':
-          return new DuiApiAction<T>(x)
+          return new DuiApiAction(x as DuiApiActionOptions)
         case 'redirect':
-          return new DuiRedirectAction<T>(x)
+          return new DuiRedirectAction(x as DuiRedirectActionOptions)
         case 'composite':
-          return new DuiCompositeAction<T>(x, config)
+          return new DuiCompositeAction(x as DuiCompositeActionOptions, config)
         default:
           throw new Error(`Action type '${x.type}' is not supported`)
       }
     })
   }
-  fieldFactory<T extends IDuiConfig>(options: DuiFieldOptions<T>[], config: T): DuiField<T>[] {
+  fieldFactory<T extends IDuiConfig>(options: DuiFieldOptions<T>[], config: T): DuiField[] {
     return options.map((x) => {
       switch (x.type) {
         case DataType.BUTTON:
           return new DuiButtonField<T>(x, config)
         default:
-          return new DuiField<T>(x, config)
+          return new DuiField(x, config)
       }
     })
   }

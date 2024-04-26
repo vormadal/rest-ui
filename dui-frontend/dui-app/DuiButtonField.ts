@@ -4,7 +4,7 @@ import { DuiParameter } from './DuiParamater'
 import type { DuiActionContext } from './actions/DuiActionContext'
 import type { IDuiConfig } from './config/DuiConfig'
 
-export class DuiButtonField<Config extends IDuiConfig> extends DuiField<Config> {
+export class DuiButtonField<Config extends IDuiConfig> extends DuiField {
   linkTo: string
   paramaters: DuiParameter[]
   constructor(options: DuiFieldOptions<Config>, config: Config) {
@@ -22,7 +22,7 @@ export class DuiButtonField<Config extends IDuiConfig> extends DuiField<Config> 
     return ''
   }
 
-  getComponentProperties = (context: DuiActionContext, handleChange?: (field: DuiField<Config>, value: any) => void) => {
+  getComponentProperties = (context: DuiActionContext, handleChange?: (field: DuiField, value: any) => void) => {
     let route = this.linkTo
     for (const param of this.paramaters) {
       route = param.inject(route, context)

@@ -1,11 +1,10 @@
 import { extractField } from '../../utils/objectUtils'
 import { DuiParameter } from '../DuiParamater'
-import type { IDuiConfig } from '../config/DuiConfig'
 import type { DuiAction } from './DuiAction'
 import type { DuiActionContext } from './DuiActionContext'
 import type { DuiApiActionOptions } from './DuiApiActionOptions'
 
-export class DuiApiAction<Config extends IDuiConfig> implements DuiAction<Config> {
+export class DuiApiAction implements DuiAction {
   method: string
   routeTemplate: string
   parameters: DuiParameter[]
@@ -17,7 +16,7 @@ export class DuiApiAction<Config extends IDuiConfig> implements DuiAction<Config
     return this._label ?? ''
   }
 
-  constructor({ method, routeTemplate, dataField, paramaters, label }: DuiApiActionOptions<Config>) {
+  constructor({ method, routeTemplate, dataField, paramaters, label }: DuiApiActionOptions) {
     this._label = label
     this.routeTemplate = routeTemplate
     this.method = method

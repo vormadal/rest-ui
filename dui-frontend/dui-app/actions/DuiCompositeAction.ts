@@ -3,8 +3,8 @@ import type { DuiAction } from './DuiAction'
 import type { DuiActionContext } from './DuiActionContext'
 import type { DuiCompositeActionOptions } from './DuiCompositeActionOptions'
 
-export class DuiCompositeAction<Config extends IDuiConfig> implements DuiAction<Config> {
-  actions: DuiAction<Config>[]
+export class DuiCompositeAction<Config extends IDuiConfig> implements DuiAction {
+  actions: DuiAction[]
 
   _label?: string
 
@@ -12,7 +12,7 @@ export class DuiCompositeAction<Config extends IDuiConfig> implements DuiAction<
     return this._label ?? ''
   }
 
-  constructor({ actions, label }: DuiCompositeActionOptions<Config>, config: Config) {
+  constructor({ actions, label }: DuiCompositeActionOptions, config: Config) {
     this._label = label
     this.actions = config.actionFactory(actions, config)
   }

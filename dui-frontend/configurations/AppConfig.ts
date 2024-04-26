@@ -1,8 +1,8 @@
 import { DuiApp } from '../dui-app/DuiApp'
 import type { DuiAppOptions } from '../dui-app/DuiAppOptions'
-import { DuiConfig } from '../dui-app/config/DuiConfig'
+import { DuiConfig, type IDuiConfig } from '../dui-app/config/DuiConfig'
 
-export function createDuiApp(options: DuiAppOptions): DuiApp {
+export function createDuiApp<T extends IDuiConfig>(options: DuiAppOptions<T>): DuiApp {
   const config = new DuiConfig({})
-  return new DuiApp(options, config)
+  return new DuiApp<T>(options, config)
 }

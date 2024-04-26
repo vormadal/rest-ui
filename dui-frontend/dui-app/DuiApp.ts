@@ -1,8 +1,8 @@
 import type { DuiAppOptions } from './DuiAppOptions'
 import { DuiPage } from './DuiPage'
-import type { DuiConfig } from './config/DuiConfig'
+import type { IDuiConfig } from './config/DuiConfig'
 
-export class DuiApp<Config extends DuiConfig = DuiConfig> {
+export class DuiApp<Config extends IDuiConfig> {
   baseUrl: string
   pages: DuiPage<Config>[]
   dashboard: {

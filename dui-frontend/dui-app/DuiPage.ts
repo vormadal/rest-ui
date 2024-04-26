@@ -1,22 +1,22 @@
 import { DuiField } from './DuiField'
 import type { DuiPageOptions } from './DuiPageOptions'
 import type { DuiPageType } from './DuiPageType'
-import type { DuiConfig } from './config/DuiConfig'
+import type { IDuiConfig } from './config/DuiConfig'
 
 import type { DuiParameter } from './DuiParamater'
 import type { DuiAction } from './actions/DuiAction'
 import { DuiApiAction } from './actions/DuiApiAction'
 
-export class DuiPage<Config extends DuiConfig = DuiConfig> {
+export class DuiPage<Config extends IDuiConfig> {
   route: string
   type: DuiPageType
 
   onSubmit?: DuiAction
 
-  dataSource?: DuiApiAction<Config>
+  dataSource?: DuiApiAction
 
   component: any
-  fields: DuiField<Config>[]
+  fields: DuiField[]
 
   actions: DuiAction[]
 
@@ -31,7 +31,7 @@ export class DuiPage<Config extends DuiConfig = DuiConfig> {
     //TODO handle different variants instead of just using default
     this.component = config.components[type].default
 
-    this.actions = config.actionFactory(actions, config)
+    this.actions = config.actionFactory(actions ?? [], config)
   }
 
   matches = (route: string): boolean => {
@@ -60,7 +60,7 @@ export class DuiPage<Config extends DuiConfig = DuiConfig> {
     return index >= 0 ? routeParts[index] : ''
   }
 
-  get visibleFields(): DuiField<Config>[] {
+  get visibleFields(): DuiField[] {
     return this.fields.filter((x) => !x.hidden)
   }
 }

@@ -1,14 +1,13 @@
 import { DuiParameter } from '../DuiParamater'
-import type { IDuiConfig } from '../config/DuiConfig'
 import type { DuiAction } from './DuiAction'
 import type { DuiActionContext } from './DuiActionContext'
 import type { DuiRedirectActionOptions } from './DuiRedirectActionOptions'
 
-export class DuiRedirectAction<Config extends IDuiConfig> implements DuiAction<Config> {
+export class DuiRedirectAction implements DuiAction {
   urlTemplate: string
   parameters: DuiParameter[]
   _label?: string
-  constructor({ label, urlTemplate, paramaters }: DuiRedirectActionOptions<Config>) {
+  constructor({ label, urlTemplate, paramaters }: DuiRedirectActionOptions) {
     this._label = label
     this.urlTemplate = urlTemplate
     this.parameters = paramaters?.map((x) => new DuiParameter(x)) ?? []
