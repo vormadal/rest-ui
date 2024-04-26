@@ -4,5 +4,6 @@ export enum DataType {
   DATE_TIME = 'dateTime',
   TIME = 'time',
   NUMBER = 'number',
-  BUTTON = 'button'
+  BUTTON = 'button',
+  BOOLEAN = 'boolean'
 }

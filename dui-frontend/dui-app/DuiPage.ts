@@ -26,7 +26,7 @@ export class DuiPage<Config extends DuiConfig = DuiConfig> {
     this.route = route
     this.type = type
     this.dataSource = dataSource && new DuiApiAction(dataSource)
-    this.onSubmit = config.actionFactory(onSubmit)
+    this.onSubmit = config.actionFactory(onSubmit, config)
 
     this.fields = config.fieldFactory(fields, config)
     //TODO handle different variants instead of just using default

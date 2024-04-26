@@ -28,6 +28,8 @@ import type { DuiFieldOptions } from '../DuiFieldOptions'
 import { DuiField } from '../DuiField'
 import { DuiButtonField } from '../DuiButtonField'
 import { NuxtLink } from '#components'
+import DefaultBooleanField from '../../components/fields/DefaultBooleanField.vue'
+import { DuiCompositeAction } from '../actions/DuiCompositeAction'
 
 const locale = 'da-dk'
 
@@ -54,6 +56,7 @@ export interface IDuiConfig {
       [DataType.DATE_TIME]: IDuiConfigComponent
       [DataType.TIME]: IDuiConfigComponent
       [DataType.NUMBER]: IDuiConfigComponent
+      [DataType.BOOLEAN]: IDuiConfigComponent
       [DataType.STRING]: IDuiConfigComponent
     }
     [DuiPageType.createForm]: IDuiConfigComponent
@@ -67,7 +70,7 @@ export interface IDuiConfig {
     [key: PropertyKey]: IDuiConfigValueFormatter
   }
 
-  actionFactory: <T extends DuiConfig = DuiConfig>(options?: DuiActionOptions<T>[]) => DuiAction<T>[]
+  actionFactory: <T extends DuiConfig = DuiConfig>(options: DuiActionOptions<T>[], config: T) => DuiAction<T>[]
   buttonActionFactory: <T extends DuiConfig = DuiConfig>(options?: DuiButtonActionOptions<T>[]) => DuiAction<T>[]
   fieldFactory: <T extends DuiConfig = DuiConfig>(options: DuiFieldOptions<T>[], config: T) => DuiField<T>[]
 }
@@ -85,7 +88,7 @@ export class DuiConfig implements IDuiConfig {
       }
     })
   }
-  actionFactory<T extends DuiConfig = DuiConfig>(options?: DuiActionOptions<T>[] | undefined) {
+  actionFactory<T extends DuiConfig = DuiConfig>(options: DuiActionOptions<T>[] | undefined, config: T) {
     if (!options) return []
 
     return options.map((x) => {
@@ -94,6 +97,8 @@ export class DuiConfig implements IDuiConfig {
           return new DuiApiAction<T>(x)
         case 'redirect':
           return new DuiRedirectAction<T>(x)
+        case 'composite':
+          return new DuiCompositeAction<T>(x, config)
       }
     })
   }
@@ -129,6 +134,9 @@ export class DuiConfig implements IDuiConfig {
       },
       [DataType.NUMBER]: {
         default: DefaultNumberField
+      },
+      [DataType.BOOLEAN]: {
+        default: DefaultBooleanField
       }
     },
     [DuiPageType.list]: {
@@ -172,6 +180,10 @@ export class DuiConfig implements IDuiConfig {
         }
       })
     },
+    boolean: {
+      format: (value: boolean) => (value ? 'yes' : 'no'),
+      defaultOptions: () => ({})
+    },
     string: {
       format: defaultStringFormatter,
       defaultOptions: () => ({})
@@ -179,19 +191,29 @@ export class DuiConfig implements IDuiConfig {
     date: {
       format: defaultDateFormatter,
       defaultOptions: () => ({
-        locale: locale
+        locale: locale,
+        options: {
+          dateStyle: 'short'
+        }
       })
     },
     dateTime: {
       format: defaultDateTimeFormatter,
       defaultOptions: () => ({
-        locale: locale
+        locale: locale,
+        options: {
+          timeStyle: 'short',
+          dateStyle: 'short'
+        }
       })
     },
     time: {
       format: defaultTimeFormatter,
       defaultOptions: () => ({
-        locale: locale
+        locale: locale,
+        options: {
+          timeStyle: 'short'
+        }
       })
     }
   }

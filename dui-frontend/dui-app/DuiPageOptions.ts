@@ -11,7 +11,7 @@ export interface DuiPageOptions<Config extends DuiConfig = DuiConfig> {
 
   dataSource?: DuiApiActionOptions<Config>
 
-  onSubmit?: DuiActionOptions<Config>[]
+  onSubmit?: DuiActionOptions<Config>
 
   fields: DuiFieldOptions<Config>[]
 

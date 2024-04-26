@@ -26,8 +26,11 @@ export class DuiApiAction<Config extends DuiConfig = DuiConfig> implements DuiAc
 
     const data = ['POST', 'PUT'].includes(this.method) ? context.data : undefined
     const response = await context.app.fetch(this.method, route, data)
-    const content = await response.json()
+    try {
+      const content = await response.json()
 
-    return extractField(content, this.dataField)
+      return extractField(content, this.dataField)
+    } catch (e) {}
+    return null
   }
 }
