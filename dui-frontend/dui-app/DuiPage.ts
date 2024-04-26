@@ -6,33 +6,32 @@ import type { DuiConfig } from './config/DuiConfig'
 import type { DuiParameter } from './DuiParamater'
 import type { DuiAction } from './actions/DuiAction'
 import { DuiApiAction } from './actions/DuiApiAction'
-import type { DuiButtonAction } from './actions/DuiButtonAction'
 
 export class DuiPage<Config extends DuiConfig = DuiConfig> {
   route: string
   type: DuiPageType
 
-  onSubmit?: DuiAction<Config>[]
+  onSubmit?: DuiAction
 
   dataSource?: DuiApiAction<Config>
 
   component: any
   fields: DuiField<Config>[]
 
-  actions: DuiButtonAction<Config>[]
+  actions: DuiAction[]
 
   constructor({ route, type, dataSource, onSubmit, fields, actions }: DuiPageOptions<Config>, config: Config) {
     console.log('creating page', route, type)
     this.route = route
     this.type = type
     this.dataSource = dataSource && new DuiApiAction(dataSource)
-    this.onSubmit = config.actionFactory(onSubmit, config)
+    this.onSubmit = onSubmit && config.actionFactory([onSubmit], config)[0]
 
     this.fields = config.fieldFactory(fields, config)
     //TODO handle different variants instead of just using default
     this.component = config.components[type].default
 
-    this.actions = config.buttonActionFactory(actions)
+    this.actions = config.actionFactory(actions, config)
   }
 
   matches = (route: string): boolean => {

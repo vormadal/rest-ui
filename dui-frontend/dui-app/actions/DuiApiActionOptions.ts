@@ -1,8 +1,8 @@
 import type { DuiParameterOptions } from '../DuiParamaterOptions'
-import type { DuiConfig } from '../config/DuiConfig'
+import type { DuiActionOptions } from './DuiActionOptions'
 
-export interface DuiApiActionOptions<Config extends DuiConfig = DuiConfig> {
-  type?: 'api'
+export interface DuiApiActionOptions extends DuiActionOptions {
+  type: 'api'
   routeTemplate: string
   method: 'GET' | 'POST' | 'PUT' | 'DELETE'
   paramaters?: DuiParameterOptions[]

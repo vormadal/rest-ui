@@ -3,9 +3,9 @@ import type { ValueConfigOptions } from '../configurations/ValueConfigOptions'
 import { merge } from '../configurations/utilities'
 import type { DuiFieldOptions } from './DuiFieldOptions'
 import type { DuiActionContext } from './actions/DuiActionContext'
-import type { DuiConfig, IDuiConfig, IDuiConfigValueFormatter } from './config/DuiConfig'
+import type { IDuiConfig, IDuiConfigValueFormatter } from './config/DuiConfig'
 
-export class DuiField<Config extends IDuiConfig = DuiConfig> {
+export class DuiField<Config extends IDuiConfig> {
   displayName: string
   name: string
   type: DataType
@@ -43,7 +43,10 @@ export class DuiField<Config extends IDuiConfig = DuiConfig> {
     return data[this.name]
   }
 
-  getComponentProperties = (context: DuiActionContext, handleChange?: (field: DuiField, value: any) => void): any => {
+  getComponentProperties = (
+    context: DuiActionContext,
+    handleChange?: (field: DuiField<Config>, value: any) => void
+  ): any => {
     return { field: this, value: this.getInputValue(context.data), handleChange }
   }
 }

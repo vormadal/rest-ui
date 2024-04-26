@@ -1,11 +1,12 @@
-import { OpenAPIV3, type OpenAPI } from 'openapi-types'
+import { OpenAPIV3 } from 'openapi-types'
 import { DataType } from '../configurations/DataType'
 import type { DuiAppOptions } from '../dui-app/DuiAppOptions'
 import type { DuiFieldOptions } from '../dui-app/DuiFieldOptions'
 import type { DuiPageOptions } from '../dui-app/DuiPageOptions'
 import { DuiPageType } from '../dui-app/DuiPageType'
 import type { DuiParameterOptions } from '../dui-app/DuiParamaterOptions'
-import type { DuiButtonActionOptions } from '../dui-app/actions/DuiButtonActionOptions'
+import type { DuiActionOptionsValues } from '../dui-app/actions/DuiActionOptionValues'
+import type { IDuiConfig } from '../dui-app/config/DuiConfig'
 import { HttpMethods } from './openApi/HttpMethods'
 import type { AnySchema, SchemaComponentMap } from './openApi/OpenApiTypes'
 
@@ -22,14 +23,14 @@ const defaultOptions: ParserOptions = {
   request: {},
   response: {}
 }
-export class OpenApiParser {
+export class OpenApiParser<T extends IDuiConfig> {
   private readonly schemas: SchemaComponentMap
   private options: ParserOptions = defaultOptions
-  constructor(private readonly document: OpenAPIV3.Document) {
+  constructor(private readonly document: OpenAPIV3.Document, private readonly config: T) {
     this.schemas = this.getSchemaComponents(document)
   }
 
-  parse(options: ParserOptions = defaultOptions): DuiAppOptions {
+  parse(options: ParserOptions = defaultOptions): DuiAppOptions<T> {
     this.options = options
     const version = this.document.openapi
     if (version.startsWith('3')) {
@@ -39,7 +40,7 @@ export class OpenApiParser {
     throw new Error('this document type cannot be handled')
   }
 
-  private parseV3(): DuiAppOptions {
+  private parseV3(): DuiAppOptions<T> {
     const pages = this.getPages()
     return {
       baseUrl: this.document.servers ? this.document.servers[0].url : '/',
@@ -55,11 +56,11 @@ export class OpenApiParser {
     return endpoint ? this.resolveReferenceObject<OpenAPIV3.OperationObject>(endpoint[method]) : null
   }
 
-  private getPages(): DuiPageOptions[] {
+  private getPages(): DuiPageOptions<T>[] {
     if (!this.document?.paths) return []
 
     const paths = Object.keys(this.document.paths)
-    const pages: DuiPageOptions[] = []
+    const pages: DuiPageOptions<T>[] = []
 
     const relevantMethods = [HttpMethods.GET, HttpMethods.POST, HttpMethods.PUT]
 
@@ -90,7 +91,11 @@ export class OpenApiParser {
     return pages
   }
 
-  private createCreateFormPage(path: string, method: HttpMethods, source: OpenAPIV3.OperationObject): DuiPageOptions {
+  private createCreateFormPage(
+    path: string,
+    method: HttpMethods,
+    source: OpenAPIV3.OperationObject
+  ): DuiPageOptions<T> {
     const pageType = this.resolveType(method, source)
     return {
       type: DuiPageType.createForm,
@@ -115,7 +120,11 @@ export class OpenApiParser {
     }
   }
 
-  private createUpdateFormPage(path: string, method: HttpMethods, source: OpenAPIV3.OperationObject): DuiPageOptions {
+  private createUpdateFormPage(
+    path: string,
+    method: HttpMethods,
+    source: OpenAPIV3.OperationObject
+  ): DuiPageOptions<T> {
     const pageType = this.resolveType(method, source)
     return {
       type: DuiPageType.updateForm,
@@ -147,23 +156,32 @@ export class OpenApiParser {
     }
   }
 
-  private createRecordPage(path: string, method: HttpMethods, source: OpenAPIV3.OperationObject): DuiPageOptions {
+  private createRecordPage(path: string, method: HttpMethods, source: OpenAPIV3.OperationObject): DuiPageOptions<T> {
     const deleteAction = this.getOperation(path, HttpMethods.DELETE)
     const updateAction = this.getOperation(path, HttpMethods.PUT)
 
-    const actions: DuiButtonActionOptions[] = []
+    const actions: DuiActionOptionsValues[] = []
     if (deleteAction) {
       actions.push({
+        type: 'composite',
         label: 'Delete',
-        method: 'DELETE',
-        routeTemplate: path,
-        type: 'api',
-        dataField: this.options.response.dataField,
-        paramaters: [
+        actions: [
           {
-            name: 'id',
-            valueFieldName: 'id',
-            from: 'path'
+            method: 'DELETE',
+            routeTemplate: path,
+            type: 'api',
+            dataField: this.options.response.dataField,
+            paramaters: [
+              {
+                name: 'id',
+                valueFieldName: 'id',
+                from: 'path'
+              }
+            ]
+          },
+          {
+            type: 'redirect',
+            urlTemplate: this.resolveRoute(path.substring(0, path.lastIndexOf('/')), HttpMethods.GET)
           }
         ]
       })
@@ -209,7 +227,7 @@ export class OpenApiParser {
       }))
   }
 
-  private createListPage(path: string, method: HttpMethods, source: OpenAPIV3.OperationObject): DuiPageOptions {
+  private createListPage(path: string, method: HttpMethods, source: OpenAPIV3.OperationObject): DuiPageOptions<T> {
     const fields = this.resolveFields(DuiPageType.list, source)
     const showOperationPath = `${path}/{id}`
 
@@ -270,7 +288,7 @@ export class OpenApiParser {
   private resolveProperty(
     name: string,
     reference?: OpenAPIV3.ReferenceObject | OpenAPIV3.SchemaObject | null
-  ): DuiFieldOptions {
+  ): DuiFieldOptions<T> {
     const schema = this.resolveReferenceObject<OpenAPIV3.SchemaObject>(reference)
     const type = this.resolvePropertyType(schema)
 
@@ -305,7 +323,7 @@ export class OpenApiParser {
     }
   }
 
-  private resolveFields(type: DuiPageType, source: OpenAPIV3.OperationObject): DuiFieldOptions[] {
+  private resolveFields(type: DuiPageType, source: OpenAPIV3.OperationObject): DuiFieldOptions<T>[] {
     const responseBody = this.resolveReferenceObject<OpenAPIV3.ResponseObject>(source.responses[200])
     let schema = this.resolveReferenceObject<OpenAPIV3.SchemaObject>(
       responseBody?.content && responseBody?.content['application/json']?.schema

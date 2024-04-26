@@ -1,7 +1,7 @@
 import type { DuiParameterOptions } from '../DuiParamaterOptions'
-import type { DuiConfig } from '../config/DuiConfig'
+import type { DuiActionOptions } from './DuiActionOptions'
 
-export interface DuiRedirectActionOptions<Config extends DuiConfig = DuiConfig> {
+export interface DuiRedirectActionOptions extends DuiActionOptions {
   type: 'redirect'
   urlTemplate: string
   paramaters?: DuiParameterOptions[]

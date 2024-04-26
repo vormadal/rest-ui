@@ -1,12 +1,19 @@
-import type { DuiConfig } from '../config/DuiConfig'
+import type { IDuiConfig } from '../config/DuiConfig'
 import type { DuiAction } from './DuiAction'
 import type { DuiActionContext } from './DuiActionContext'
 import type { DuiCompositeActionOptions } from './DuiCompositeActionOptions'
 
-export class DuiCompositeAction<Config extends DuiConfig = DuiConfig> implements DuiAction<Config> {
-  actions: DuiAction[]
+export class DuiCompositeAction<Config extends IDuiConfig> implements DuiAction<Config> {
+  actions: DuiAction<Config>[]
 
-  constructor({ actions }: DuiCompositeActionOptions, config: Config) {
+  _label?: string
+
+  get label() {
+    return this._label ?? ''
+  }
+
+  constructor({ actions, label }: DuiCompositeActionOptions<Config>, config: Config) {
+    this._label = label
     this.actions = config.actionFactory(actions, config)
   }
 

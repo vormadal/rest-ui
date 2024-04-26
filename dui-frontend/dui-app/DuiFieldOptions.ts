@@ -1,15 +1,15 @@
 import type { DataType } from '../configurations/DataType'
 import type { ValueConfigOptions } from '../configurations/ValueConfigOptions'
-import type { DuiConfig, IDuiConfig } from './config/DuiConfig'
+import type { IDuiConfig } from './config/DuiConfig'
 import type { DuiParameterOptions } from './DuiParamaterOptions'
 
-export type DuiButtonFieldOptions<Config extends IDuiConfig = DuiConfig> = {
+export type DuiButtonFieldOptions = {
   type: DataType.BUTTON
   linkTo: string
   parameters: DuiParameterOptions[]
 }
 
-export type DuiFieldOptions<Config extends IDuiConfig = DuiConfig> = {
+export type DuiFieldOptions<Config extends IDuiConfig> = {
   hidden?: boolean
   formatter?: keyof Config['valueFormatters']
   type: DataType

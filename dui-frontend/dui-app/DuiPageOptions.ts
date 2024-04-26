@@ -1,19 +1,18 @@
-import type { DuiActionOptions } from './actions/DuiActionOptions'
+import type { DuiActionOptionsValues } from './actions/DuiActionOptionValues'
 import type { DuiApiActionOptions } from './actions/DuiApiActionOptions'
-import type { DuiButtonActionOptions } from './actions/DuiButtonActionOptions'
-import type { DuiConfig } from './config/DuiConfig'
+import type { IDuiConfig } from './config/DuiConfig'
 import type { DuiFieldOptions } from './DuiFieldOptions'
 import type { DuiPageType } from './DuiPageType'
 
-export interface DuiPageOptions<Config extends DuiConfig = DuiConfig> {
+export interface DuiPageOptions<Config extends IDuiConfig> {
   route: string
   type: DuiPageType
 
-  dataSource?: DuiApiActionOptions<Config>
+  dataSource?: DuiApiActionOptions
 
-  onSubmit?: DuiActionOptions<Config>
+  onSubmit?: DuiActionOptionsValues
 
   fields: DuiFieldOptions<Config>[]
 
-  actions?: DuiButtonActionOptions<Config>[]
+  actions?: DuiActionOptionsValues[]
 }

@@ -1,7 +1,7 @@
-import type { DuiConfig } from '../config/DuiConfig'
 import type { DuiActionOptions } from './DuiActionOptions'
+import type { DuiActionOptionsValues } from './DuiActionOptionValues'
 
-export type DuiCompositeActionOptions<Config extends DuiConfig = DuiConfig> = {
+export interface DuiCompositeActionOptions extends DuiActionOptions {
   type: 'composite'
-  actions: DuiActionOptions<Config>[]
+  actions: DuiActionOptionsValues[]
 }

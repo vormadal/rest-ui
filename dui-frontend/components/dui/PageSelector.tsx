@@ -25,14 +25,8 @@ export function PageSelector({ app, route }: Props) {
 
   async function submit(data: any) {
     if (!page?.onSubmit) return
-
     context.data = data
-
-    for (const action of page.onSubmit) {
-      console.log('run action', action)
-      const result = await action.run(context)
-      context.data = result
-    }
+    await page.onSubmit.run(context)
   }
 
   const Component = page.component

@@ -1,35 +1,32 @@
+import { NuxtLink } from '#components'
+import DefaultActions from '../../components/DefaultActions.vue'
+import DefaultCreateForm from '../../components/DefaultCreateForm.vue'
+import DefaultEditForm from '../../components/DefaultEditForm.vue'
 import DefaultTable from '../../components/DefaultTable.vue'
 import DefaultViewRecord from '../../components/DefaultViewRecord.vue'
-import DefaultCreateForm from '../../components/DefaultCreateForm.vue'
 import DefaultDashboard from '../../components/dui/DefaultDashboard.vue'
+import DefaultBooleanField from '../../components/fields/DefaultBooleanField.vue'
+import DefaultDateField from '../../components/fields/DefaultDateField.vue'
+import DefaultDateTimeField from '../../components/fields/DefaultDateTimeField.vue'
+import DefaultNumberField from '../../components/fields/DefaultNumberField.vue'
+import DefaultTextField from '../../components/fields/DefaultTextField.vue'
+import DefaultTimeField from '../../components/fields/DefaultTimeField.vue'
+import { DataType } from '../../configurations/DataType'
 import { defaultDateFormatter } from '../../configurations/defaultFormatters/defaultDateFormatter'
 import { defaultDateTimeFormatter } from '../../configurations/defaultFormatters/defaultDateTimeFormatter'
 import { defaultNumberFormatter } from '../../configurations/defaultFormatters/defaultNumberFormatter'
 import { defaultStringFormatter } from '../../configurations/defaultFormatters/defaultStringFormatter'
 import { defaultTimeFormatter } from '../../configurations/defaultFormatters/defaultTimeFormatter'
+import type { DuiAction } from '../actions/DuiAction'
+import type { DuiActionOptions } from '../actions/DuiActionOptions'
+import { DuiApiAction } from '../actions/DuiApiAction'
+import { DuiCompositeAction } from '../actions/DuiCompositeAction'
+import { DuiRedirectAction } from '../actions/DuiRedirectAction'
+import { DuiButtonField } from '../DuiButtonField'
+import { DuiField } from '../DuiField'
+import type { DuiFieldOptions } from '../DuiFieldOptions'
 import { DuiPageType } from '../DuiPageType'
 import type { DuiConfigOptions } from './DuiConfigOptions'
-import { DataType } from '../../configurations/DataType'
-import DefaultTextField from '../../components/fields/DefaultTextField.vue'
-import DefaultDateTimeField from '../../components/fields/DefaultDateTimeField.vue'
-import DefaultDateField from '../../components/fields/DefaultDateField.vue'
-import DefaultTimeField from '../../components/fields/DefaultTimeField.vue'
-import DefaultNumberField from '../../components/fields/DefaultNumberField.vue'
-import DefaultEditForm from '../../components/DefaultEditForm.vue'
-import type { DuiActionOptions } from '../actions/DuiActionOptions'
-import type { DuiAction } from '../actions/DuiAction'
-import { DuiApiAction } from '../actions/DuiApiAction'
-import { DuiRedirectAction } from '../actions/DuiRedirectAction'
-import type { DuiButtonActionOptions } from '../actions/DuiButtonActionOptions'
-import { DuiApiButtonAction } from '../actions/DuiApiButtonAction'
-import { DuiRedirectButtonAction } from '../actions/DuiRedirectButtonAction'
-import DefaultActions from '../../components/DefaultActions.vue'
-import type { DuiFieldOptions } from '../DuiFieldOptions'
-import { DuiField } from '../DuiField'
-import { DuiButtonField } from '../DuiButtonField'
-import { NuxtLink } from '#components'
-import DefaultBooleanField from '../../components/fields/DefaultBooleanField.vue'
-import { DuiCompositeAction } from '../actions/DuiCompositeAction'
 
 const locale = 'da-dk'
 
@@ -70,25 +67,12 @@ export interface IDuiConfig {
     [key: PropertyKey]: IDuiConfigValueFormatter
   }
 
-  actionFactory: <T extends DuiConfig = DuiConfig>(options: DuiActionOptions<T>[], config: T) => DuiAction<T>[]
-  buttonActionFactory: <T extends DuiConfig = DuiConfig>(options?: DuiButtonActionOptions<T>[]) => DuiAction<T>[]
-  fieldFactory: <T extends DuiConfig = DuiConfig>(options: DuiFieldOptions<T>[], config: T) => DuiField<T>[]
+  actionFactory: <T extends IDuiConfig>(options: DuiActionOptions[], config: T) => DuiAction[]
+  fieldFactory: <T extends IDuiConfig>(options: DuiFieldOptions<T>[], config: T) => DuiField<T>[]
 }
 
 export class DuiConfig implements IDuiConfig {
-  buttonActionFactory<T extends DuiConfig = DuiConfig>(options?: DuiButtonActionOptions<T>[] | undefined) {
-    if (!options) return []
-
-    return options.map((x) => {
-      switch (x.type) {
-        case 'api':
-          return new DuiApiButtonAction<T>(x)
-        case 'redirect':
-          return new DuiRedirectButtonAction<T>(x)
-      }
-    })
-  }
-  actionFactory<T extends DuiConfig = DuiConfig>(options: DuiActionOptions<T>[] | undefined, config: T) {
+  actionFactory<T extends IDuiConfig>(options: DuiActionOptions[] | undefined, config: T) {
     if (!options) return []
 
     return options.map((x) => {
@@ -99,14 +83,16 @@ export class DuiConfig implements IDuiConfig {
           return new DuiRedirectAction<T>(x)
         case 'composite':
           return new DuiCompositeAction<T>(x, config)
+        default:
+          throw new Error(`Action type '${x.type}' is not supported`)
       }
     })
   }
-  fieldFactory<T extends DuiConfig = DuiConfig>(options: DuiFieldOptions<T>[], config: T): DuiField<T>[] {
+  fieldFactory<T extends IDuiConfig>(options: DuiFieldOptions<T>[], config: T): DuiField<T>[] {
     return options.map((x) => {
       switch (x.type) {
         case DataType.BUTTON:
-          return new DuiButtonField(x, config)
+          return new DuiButtonField<T>(x, config)
         default:
           return new DuiField<T>(x, config)
       }
