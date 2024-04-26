@@ -1,0 +1,6 @@
+@NestedDataApi_HostAddress = http://localhost:5141
+
+GET {{NestedDataApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
