@@ -9,6 +9,7 @@ import type { DuiActionOptionsValues } from '../dui-app/actions/DuiActionOptionV
 import type { IDuiConfig } from '../dui-app/config/DuiConfig'
 import { HttpMethods } from './openApi/HttpMethods'
 import type { AnySchema, SchemaComponentMap } from './openApi/OpenApiTypes'
+import { sanitizeString } from '../utils/stringUtils'
 
 type ParserOptions = {
   request: {
@@ -111,7 +112,7 @@ export class OpenApiParser<T extends IDuiConfig> {
             //TODO this might have some global variables as paramaters that we need to handle
           },
           {
-            type: 'redirect',
+            type: 'redirect', //TODO redirect to created resource
             urlTemplate: this.resolveRoute(path, HttpMethods.GET),
             paramaters: this.resolveDataSourceParameters(source)
           }
@@ -271,10 +272,22 @@ export class OpenApiParser<T extends IDuiConfig> {
       })
     }
 
+    const actions: DuiActionOptionsValues[] = []
+    const createRoute = this.getOperation(path, HttpMethods.POST)
+    if (createRoute) {
+      actions.push({
+        type: 'redirect',
+        label: 'Create',
+        urlTemplate: this.resolveRoute(path, HttpMethods.POST)
+      })
+    }
+
     return {
       type: DuiPageType.list,
       route: this.resolveRoute(path, method),
       fields: fields,
+      actions: actions,
+
       dataSource: {
         method: 'GET',
         dataField: this.options.response.dataField, //TODO make this dynamic,
@@ -294,7 +307,7 @@ export class OpenApiParser<T extends IDuiConfig> {
 
     return {
       name: name,
-      displayName: name,
+      displayName: sanitizeString(name),
       type: type
     }
   }
@@ -334,14 +347,21 @@ export class OpenApiParser<T extends IDuiConfig> {
       )
     }
 
+    if (type === DuiPageType.createForm) {
+      const requestBody = this.resolveReferenceObject<OpenAPIV3.RequestBodyObject>(source.requestBody)
+      schema = this.resolveReferenceObject<OpenAPIV3.SchemaObject>(
+        requestBody?.content && requestBody?.content['application/json']?.schema
+      )
+    }
+
     switch (type) {
       case DuiPageType.list:
       case DuiPageType.record:
       case DuiPageType.updateForm:
+      case DuiPageType.createForm:
         return Object.keys(schema?.properties ?? {}).map((name) => {
           return this.resolveProperty(name, schema?.properties && schema?.properties[name])
         })
-      case DuiPageType.createForm:
     }
 
     return []

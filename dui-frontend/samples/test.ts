@@ -13,11 +13,37 @@ export const TestDocument1: OpenAPIV3.Document = {
   ],
   "paths": {
     "/employees": {
+      "post": {
+        "tags": [
+          "EmployeeEndpoints"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Employee"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Employee"
+                }
+              }
+            }
+          }
+        }
+      },
       "get": {
         "tags": [
           "EmployeeEndpoints"
         ],
-        "operationId": "GetEmployees",
         "responses": {
           "200": {
             "description": "OK",
@@ -40,7 +66,6 @@ export const TestDocument1: OpenAPIV3.Document = {
         "tags": [
           "EmployeeEndpoints"
         ],
-        "operationId": "GetEmployeeById",
         "parameters": [
           {
             "name": "id",
@@ -69,7 +94,6 @@ export const TestDocument1: OpenAPIV3.Document = {
         "tags": [
           "EmployeeEndpoints"
         ],
-        "operationId": "UpdateEmployee",
         "parameters": [
           {
             "name": "id",
@@ -108,7 +132,6 @@ export const TestDocument1: OpenAPIV3.Document = {
         "tags": [
           "EmployeeEndpoints"
         ],
-        "operationId": "DeleteEmployee",
         "parameters": [
           {
             "name": "id",

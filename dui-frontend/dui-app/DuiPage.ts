@@ -37,6 +37,9 @@ export class DuiPage<Config extends IDuiConfig> {
   matches = (route: string): boolean => {
     const routeParts = route.split('/').filter((x) => !!x)
     const pageRouteParts = this.route.split('/').filter((x) => !!x)
+
+    if (routeParts.length !== pageRouteParts.length) return false
+    
     for (let i = 0; i < routeParts.length; i++) {
       if (routeParts[i] === pageRouteParts[i]) {
         continue

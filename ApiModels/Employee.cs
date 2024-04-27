@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace ApiModels;
+﻿namespace ApiModels;
 
 public class Employee(
 string Id,
@@ -15,18 +13,15 @@ bool IsAdmin)
     public DateTime Created { get; } = Created;
     public bool IsAdmin { get; } = IsAdmin;
 
-    public static List<Employee> CreateSamples(int size)
+    public static List<Employee> CreateSamples(int size) => Enumerable.Range(1, size).Select(CreateSample).ToList();
+    public static Employee CreateSample(int id)
     {
-        return Enumerable
-            .Range(1, size)
-            .Select(index => new Employee
-            (
-                $"{index}",
-                $"Name {index}",
-                100 * index,
-                DateTime.Now,
-                index % 2 == 0
-                )
-            ).ToList();
+        return new Employee(
+            $"{id}",
+            $"Name {id}",
+            100 * id,
+            DateTime.Now,
+            id % 2 == 0
+            );
     }
 }

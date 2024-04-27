@@ -29,6 +29,9 @@ export class DuiApp<Config extends IDuiConfig> {
     return fetch(`${this.baseUrl}${this.baseUrl.endsWith('/') || route.startsWith('/') ? '' : '/'}${route}`, {
       method: method,
       body: data ? JSON.stringify(data) : undefined,
+      headers: {
+        'Content-Type': 'application/json'
+      }
     })
   }
 }

@@ -1,27 +1,28 @@
 ﻿using ApiModels;
-using Microsoft.AspNetCore.Mvc;
 
-namespace TestApi
+namespace TestApi;
+
+public static class WebAppExtensions
 {
-    public static class WebAppExtensions
+    public static void RegisterEmployeeEndpoints(this WebApplication app, EmployeeEndpoints instance)
     {
-        public static void RegisterEmployeeEndpoints(this WebApplication app, EmployeeEndpoints instance)
-        {
-            app.MapGet("/employees", instance.GetEmployeeList)
-                .WithName("GetEmployees")
-                .WithOpenApi();
+        var group = app.MapGroup("/employees").WithOpenApi();
 
-            app.MapGet("/employees/{id}", instance.GetEmployeeById)
-                .WithName("GetEmployeeById")
-                .WithOpenApi();
+        group.MapPost("/", instance.CreateEmployee);
+        group.MapGet("/", instance.GetEmployeeList);
+        group.MapGet("/{id}", instance.GetEmployeeById);
+        group.MapPut("/{id}", instance.UpdateEmployee);
+        group.MapDelete("/{id}", instance.DeleteEmployee);
+    }
 
-            app.MapPut("/employees/{id}", instance.UpdateEmployee)
-            .WithName("UpdateEmployee")
-            .WithOpenApi();
+    public static void RegisterDepartmentEndpoints(this WebApplication app, DepartmentEndpoints instance)
+    {
+        var group = app.MapGroup("/departments").WithOpenApi();
 
-            app.MapDelete("/employees/{id}", instance.DeleteEmployee)
-            .WithName("DeleteEmployee")
-            .WithOpenApi();
-        }
+        group.MapPost("/", instance.CreateDepartment);
+        group.MapGet("/", instance.GetDepartmentList);
+        group.MapGet("/{id}", instance.GetDepartmentById);
+        group.MapPut("/{id}", instance.UpdateDepartment);
+        group.MapDelete("/{id}", instance.DeleteDepartment);
     }
 }

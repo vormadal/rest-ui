@@ -2,7 +2,7 @@ import type { DuiApp } from '../../dui-app/DuiApp'
 import type { DuiActionContext } from '../../dui-app/actions/DuiActionContext'
 
 interface Props {
-  app: DuiApp
+  app: DuiApp<any>
   route: string
 }
 export function PageSelector({ app, route }: Props) {
