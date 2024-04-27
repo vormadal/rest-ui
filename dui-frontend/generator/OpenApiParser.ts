@@ -300,7 +300,8 @@ export class OpenApiParser<T extends IDuiConfig> {
 
   private resolveProperty(
     name: string,
-    reference?: OpenAPIV3.ReferenceObject | OpenAPIV3.SchemaObject | null
+    reference: OpenAPIV3.ReferenceObject | OpenAPIV3.SchemaObject | null,
+    hideMetadataFields: boolean
   ): DuiFieldOptions<T> {
     const schema = this.resolveReferenceObject<OpenAPIV3.SchemaObject>(reference)
     const type = this.resolvePropertyType(schema)
@@ -308,7 +309,8 @@ export class OpenApiParser<T extends IDuiConfig> {
     return {
       name: name,
       displayName: sanitizeString(name),
-      type: type
+      type: type,
+      hidden: hideMetadataFields && ['id', 'created', 'modified', 'modifiedOn', 'createdOn'].includes(name)
     }
   }
 
@@ -354,13 +356,15 @@ export class OpenApiParser<T extends IDuiConfig> {
       )
     }
 
+    let hideMetadataFields = false
     switch (type) {
       case DuiPageType.list:
       case DuiPageType.record:
+        hideMetadataFields = true
       case DuiPageType.updateForm:
       case DuiPageType.createForm:
         return Object.keys(schema?.properties ?? {}).map((name) => {
-          return this.resolveProperty(name, schema?.properties && schema?.properties[name])
+          return this.resolveProperty(name, schema?.properties && schema?.properties[name], hideMetadataFields)
         })
     }
 

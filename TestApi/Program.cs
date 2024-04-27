@@ -31,8 +31,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-var instance = new EmployeeEndpoints();
-app.RegisterEmployeeEndpoints(instance);
+app.RegisterEmployeeEndpoints(new EmployeeEndpoints());
+app.RegisterDepartmentEndpoints(new DepartmentEndpoints());
 
 app.Run();
 
