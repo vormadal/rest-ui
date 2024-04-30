@@ -2,6 +2,7 @@ import type { OpenAPIV3 } from 'openapi-types'
 import type { ParserOptions } from '../ParserOptions'
 import type { AnySchema, SchemaComponentMap } from '../openApi/OpenApiTypes'
 import type { EndpointBuilder } from '../EndpointBuilder'
+import type { PageGroup } from '../EndpointGroup'
 
 export class PageContext {
   constructor(public readonly document: OpenAPIV3.Document, public readonly options: ParserOptions) {
@@ -37,6 +38,15 @@ export class PageContext {
 
   set endpoints(list: EndpointBuilder[]) {
     this._endpoints = list
+  }
+
+  private _pageGroups: PageGroup[] = []
+  set pageGroups(list: PageGroup[]) {
+    this._pageGroups = list
+  }
+
+  get pageGroups() {
+    return this._pageGroups
   }
 
   resolveReference<T>(obj?: T | OpenAPIV3.ReferenceObject | null): T {

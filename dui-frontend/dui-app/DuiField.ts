@@ -15,7 +15,10 @@ export class DuiField {
 
   component?: any
 
-  constructor({ displayName, name, type, formatter, hidden, options }: DuiFieldOptions<any>, config: IDuiConfig) {
+  constructor(
+    { displayName, name, type, formatter, hidden, options, component }: DuiFieldOptions<any>,
+    config: IDuiConfig
+  ) {
     this.displayName = displayName
     this.name = name
     this.type = type
@@ -24,7 +27,7 @@ export class DuiField {
     this.options = merge(this.formatter.defaultOptions() ?? {}, options || {})
 
     //TODO handle override and variants
-    this.component = config.components.fields[this.type]?.default
+    this.component = config.components.fields[this.type]![component || 'default']
   }
 
   format = (data: any) => {
@@ -48,6 +51,7 @@ export class DuiField {
       field: this,
       value: this.getInputValue(context.data),
       context: context,
+      data: context.data,
       handleChange
     }
   }

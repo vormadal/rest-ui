@@ -5,13 +5,16 @@ import DefaultEditForm from '../../components/DefaultEditForm.vue'
 import DefaultTable from '../../components/DefaultTable.vue'
 import DefaultViewRecord from '../../components/DefaultViewRecord.vue'
 import DefaultDashboard from '../../components/dui/DefaultDashboard.vue'
-import DefaultBooleanField from '../../components/fields/DefaultBooleanField.vue'
-import DefaultDateField from '../../components/fields/DefaultDateField.vue'
-import DefaultDateTimeField from '../../components/fields/DefaultDateTimeField.vue'
+import DefaultBooleanEditor from '../../components/fields/DefaultBooleanEditor.vue'
+import DefaultDateEditor from '../../components/fields/DefaultDateEditor.vue'
+import DefaultDateTimeEditor from '../../components/fields/DefaultDateTimeEditor.vue'
+import DefaultLookupEditor from '../../components/fields/DefaultLookupEditor.vue'
 import DefaultLookupField from '../../components/fields/DefaultLookupField.vue'
-import DefaultNumberField from '../../components/fields/DefaultNumberField.vue'
+import DefaultNumberEditor from '../../components/fields/DefaultNumberEditor.vue'
+import DefaultTextEditor from '../../components/fields/DefaultTextEditor.vue'
 import DefaultTextField from '../../components/fields/DefaultTextField.vue'
-import DefaultTimeField from '../../components/fields/DefaultTimeField.vue'
+import DefaultTimeEditor from '../../components/fields/DefaultTimeEditor.vue'
+
 import { DataType } from '../../configurations/DataType'
 import { defaultDateFormatter } from '../../configurations/defaultFormatters/defaultDateFormatter'
 import { defaultDateTimeFormatter } from '../../configurations/defaultFormatters/defaultDateTimeFormatter'
@@ -19,7 +22,6 @@ import { defaultNumberFormatter } from '../../configurations/defaultFormatters/d
 import { defaultStringFormatter } from '../../configurations/defaultFormatters/defaultStringFormatter'
 import { defaultTimeFormatter } from '../../configurations/defaultFormatters/defaultTimeFormatter'
 import type { DuiAction } from '../actions/DuiAction'
-import type { DuiActionOptions } from '../actions/DuiActionOptions'
 import type { DuiActionOptionsValues } from '../actions/DuiActionOptionValues'
 import { DuiApiAction } from '../actions/DuiApiAction'
 import type { DuiApiActionOptions } from '../actions/DuiApiActionOptions'
@@ -41,6 +43,8 @@ export type ComponentType = any
 
 export interface IDuiConfigComponent {
   default: ComponentType
+  read?: ComponentType
+  write?: ComponentType
   [key: string]: ComponentType
 }
 
@@ -116,25 +120,39 @@ export class DuiConfig implements IDuiConfig {
         default: NuxtLink
       },
       [DataType.DATE]: {
-        default: DefaultDateField
+        default: DefaultDateEditor,
+        write: DefaultDateEditor,
+        read: DefaultTextField
       },
       [DataType.STRING]: {
-        default: DefaultTextField
+        default: DefaultTextEditor,
+        write: DefaultTextEditor,
+        read: DefaultTextField
       },
       [DataType.DATE_TIME]: {
-        default: DefaultDateTimeField
+        default: DefaultDateTimeEditor,
+        write: DefaultDateTimeEditor,
+        read: DefaultTextField
       },
       [DataType.TIME]: {
-        default: DefaultTimeField
+        default: DefaultTimeEditor,
+        write: DefaultTimeEditor,
+        read: DefaultTextField
       },
       [DataType.NUMBER]: {
-        default: DefaultNumberField
+        default: DefaultNumberEditor,
+        write: DefaultNumberEditor,
+        read: DefaultTextField
       },
       [DataType.BOOLEAN]: {
-        default: DefaultBooleanField
+        default: DefaultBooleanEditor,
+        write: DefaultBooleanEditor,
+        read: DefaultTextField
       },
       [DataType.LOOKUP]: {
-        default: DefaultLookupField
+        default: DefaultLookupEditor,
+        write: DefaultLookupEditor,
+        read: DefaultLookupField
       }
     },
     [DuiPageType.list]: {

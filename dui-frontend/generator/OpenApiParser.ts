@@ -43,6 +43,8 @@ export class OpenApiParser<T extends IDuiConfig> {
     this.context.endpoints = endpoints
     const pages = endpoints.map((x) => new PageBuilder(x, this.context))
     const groups = this.getPageGroups(pages)
+    this.context.pageGroups = groups
+
     for (const page of pages) {
       page.pageGroup = groups.find((x) => x.name === page.endpoint.resourceName)
     }

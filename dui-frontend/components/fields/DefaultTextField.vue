@@ -1,18 +1,14 @@
 <template>
-    <v-text-field :label="field.displayName" :name="field.name" :model-value="value" @update:modelValue="onChange" />
+    <span>{{ field.format(data) }}</span>
 </template>
 
 <script setup lang="ts">
 import type { DuiField } from '../../dui-app/DuiField';
 
 
-const props = defineProps<{
+defineProps<{
     field: DuiField
-    value?: string
-    handleChange: (field: DuiField, value: string) => Promise<void>
+    data?: any
 }>()
 
-function onChange(value: string) {
-    props.handleChange(props.field, value)
-}
 </script>

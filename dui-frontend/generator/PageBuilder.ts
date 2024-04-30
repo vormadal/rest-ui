@@ -11,6 +11,8 @@ import { FieldBuilder } from './FieldBuilder'
 import { HttpMethods } from './openApi/HttpMethods'
 import { DataType } from '../configurations/DataType'
 import type { DuiApiActionOptions } from '../dui-app/actions/DuiApiActionOptions'
+import type { DuiRedirectActionOptions } from '../dui-app/actions/DuiRedirectActionOptions'
+import type { ParameterValueSource } from '../dui-app/DuiParamaterOptions'
 
 export class PageBuilder {
   constructor(public readonly endpoint: EndpointBuilder, public readonly context: PageContext) {
@@ -121,12 +123,12 @@ export class PageBuilder {
     return schemaFields
   }
 
-  getRedirectAction(label?: string): DuiActionOptionsValues {
+  getRedirectAction(label?: string, parameterSource?: ParameterValueSource): DuiRedirectActionOptions {
     return {
       type: 'redirect',
       urlTemplate: this.route,
       label: label,
-      paramaters: this.endpoint.getDataSourceParameters() //TODO maybe page should have a list of parameters as well?
+      paramaters: this.endpoint.getDataSourceParameters(parameterSource) //TODO maybe page should have a list of parameters as well?
     }
   }
 
@@ -149,10 +151,7 @@ export class PageBuilder {
         return {
           type: 'composite',
           label: 'Save',
-          actions: [
-            this.endpoint.submitAction,
-            this.group.record?.getRedirectAction()
-          ].filter((x) => !!x)
+          actions: [this.endpoint.submitAction, this.group.record?.getRedirectAction()].filter((x) => !!x)
         }
     }
     return undefined

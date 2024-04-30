@@ -49,7 +49,10 @@ export class FieldBuilder {
       name: this.name,
       displayName: sanitizeString(this.name),
       type: this.type || DataType.STRING,
-      hidden: hidden
+      hidden: hidden,
+      component: [DuiPageType.createForm, DuiPageType.updateForm].includes(this.context.page.pageType!)
+        ? 'write'
+        : 'read'
     }
 
     if (this.type === DataType.LOOKUP && this.lookupEndpoint) {
@@ -58,11 +61,15 @@ export class FieldBuilder {
       //convert from iterator to array using the spread operator
       const properties = [...Object.keys(this.lookupEndpoint.responseSchema.properties || {})]
 
+      const redirectPage = this.context.pageGroups.find(x => x.name === this.lookupEndpoint?.resourceName)?.record
+
       lookupOptions.dataSource = this.lookupEndpoint.datasourceAction!
       lookupOptions.dataSource.paramaters![lookupOptions.dataSource.paramaters!.length - 1].valueFieldName = this.name
       lookupOptions.dataSource.paramaters![lookupOptions.dataSource.paramaters!.length - 1].from = 'data'
       lookupOptions.keyField = 'id' //TODO should get this from lookup endpoint response schema
       lookupOptions.labelField = properties.find((x) => x.toLowerCase().endsWith('name')) || 'name' //TODO should get this from lookup endpoint response schema
+
+      lookupOptions.redirectAction = redirectPage?.getRedirectAction(undefined, 'data');
     }
     return options
   }

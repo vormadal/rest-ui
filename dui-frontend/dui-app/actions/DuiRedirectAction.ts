@@ -16,11 +16,15 @@ export class DuiRedirectAction implements DuiAction {
     return this._label ?? ''
   }
 
-  async run(context: DuiActionContext): Promise<any> {
+  getLink(context: DuiActionContext): string {
     let route = this.urlTemplate
     for (const param of this.parameters) {
       route = param.inject(route, context)
     }
-    context.router.push(route)
+    return route
+  }
+
+  async run(context: DuiActionContext): Promise<any> {
+    context.router.push(this.getLink(context))
   }
 }
