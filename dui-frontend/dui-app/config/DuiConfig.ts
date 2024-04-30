@@ -8,6 +8,7 @@ import DefaultDashboard from '../../components/dui/DefaultDashboard.vue'
 import DefaultBooleanField from '../../components/fields/DefaultBooleanField.vue'
 import DefaultDateField from '../../components/fields/DefaultDateField.vue'
 import DefaultDateTimeField from '../../components/fields/DefaultDateTimeField.vue'
+import DefaultLookupField from '../../components/fields/DefaultLookupField.vue'
 import DefaultNumberField from '../../components/fields/DefaultNumberField.vue'
 import DefaultTextField from '../../components/fields/DefaultTextField.vue'
 import DefaultTimeField from '../../components/fields/DefaultTimeField.vue'
@@ -29,6 +30,7 @@ import type { DuiRedirectActionOptions } from '../actions/DuiRedirectActionOptio
 import { DuiButtonField } from '../DuiButtonField'
 import { DuiField } from '../DuiField'
 import type { DuiFieldOptions } from '../DuiFieldOptions'
+import { DuiLookupField } from '../DuiLookupField'
 import { DuiPageType } from '../DuiPageType'
 import type { DuiConfigOptions } from './DuiConfigOptions'
 
@@ -59,6 +61,7 @@ export interface IDuiConfig {
       [DataType.NUMBER]: IDuiConfigComponent
       [DataType.BOOLEAN]: IDuiConfigComponent
       [DataType.STRING]: IDuiConfigComponent
+      [DataType.LOOKUP]: IDuiConfigComponent
     }
     [DuiPageType.createForm]: IDuiConfigComponent
     [DuiPageType.list]: IDuiConfigComponent
@@ -97,6 +100,8 @@ export class DuiConfig implements IDuiConfig {
       switch (x.type) {
         case DataType.BUTTON:
           return new DuiButtonField<T>(x, config)
+        case DataType.LOOKUP:
+          return new DuiLookupField(x, config)
         default:
           return new DuiField(x, config)
       }
@@ -127,6 +132,9 @@ export class DuiConfig implements IDuiConfig {
       },
       [DataType.BOOLEAN]: {
         default: DefaultBooleanField
+      },
+      [DataType.LOOKUP]: {
+        default: DefaultLookupField
       }
     },
     [DuiPageType.list]: {
@@ -175,6 +183,10 @@ export class DuiConfig implements IDuiConfig {
       defaultOptions: () => ({})
     },
     string: {
+      format: defaultStringFormatter,
+      defaultOptions: () => ({})
+    },
+    lookup: {
       format: defaultStringFormatter,
       defaultOptions: () => ({})
     },

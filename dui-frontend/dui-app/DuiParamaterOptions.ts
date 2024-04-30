@@ -1,4 +1,6 @@
 
+
+export type ParameterValueSource = 'data' | 'path' | 'query'
 /**
  * A URL path or query paramater configuration which specifies where 
  * the value for the given parameter is retrieved from
@@ -12,7 +14,7 @@ export interface DuiParameterOptions {
     /**
      * where the value for the parameter is retrieved from
      */
-    from?: 'data' | 'path' | 'query'
+    from?: ParameterValueSource
 
     /**
      * specifies the field name of the data object of which the value is retrieved from.

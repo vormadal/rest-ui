@@ -10,29 +10,26 @@ import type { IDuiConfig } from '../dui-app/config/DuiConfig'
 import { HttpMethods } from './openApi/HttpMethods'
 import type { AnySchema, SchemaComponentMap } from './openApi/OpenApiTypes'
 import { sanitizeString } from '../utils/stringUtils'
-
-type ParserOptions = {
-  request: {
-    dataField?: string
-  }
-  response: {
-    dataField?: string
-  }
-}
+import { EndpointBuilder } from './EndpointBuilder'
+import { PageGroup } from './EndpointGroup'
+import { PageBuilder } from './PageBuilder'
+import { ParserContext } from './ParserContext'
+import type { ParserOptions } from './ParserOptions'
+import { PageContext } from './context/PageContext'
 
 const defaultOptions: ParserOptions = {
   request: {},
-  response: {}
+  response: {},
+  fieldsToHide: ['id', 'created', 'modified', 'modifiedOn', 'createdOn']
 }
 export class OpenApiParser<T extends IDuiConfig> {
-  private readonly schemas: SchemaComponentMap
-  private options: ParserOptions = defaultOptions
-  constructor(private readonly document: OpenAPIV3.Document, private readonly config: T) {
-    this.schemas = this.getSchemaComponents(document)
+  readonly context: PageContext
+
+  constructor(readonly document: OpenAPIV3.Document) {
+    this.context = new PageContext(document, defaultOptions)
   }
 
-  parse(options: ParserOptions = defaultOptions): DuiAppOptions<T> {
-    this.options = options
+  parse(): DuiAppOptions<T> {
     const version = this.document.openapi
     if (version.startsWith('3')) {
       return this.parseV3()
@@ -42,398 +39,324 @@ export class OpenApiParser<T extends IDuiConfig> {
   }
 
   private parseV3(): DuiAppOptions<T> {
-    const pages = this.getPages()
+    const endpoints = this.getEndpoints()
+    this.context.endpoints = endpoints
+    const pages = endpoints.map((x) => new PageBuilder(x, this.context))
+    const groups = this.getPageGroups(pages)
+    for (const page of pages) {
+      page.pageGroup = groups.find((x) => x.name === page.endpoint.resourceName)
+    }
+
     return {
       baseUrl: this.document.servers ? this.document.servers[0].url : '/',
       dashboard: {
-        pages: pages.filter((x) => x.type === DuiPageType.list).map((x) => x.route)
+        pages: pages.filter((x) => x.pageType === DuiPageType.list).map((x) => x.route)
       },
-      pages: pages
+      pages: pages.filter((x) => !!x.pageType).map((x) => x.duiPageOptions)
     }
   }
 
-  private getOperation(path: string, method: HttpMethods): OpenAPIV3.OperationObject | null {
-    const endpoint = this.document.paths[path]
-    return endpoint ? this.resolveReferenceObject<OpenAPIV3.OperationObject>(endpoint[method]) : null
-  }
-
-  private getPages(): DuiPageOptions<T>[] {
+  private getEndpoints() {
     if (!this.document?.paths) return []
 
     const paths = Object.keys(this.document.paths)
-    const pages: DuiPageOptions<T>[] = []
+    const endpoints: EndpointBuilder[] = []
 
-    const relevantMethods = [HttpMethods.GET, HttpMethods.POST, HttpMethods.PUT]
+    const relevantMethods = [HttpMethods.GET, HttpMethods.POST, HttpMethods.PUT, HttpMethods.DELETE]
 
     for (const path of paths) {
       const methods = Object.keys(this.document.paths[path] || {}) as HttpMethods[]
 
       for (const method of methods.filter((x) => relevantMethods.includes(x))) {
-        const source = this.document.paths[path]![method] as OpenAPIV3.OperationObject
-        const type = this.resolveType(method, source)
-
-        switch (type) {
-          case DuiPageType.list:
-            pages.push(this.createListPage(path, method, source))
-            break
-          case DuiPageType.record:
-            pages.push(this.createRecordPage(path, method, source))
-            break
-          case DuiPageType.createForm:
-            pages.push(this.createCreateFormPage(path, method, source))
-            break
-          case DuiPageType.updateForm:
-            pages.push(this.createUpdateFormPage(path, method, source))
-            break
-        }
+        endpoints.push(new EndpointBuilder(path, method, this.context))
       }
     }
 
-    return pages
+    return endpoints
   }
 
-  private createCreateFormPage(
-    path: string,
-    method: HttpMethods,
-    source: OpenAPIV3.OperationObject
-  ): DuiPageOptions<T> {
-    const pageType = this.resolveType(method, source)
-    return {
-      type: DuiPageType.createForm,
-      route: this.resolveRoute(path, method),
-      fields: this.resolveFields(pageType, source),
-      onSubmit: {
-        type: 'composite',
-        actions: [
-          {
-            type: 'api',
-            method: 'POST',
-            routeTemplate: path
-            //TODO this might have some global variables as paramaters that we need to handle
-          },
-          {
-            type: 'redirect', //TODO redirect to created resource
-            urlTemplate: this.resolveRoute(path, HttpMethods.GET),
-            paramaters: this.resolveDataSourceParameters(source)
-          }
-        ]
-      }
-    }
+  private getPageGroups(pages: PageBuilder[]) {
+    const resourceNames = [...new Set(pages.map((x) => x.endpoint.resourceName))]
+    return resourceNames.map((x) => new PageGroup(x, pages))
   }
 
-  private createUpdateFormPage(
-    path: string,
-    method: HttpMethods,
-    source: OpenAPIV3.OperationObject
-  ): DuiPageOptions<T> {
-    const pageType = this.resolveType(method, source)
-    return {
-      type: DuiPageType.updateForm,
-      route: this.resolveRoute(path, method),
-      fields: this.resolveFields(pageType, source),
-      dataSource: {
-        method: 'GET',
-        dataField: this.options.response.dataField, //TODO
-        routeTemplate: path, //TODO the put endpoint might be different from the get endpoint that we need here
-        type: 'api',
-        paramaters: this.resolveDataSourceParameters(source)
-      },
-      onSubmit: {
-        type: 'composite',
-        actions: [
-          {
-            type: 'api',
-            method: 'PUT',
-            routeTemplate: path,
-            paramaters: this.resolveDataSourceParameters(source) //TODO this might have to be different?
-          },
-          {
-            type: 'redirect',
-            urlTemplate: this.resolveRoute(path, HttpMethods.GET),
-            paramaters: this.resolveDataSourceParameters(source)
-          }
-        ]
-      }
-    }
-  }
+  //   private getOperation(path: string, method: HttpMethods): OpenAPIV3.OperationObject | null {
+  //     const endpoint = this.document.paths[path]
+  //     return endpoint ? this.resolveReferenceObject<OpenAPIV3.OperationObject>(endpoint[method]) : null
+  //   }
 
-  private createRecordPage(path: string, method: HttpMethods, source: OpenAPIV3.OperationObject): DuiPageOptions<T> {
-    const deleteAction = this.getOperation(path, HttpMethods.DELETE)
-    const updateAction = this.getOperation(path, HttpMethods.PUT)
+  //   private createCreateFormPage(
+  //     path: string,
+  //     method: HttpMethods,
+  //     source: OpenAPIV3.OperationObject
+  //   ): DuiPageOptions<T> {
+  //     const pageType = this.resolveType(method, source)
+  //     return {
+  //       type: DuiPageType.createForm,
+  //       route: this.resolveRoute(path, method),
+  //       fields: this.resolveFields(pageType, source),
+  //       onSubmit: {
+  //         type: 'composite',
+  //         actions: [
+  //           {
+  //             type: 'api',
+  //             method: 'POST',
+  //             routeTemplate: path
+  //             //TODO this might have some global variables as paramaters that we need to handle
+  //           },
+  //           {
+  //             type: 'redirect', //TODO redirect to created resource
+  //             urlTemplate: this.resolveRoute(path, HttpMethods.GET),
+  //             paramaters: this.resolveDataSourceParameters(source)
+  //           }
+  //         ]
+  //       }
+  //     }
+  //   }
 
-    const actions: DuiActionOptionsValues[] = []
-    if (deleteAction) {
-      actions.push({
-        type: 'composite',
-        label: 'Delete',
-        actions: [
-          {
-            method: 'DELETE',
-            routeTemplate: path,
-            type: 'api',
-            dataField: this.options.response.dataField,
-            paramaters: [
-              {
-                name: 'id',
-                valueFieldName: 'id',
-                from: 'path'
-              }
-            ]
-          },
-          {
-            type: 'redirect',
-            urlTemplate: this.resolveRoute(path.substring(0, path.lastIndexOf('/')), HttpMethods.GET)
-          }
-        ]
-      })
-    }
+  //   private createUpdateFormPage(
+  //     path: string,
+  //     method: HttpMethods,
+  //     source: OpenAPIV3.OperationObject
+  //   ): DuiPageOptions<T> {
+  //     const pageType = this.resolveType(method, source)
+  //     return {
+  //       type: DuiPageType.updateForm,
+  //       route: this.resolveRoute(path, method),
+  //       fields: this.resolveFields(pageType, source),
+  //       dataSource: {
+  //         method: 'GET',
+  //         dataField: this.options.response.dataField, //TODO
+  //         routeTemplate: path, //TODO the put endpoint might be different from the get endpoint that we need here
+  //         type: 'api',
+  //         paramaters: this.resolveDataSourceParameters(source)
+  //       },
+  //       onSubmit: {
+  //         type: 'composite',
+  //         actions: [
+  //           {
+  //             type: 'api',
+  //             method: 'PUT',
+  //             routeTemplate: path,
+  //             paramaters: this.resolveDataSourceParameters(source) //TODO this might have to be different?
+  //           },
+  //           {
+  //             type: 'redirect',
+  //             urlTemplate: this.resolveRoute(path, HttpMethods.GET),
+  //             paramaters: this.resolveDataSourceParameters(source)
+  //           }
+  //         ]
+  //       }
+  //     }
+  //   }
 
-    if (updateAction) {
-      actions.push({
-        label: 'Edit',
-        type: 'redirect',
-        urlTemplate: this.resolveRoute(path, HttpMethods.PUT),
-        paramaters: [
-          {
-            name: 'id',
-            valueFieldName: 'id',
-            from: 'path'
-          }
-        ]
-      })
-    }
-    return {
-      type: DuiPageType.record,
-      route: this.resolveRoute(path, method),
-      fields: this.resolveFields(DuiPageType.record, source),
-      dataSource: {
-        method: 'GET',
-        dataField: this.options.response.dataField, //TODO
-        routeTemplate: path,
-        type: 'api',
-        paramaters: this.resolveDataSourceParameters(source)
-      },
-      actions: actions
-    }
-  }
+  //   private createRecordPage(path: string, method: HttpMethods, source: OpenAPIV3.OperationObject): DuiPageOptions<T> {
+  //     const deleteAction = this.getOperation(path, HttpMethods.DELETE)
+  //     const updateAction = this.getOperation(path, HttpMethods.PUT)
 
-  private resolveDataSourceParameters(source: OpenAPIV3.OperationObject): DuiParameterOptions[] {
-    return (source.parameters ?? [])
-      .map((x) => this.resolveReferenceObject<OpenAPIV3.ParameterObject>(x))
-      .filter((x) => x.required)
-      .map((x) => ({
-        name: x.name,
-        valueFieldName: x.name, //TODO make smarter and search the schema fields or origin path
-        from: x.in === 'path' ? 'path' : 'data' //TODO this might not always be the case
-      }))
-  }
+  //     const actions: DuiActionOptionsValues[] = []
+  //     if (deleteAction) {
+  //       actions.push({
+  //         type: 'composite',
+  //         label: 'Delete',
+  //         actions: [
+  //           {
+  //             method: 'DELETE',
+  //             routeTemplate: path,
+  //             type: 'api',
+  //             dataField: this.options.response.dataField,
+  //             paramaters: [
+  //               {
+  //                 name: 'id',
+  //                 valueFieldName: 'id',
+  //                 from: 'path'
+  //               }
+  //             ]
+  //           },
+  //           {
+  //             type: 'redirect',
+  //             urlTemplate: this.resolveRoute(path.substring(0, path.lastIndexOf('/')), HttpMethods.GET)
+  //           }
+  //         ]
+  //       })
+  //     }
 
-  private createListPage(path: string, method: HttpMethods, source: OpenAPIV3.OperationObject): DuiPageOptions<T> {
-    const fields = this.resolveFields(DuiPageType.list, source)
-    const showOperationPath = `${path}/{id}`
+  //     if (updateAction) {
+  //       actions.push({
+  //         label: 'Edit',
+  //         type: 'redirect',
+  //         urlTemplate: this.resolveRoute(path, HttpMethods.PUT),
+  //         paramaters: [
+  //           {
+  //             name: 'id',
+  //             valueFieldName: 'id',
+  //             from: 'path'
+  //           }
+  //         ]
+  //       })
+  //     }
+  //     return {
+  //       type: DuiPageType.record,
+  //       route: this.resolveRoute(path, method),
+  //       fields: this.resolveFields(DuiPageType.record, source),
+  //       dataSource: {
+  //         method: 'GET',
+  //         dataField: this.options.response.dataField, //TODO
+  //         routeTemplate: path,
+  //         type: 'api',
+  //         paramaters: this.resolveDataSourceParameters(source)
+  //       },
+  //       actions: actions
+  //     }
+  //   }
 
-    source.parameters
+  //   private resolveDataSourceParameters(source: OpenAPIV3.OperationObject): DuiParameterOptions[] {
+  //     return (source.parameters ?? [])
+  //       .map((x) => this.resolveReferenceObject<OpenAPIV3.ParameterObject>(x))
+  //       .filter((x) => x.required)
+  //       .map((x) => ({
+  //         name: x.name,
+  //         valueFieldName: x.name, //TODO make smarter and search the schema fields or origin path
+  //         from: x.in === 'path' ? 'path' : 'data' //TODO this might not always be the case
+  //       }))
+  //   }
 
-    const showRoute = this.resolveRoute(showOperationPath, HttpMethods.GET)
-    const editRoute = this.resolveRoute(showOperationPath, HttpMethods.PUT)
+  //   private createListPage(path: string, method: HttpMethods, source: OpenAPIV3.OperationObject): DuiPageOptions<T> {
+  //     const fields = this.resolveFields(DuiPageType.list, source)
+  //     const showOperationPath = `${path}/{id}`
 
-    const showOperation = this.getOperation(showOperationPath, HttpMethods.GET)
-    const editOperation = this.getOperation(showOperationPath, HttpMethods.PUT)
+  //     source.parameters
 
-    if (showOperation) {
-      fields.push({
-        type: DataType.BUTTON,
-        linkTo: showRoute,
-        displayName: 'Show',
-        name: 'show',
-        parameters: [
-          {
-            name: 'id',
-            valueFieldName: 'id',
-            from: 'data'
-          }
-        ]
-      })
-    }
+  //     const showRoute = this.resolveRoute(showOperationPath, HttpMethods.GET)
+  //     const editRoute = this.resolveRoute(showOperationPath, HttpMethods.PUT)
 
-    if (editOperation) {
-      fields.push({
-        type: DataType.BUTTON,
-        linkTo: editRoute,
-        displayName: 'Edit',
-        name: 'edit',
-        parameters: [
-          {
-            name: 'id',
-            valueFieldName: 'id',
-            from: 'data'
-          }
-        ]
-      })
-    }
+  //     const showOperation = this.getOperation(showOperationPath, HttpMethods.GET)
+  //     const editOperation = this.getOperation(showOperationPath, HttpMethods.PUT)
 
-    const actions: DuiActionOptionsValues[] = []
-    const createRoute = this.getOperation(path, HttpMethods.POST)
-    if (createRoute) {
-      actions.push({
-        type: 'redirect',
-        label: 'Create',
-        urlTemplate: this.resolveRoute(path, HttpMethods.POST)
-      })
-    }
+  //     if (showOperation) {
+  //       fields.push({
+  //         type: DataType.BUTTON,
+  //         linkTo: showRoute,
+  //         displayName: 'Show',
+  //         name: 'show',
+  //         parameters: [
+  //           {
+  //             name: 'id',
+  //             valueFieldName: 'id',
+  //             from: 'data'
+  //           }
+  //         ]
+  //       })
+  //     }
 
-    return {
-      type: DuiPageType.list,
-      route: this.resolveRoute(path, method),
-      fields: fields,
-      actions: actions,
+  //     if (editOperation) {
+  //       fields.push({
+  //         type: DataType.BUTTON,
+  //         linkTo: editRoute,
+  //         displayName: 'Edit',
+  //         name: 'edit',
+  //         parameters: [
+  //           {
+  //             name: 'id',
+  //             valueFieldName: 'id',
+  //             from: 'data'
+  //           }
+  //         ]
+  //       })
+  //     }
 
-      dataSource: {
-        method: 'GET',
-        dataField: this.options.response.dataField, //TODO make this dynamic,
-        routeTemplate: path,
-        type: 'api'
-        // paramaters: this.resolveDataSourceParamaters(path) //TODO handle parameters
-      }
-    }
-  }
+  //     const actions: DuiActionOptionsValues[] = []
+  //     const createRoute = this.getOperation(path, HttpMethods.POST)
+  //     if (createRoute) {
+  //       actions.push({
+  //         type: 'redirect',
+  //         label: 'Create',
+  //         urlTemplate: this.resolveRoute(path, HttpMethods.POST)
+  //       })
+  //     }
 
-  private resolveProperty(
-    name: string,
-    reference: OpenAPIV3.ReferenceObject | OpenAPIV3.SchemaObject | null,
-    hideMetadataFields: boolean
-  ): DuiFieldOptions<T> {
-    const schema = this.resolveReferenceObject<OpenAPIV3.SchemaObject>(reference)
-    const type = this.resolvePropertyType(schema)
+  //     return {
+  //       type: DuiPageType.list,
+  //       route: this.resolveRoute(path, method),
+  //       fields: fields,
+  //       actions: actions,
+  //       otherDataSources: fields
+  //         .filter((x) => x.type === DataType.LOOKUP)
+  //         .map((field) => ({
+  //           type: 'api',
+  //           method: 'GET',
+  //           dataField: this.options.response.dataField,
+  //           routeTemplate: '', // this.getLookupSchema(field.name, ),
+  //           paramaters: [
+  //             {
+  //               from: 'data',
+  //               name: 'id', // TODO this might not always be the case
+  //               valueFieldName: field.name //TODO these two might not be the same
+  //             }
+  //           ]
 
-    return {
-      name: name,
-      displayName: sanitizeString(name),
-      type: type,
-      hidden: hideMetadataFields && ['id', 'created', 'modified', 'modifiedOn', 'createdOn'].includes(name)
-    }
-  }
+  //           // lookupFieldName: field.name,
+  //           // lookupValue: (fieldName) => id
+  //         })),
+  //       dataSource: {
+  //         method: 'GET',
+  //         dataField: this.options.response.dataField, //TODO make this dynamic,
+  //         routeTemplate: path,
+  //         type: 'api'
+  //         // paramaters: this.resolveDataSourceParamaters(path) //TODO handle parameters
+  //       }
+  //     }
+  //   }
 
-  private resolvePropertyType(schema: OpenAPIV3.SchemaObject) {
-    switch (schema.type) {
-      case 'string':
-        switch (schema.format) {
-          //TODO check if these values are correct
-          case 'date-time':
-            return DataType.DATE_TIME
-          case 'date':
-            return DataType.DATE
-          case 'time':
-            return DataType.TIME
-          default:
-            return DataType.STRING
-        }
-      case 'integer':
-      case 'number':
-        return DataType.NUMBER
-      case 'boolean':
-        return DataType.BOOLEAN
-      default:
-        throw new Error(`Property type ${schema.type} is not yet implemented`)
-    }
-  }
+  //   private resolveProperty(
+  //     name: string,
+  //     reference: OpenAPIV3.ReferenceObject | OpenAPIV3.SchemaObject | null | undefined,
+  //     hideMetadataFields: boolean
+  //   ): DuiFieldOptions<T> {
+  //     const schema = this.resolveReferenceObject<OpenAPIV3.SchemaObject>(reference)
+  //     const type = this.resolvePropertyType(name, schema)
 
-  private resolveFields(type: DuiPageType, source: OpenAPIV3.OperationObject): DuiFieldOptions<T>[] {
-    const responseBody = this.resolveReferenceObject<OpenAPIV3.ResponseObject>(source.responses[200])
-    let schema = this.resolveReferenceObject<OpenAPIV3.SchemaObject>(
-      responseBody?.content && responseBody?.content['application/json']?.schema
-    )
-    if (schema?.type === 'array') {
-      schema = this.resolveReferenceObject<OpenAPIV3.NonArraySchemaObject>(
-        (schema as OpenAPIV3.ArraySchemaObject).items as any
-      )
-    }
+  //     return {
+  //       name: name,
+  //       displayName: sanitizeString(name),
+  //       type: type,
+  //       hidden: hideMetadataFields && ['id', 'created', 'modified', 'modifiedOn', 'createdOn'].includes(name)
+  //     }
+  //   }
 
-    if (type === DuiPageType.createForm) {
-      const requestBody = this.resolveReferenceObject<OpenAPIV3.RequestBodyObject>(source.requestBody)
-      schema = this.resolveReferenceObject<OpenAPIV3.SchemaObject>(
-        requestBody?.content && requestBody?.content['application/json']?.schema
-      )
-    }
+  //   private resolvePropertyType(name: string, schema: OpenAPIV3.SchemaObject) {}
 
-    let hideMetadataFields = false
-    switch (type) {
-      case DuiPageType.list:
-      case DuiPageType.record:
-        hideMetadataFields = true
-      case DuiPageType.updateForm:
-      case DuiPageType.createForm:
-        return Object.keys(schema?.properties ?? {}).map((name) => {
-          return this.resolveProperty(name, schema?.properties && schema?.properties[name], hideMetadataFields)
-        })
-    }
+  //   private resolveFields(type: DuiPageType, source: OpenAPIV3.OperationObject): DuiFieldOptions<T>[] {
+  //     const responseBody = this.resolveReferenceObject<OpenAPIV3.ResponseObject>(source.responses[200])
+  //     let schema = this.resolveReferenceObject<OpenAPIV3.SchemaObject>(
+  //       responseBody?.content && responseBody?.content['application/json']?.schema
+  //     )
+  //     if (schema?.type === 'array') {
+  //       schema = this.resolveReferenceObject<OpenAPIV3.NonArraySchemaObject>(
+  //         (schema as OpenAPIV3.ArraySchemaObject).items as any
+  //       )
+  //     }
 
-    return []
-  }
+  //     if (type === DuiPageType.createForm) {
+  //       const requestBody = this.resolveReferenceObject<OpenAPIV3.RequestBodyObject>(source.requestBody)
+  //       schema = this.resolveReferenceObject<OpenAPIV3.SchemaObject>(
+  //         requestBody?.content && requestBody?.content['application/json']?.schema
+  //       )
+  //     }
 
-  private resolveType(method: HttpMethods, source: OpenAPIV3.OperationObject): DuiPageType {
-    switch (method) {
-      case HttpMethods.GET:
-        const responseBody = this.resolveReferenceObject<OpenAPIV3.ResponseObject>(source.responses[200])
-        const responseSchema = this.resolveReferenceObject<OpenAPIV3.SchemaObject>(
-          responseBody?.content && responseBody?.content['application/json']?.schema
-        )
-        // TODO handle paging cases or when data is in a nested property
-        if (responseSchema?.type === 'array') {
-          return DuiPageType.list
-        }
-        return DuiPageType.record
-      case HttpMethods.PUT:
-        return DuiPageType.updateForm
-      case HttpMethods.POST:
-        return DuiPageType.createForm
-      default:
-        throw new Error(`there is no page type for ${method} requests`)
-    }
-  }
+  //     let hideMetadataFields = false
+  //     switch (type) {
+  //       case DuiPageType.list:
+  //       case DuiPageType.record:
+  //         hideMetadataFields = true
+  //       case DuiPageType.updateForm:
+  //       case DuiPageType.createForm:
+  //         return Object.keys(schema?.properties ?? {}).map((name) => {
+  //           return this.resolveProperty(name, schema?.properties && schema?.properties[name], hideMetadataFields)
+  //         })
+  //     }
 
-  private resolveRoute(path: string, method: HttpMethods): string {
-    switch (method) {
-      case HttpMethods.PUT:
-        return path + '/edit'
-      case HttpMethods.POST:
-        return path + '/create'
-      default:
-        return path
-    }
-  }
-
-  resolveReferenceObject<T>(obj?: T | OpenAPIV3.ReferenceObject | null): T {
-    if (!obj) throw new Error('reference is null')
-    if ((obj as OpenAPIV3.ReferenceObject).$ref) {
-      const ref = (obj as OpenAPIV3.ReferenceObject).$ref
-      const component = this.schemas.get(ref)
-      if ((component as OpenAPIV3.ReferenceObject).$ref) {
-        return this.resolveReferenceObject<T>(component as OpenAPIV3.ReferenceObject)
-      }
-      return component as T
-    }
-    return obj as T
-  }
-
-  getSchemaComponents(document: OpenAPIV3.Document): SchemaComponentMap {
-    const map: SchemaComponentMap = new Map()
-
-    function resolveReferences(schemas: { [key: string]: AnySchema } | undefined, prefix: string) {
-      const keys = Object.keys(schemas ?? {})
-      if (!schemas) return
-      for (const key of keys) {
-        const schema = schemas[key]
-        if (schema) {
-          map.set(`${prefix}${key}`, schema)
-        }
-      }
-    }
-
-    resolveReferences(document?.components?.schemas, '#/components/schemas/')
-    resolveReferences(document?.components?.requestBodies, '#/components/requestBodies/')
-    resolveReferences(document?.components?.responses, '#/components/responses')
-
-    return map
-  }
+  //     return []
+  //   }
+  // }
 }

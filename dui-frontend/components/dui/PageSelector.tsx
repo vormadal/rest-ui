@@ -21,7 +21,9 @@ export function PageSelector({ app, route }: Props) {
     router
   }
 
-  const fetcher = () => page.dataSource?.run(context)
+  const fetchData = async () => {
+    return await page.dataSource?.run(context)
+  }
 
   async function submit(data: any) {
     if (!page?.onSubmit) return
@@ -29,7 +31,7 @@ export function PageSelector({ app, route }: Props) {
     await page.onSubmit.run(context)
   }
 
-  const Component = page.component
+  const PageComponent = page.component
   const ActionsComponent = app.actionsComponent
   return (
     <>
@@ -37,9 +39,9 @@ export function PageSelector({ app, route }: Props) {
         actions={page.actions}
         context={context}
       />
-      <Component
+      <PageComponent
         context={context}
-        fetch={fetcher}
+        fetch={fetchData}
         fields={page.visibleFields}
         submit={submit}
       />

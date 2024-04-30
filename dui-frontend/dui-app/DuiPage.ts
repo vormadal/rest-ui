@@ -1,6 +1,6 @@
 import { DuiField } from './DuiField'
 import type { DuiPageOptions } from './DuiPageOptions'
-import type { DuiPageType } from './DuiPageType'
+import { DuiPageType } from './DuiPageType'
 import type { IDuiConfig } from './config/DuiConfig'
 
 import type { DuiParameter } from './DuiParamater'
@@ -20,7 +20,10 @@ export class DuiPage<Config extends IDuiConfig> {
 
   actions: DuiAction[]
 
-  constructor({ route, type, dataSource, onSubmit, fields, actions }: DuiPageOptions<Config>, config: Config) {
+  constructor(
+    { route, type, dataSource, onSubmit, fields, actions }: DuiPageOptions<Config>,
+    config: Config
+  ) {
     console.log('creating page', route, type)
     this.route = route
     this.type = type
@@ -39,7 +42,7 @@ export class DuiPage<Config extends IDuiConfig> {
     const pageRouteParts = this.route.split('/').filter((x) => !!x)
 
     if (routeParts.length !== pageRouteParts.length) return false
-    
+
     for (let i = 0; i < routeParts.length; i++) {
       if (routeParts[i] === pageRouteParts[i]) {
         continue

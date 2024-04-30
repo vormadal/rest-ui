@@ -9,7 +9,7 @@ export interface DuiActionContext {
    * the path corresponding to the page which is also the current page
    */
   path: string
-  page: DuiPage
+  page: DuiPage<any>
 
-  app: DuiApp
+  app: DuiApp<any>
 }

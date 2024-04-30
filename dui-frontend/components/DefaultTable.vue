@@ -20,12 +20,10 @@
 <script setup lang="ts">
 import type { DuiField } from '~/dui-app/DuiField';
 import type { DuiActionContext } from '../dui-app/actions/DuiActionContext';
-import { DuiApp } from '../dui-app/DuiApp';
 import FieldSelector from './dui/FieldSelector';
 
 const props = defineProps<{ fetch: () => Promise<any[]>, fields: DuiField[], context: DuiActionContext }>()
 const data = ref<any[]>([])
-const app = inject<DuiApp>('dui-app')!
 
 onMounted(() => {
     props.fetch().then(res => data.value = res)

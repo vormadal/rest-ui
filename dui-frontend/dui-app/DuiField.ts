@@ -43,10 +43,12 @@ export class DuiField {
     return data[this.name]
   }
 
-  getComponentProperties = (
-    context: DuiActionContext,
-    handleChange?: (field: DuiField, value: any) => void
-  ): any => {
-    return { field: this, value: this.getInputValue(context.data), handleChange }
+  getComponentProperties = (context: DuiActionContext, handleChange?: (field: DuiField, value: any) => void): any => {
+    return {
+      field: this,
+      value: this.getInputValue(context.data),
+      context: context,
+      handleChange
+    }
   }
 }

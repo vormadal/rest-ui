@@ -1,6 +1,6 @@
 export enum DuiPageType {
-  'list',
-  'record',
-  'createForm',
-  'updateForm'
+  list = 'list',
+  record = 'record',
+  createForm = 'createForm',
+  updateForm = 'updateForm'
 }

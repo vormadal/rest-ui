@@ -13,6 +13,8 @@ bool IsAdmin)
     public DateTime Created { get; } = Created;
     public bool IsAdmin { get; } = IsAdmin;
 
+    public string DepartmentId { get; } = Id;
+
     public static List<Employee> CreateSamples(int size) => Enumerable.Range(1, size).Select(CreateSample).ToList();
     public static Employee CreateSample(int id)
     {

@@ -5,5 +5,6 @@ export enum DataType {
   TIME = 'time',
   NUMBER = 'number',
   BUTTON = 'button',
-  BOOLEAN = 'boolean'
+  BOOLEAN = 'boolean',
+  LOOKUP = 'lookup'
 }

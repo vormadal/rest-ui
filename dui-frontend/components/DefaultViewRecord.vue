@@ -10,13 +10,13 @@
                 </th>
             </tr>
         </thead>
-        <tbody>
+        <tbody v-if="data">
             <tr v-for="field in props.fields">
                 <td>
                     {{ field.displayName }}
                 </td>
                 <td>
-                    <DuiFieldSelector :context="context" :data="data || {}" :field="field" />
+                    <FieldSelector :context="context" :data="data" :field="field" />
                 </td>
             </tr>
         </tbody>
@@ -26,6 +26,7 @@
 <script setup lang="ts">
 import type { DuiField } from '~/dui-app/DuiField';
 import type { DuiActionContext } from '../dui-app/actions/DuiActionContext';
+import FieldSelector from './dui/FieldSelector';
 
 const props = defineProps<{ fetch: () => Promise<any[]>, context: DuiActionContext, fields: DuiField[] }>()
 const data = ref<any>()
