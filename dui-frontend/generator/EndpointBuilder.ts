@@ -1,8 +1,10 @@
-import { OpenAPIV3 } from 'openapi-types'
+import type { OpenAPIV3 } from 'openapi-types'
 import type { DuiApiActionOptions } from '../dui-app/actions/DuiApiActionOptions'
 import type { DuiParameterOptions, ParameterValueSource } from '../dui-app/DuiParamaterOptions'
 import type { PageContext } from './context/PageContext'
 import { HttpMethods } from './openApi/HttpMethods'
+import { OperationSchema } from './openApi/OperationSchema'
+import { PagingBuilder } from './PagingBuilder'
 
 export class EndpointBuilder {
   constructor(
@@ -21,12 +23,11 @@ export class EndpointBuilder {
   }
 
   get schema() {
-    const endpoint = this.context.document.paths[this.path]
-    const result = endpoint ? this.context.resolveReference<OpenAPIV3.OperationObject>(endpoint[this.method]) : null
-
-    if (result) {
-      return result
+    const endpoint = this.context.document.paths[this.path] as OpenAPIV3.PathItemObject
+    if (endpoint && endpoint[this.method]) {
+      return new OperationSchema(endpoint[this.method] as OpenAPIV3.OperationObject, this.context)
     }
+
     throw new Error(`could not find schema for ${this.method} ${this.path}`)
   }
 
@@ -39,7 +40,7 @@ export class EndpointBuilder {
       type: 'api',
       method: 'GET',
       routeTemplate: this.path,
-      dataField: this.context.options.response.dataField,
+      dataField: this.isPagedType ? this.context.options.pagingResponse.dataField : this.context.options.response.dataField,
       paramaters: this.getDataSourceParameters()
     }
   }
@@ -85,22 +86,20 @@ export class EndpointBuilder {
   }
 
   getDataField() {
-    // TODO handle case when doing paging
-    if (this.method === HttpMethods.GET) return this.context.options.response.dataField
+    if (this.method === HttpMethods.GET) {
+      return this.isPagedType ? this.context.options.pagingResponse.dataField : this.context.options.response.dataField
+    }
     return this.context.options.request.dataField
   }
 
   getDataSourceParameters(parameterSource: ParameterValueSource = 'path'): DuiParameterOptions[] {
-    return (
-      this.schema?.parameters
-        ?.map((x) => this.context.resolveReference<OpenAPIV3.ParameterObject>(x))
-        .filter((x) => x.required && x.in === 'path') // we ignore query parameters for now
-        .map((x) => ({
-          name: x.name,
-          valueFieldName: x.name, //TODO check if it exists in schema maybe?
-          from: parameterSource // if there exists a source object we assume its data contains the parameter
-        })) || []
-    )
+    return this.schema.parameters
+      .filter((x) => x.required && x.in === 'path') // we ignore query parameters for now
+      .map((x) => ({
+        name: x.name,
+        valueFieldName: x.name, //TODO check if it exists in schema maybe?
+        from: parameterSource // if there exists a source object we assume its data contains the parameter
+      }))
   }
 
   private mapMethod(method: HttpMethods): 'GET' | 'POST' | 'PUT' | 'DELETE' {
@@ -116,37 +115,23 @@ export class EndpointBuilder {
     }
   }
 
-  get requestSchema() {
-    const requestBody = this.context.resolveReference<OpenAPIV3.RequestBodyObject>(this.schema.requestBody)
-    const schema =
-      this.context.resolveReference<OpenAPIV3.SchemaObject>(
-        requestBody?.content && requestBody?.content['application/json']?.schema
-      ) || null
-    if (schema.type === 'array') {
-      return this.context.resolveReference<OpenAPIV3.NonArraySchemaObject>(
-        (schema as OpenAPIV3.ArraySchemaObject).items as any
-      )
+  get isPagedType(): boolean {
+    return !!this.pagingBuilder
+  }
+
+  get pagingSchema() {
+    if(!this.isPagedType) return null
+
+    return this.schema.response?.schema.properties
+  }
+
+  get pagingBuilder() {
+    const pageSize = this.schema.parameters?.find((x) => x.couldBe('size'))
+    const pageNumber = this.schema.parameters?.find((x) => x.couldBe('number'))
+
+    if (pageSize && pageNumber) {
+      return new PagingBuilder(pageSize, pageNumber)
     }
-    return schema
-  }
-
-  get responseSchemaRef() {
-    const responseBody = this.context.resolveReference<OpenAPIV3.ResponseObject>(this.schema.responses[200])
-    return responseBody?.content && responseBody?.content['application/json']?.schema
-  }
-  get responseSchema() {
-    const schema = this.context.resolveReference<OpenAPIV3.SchemaObject>(this.responseSchemaRef) || null
-
-    if (schema.type === 'array') {
-      return this.context.resolveReference<OpenAPIV3.NonArraySchemaObject>(
-        (schema as OpenAPIV3.ArraySchemaObject).items as any
-      )
-    }
-    return schema
-  }
-
-  get isResponseListType(): boolean {
-    const schema = this.context.resolveReference<OpenAPIV3.SchemaObject>(this.responseSchemaRef) || null
-    return schema?.type === 'array'
+    return null
   }
 }

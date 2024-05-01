@@ -1,54 +1,58 @@
 import { OpenAPIV3 } from 'openapi-types'
 
 export const TestDocument1: OpenAPIV3.Document = {
-  openapi: '3.0.1',
-  info: {
-    title: 'TestApi',
-    version: '1.0'
+  "openapi": "3.0.1",
+  "info": {
+    "title": "TestApi",
+    "version": "1.0"
   },
-  servers: [
+  "servers": [
     {
-      url: 'http://localhost:5093'
+      "url": "http://localhost:5093"
     }
   ],
-  paths: {
-    '/departments': {
-      post: {
-        tags: ['DepartmentEndpoints'],
-        requestBody: {
-          content: {
-            'application/json': {
-              schema: {
-                $ref: '#/components/schemas/Department'
+  "paths": {
+    "/departments": {
+      "post": {
+        "tags": [
+          "DepartmentEndpoints"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Department"
               }
             }
           },
-          required: true
+          "required": true
         },
-        responses: {
-          '200': {
-            description: 'OK',
-            content: {
-              'application/json': {
-                schema: {
-                  $ref: '#/components/schemas/Department'
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Department"
                 }
               }
             }
           }
         }
       },
-      get: {
-        tags: ['DepartmentEndpoints'],
-        responses: {
-          '200': {
-            description: 'OK',
-            content: {
-              'application/json': {
-                schema: {
-                  type: 'array',
-                  items: {
-                    $ref: '#/components/schemas/Department'
+      "get": {
+        "tags": [
+          "DepartmentEndpoints"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Department"
                   }
                 }
               }
@@ -57,127 +61,156 @@ export const TestDocument1: OpenAPIV3.Document = {
         }
       }
     },
-    '/departments/{id}': {
-      get: {
-        tags: ['DepartmentEndpoints'],
-        parameters: [
+    "/departments/{id}": {
+      "get": {
+        "tags": [
+          "DepartmentEndpoints"
+        ],
+        "parameters": [
           {
-            name: 'id',
-            in: 'path',
-            required: true,
-            style: 'simple',
-            schema: {
-              type: 'string'
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
             }
           }
         ],
-        responses: {
-          '200': {
-            description: 'OK',
-            content: {
-              'application/json': {
-                schema: {
-                  $ref: '#/components/schemas/Department'
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Department"
                 }
               }
             }
           }
         }
       },
-      put: {
-        tags: ['DepartmentEndpoints'],
-        parameters: [
+      "put": {
+        "tags": [
+          "DepartmentEndpoints"
+        ],
+        "parameters": [
           {
-            name: 'id',
-            in: 'path',
-            required: true,
-            style: 'simple',
-            schema: {
-              type: 'string'
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
             }
           }
         ],
-        requestBody: {
-          content: {
-            'application/json': {
-              schema: {
-                $ref: '#/components/schemas/Department'
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Department"
               }
             }
           },
-          required: true
+          "required": true
         },
-        responses: {
-          '200': {
-            description: 'OK',
-            content: {
-              'application/json': {
-                schema: {
-                  $ref: '#/components/schemas/Department'
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Department"
                 }
               }
             }
           }
         }
       },
-      delete: {
-        tags: ['DepartmentEndpoints'],
-        parameters: [
+      "delete": {
+        "tags": [
+          "DepartmentEndpoints"
+        ],
+        "parameters": [
           {
-            name: 'id',
-            in: 'path',
-            required: true,
-            style: 'simple',
-            schema: {
-              type: 'string'
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
             }
           }
         ],
-        responses: {
-          '200': {
-            description: 'OK'
+        "responses": {
+          "200": {
+            "description": "OK"
           }
         }
       }
     },
-    '/employees': {
-      post: {
-        tags: ['EmployeeEndpoints'],
-        requestBody: {
-          content: {
-            'application/json': {
-              schema: {
-                $ref: '#/components/schemas/Employee'
+    "/employees": {
+      "post": {
+        "tags": [
+          "EmployeeEndpoints"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Employee"
               }
             }
           },
-          required: true
+          "required": true
         },
-        responses: {
-          '200': {
-            description: 'OK',
-            content: {
-              'application/json': {
-                schema: {
-                  $ref: '#/components/schemas/Employee'
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Employee"
                 }
               }
             }
           }
         }
       },
-      get: {
-        tags: ['EmployeeEndpoints'],
-        responses: {
-          '200': {
-            description: 'OK',
-            content: {
-              'application/json': {
-                schema: {
-                  type: 'array',
-                  items: {
-                    $ref: '#/components/schemas/Employee'
-                  }
+      "get": {
+        "tags": [
+          "EmployeeEndpoints"
+        ],
+        "parameters": [
+          {
+            "name": "pageNumber",
+            "in": "query",
+            "required": true,
+            "style": "form",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": true,
+            "style": "form",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmployeePagedApiResponse"
                 }
               }
             }
@@ -185,139 +218,170 @@ export const TestDocument1: OpenAPIV3.Document = {
         }
       }
     },
-    '/employees/{id}': {
-      get: {
-        tags: ['EmployeeEndpoints'],
-        parameters: [
+    "/employees/{id}": {
+      "get": {
+        "tags": [
+          "EmployeeEndpoints"
+        ],
+        "parameters": [
           {
-            name: 'id',
-            in: 'path',
-            required: true,
-            style: 'simple',
-            schema: {
-              type: 'string'
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
             }
           }
         ],
-        responses: {
-          '200': {
-            description: 'OK',
-            content: {
-              'application/json': {
-                schema: {
-                  $ref: '#/components/schemas/Employee'
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Employee"
                 }
               }
             }
           }
         }
       },
-      put: {
-        tags: ['EmployeeEndpoints'],
-        parameters: [
+      "put": {
+        "tags": [
+          "EmployeeEndpoints"
+        ],
+        "parameters": [
           {
-            name: 'id',
-            in: 'path',
-            required: true,
-            style: 'simple',
-            schema: {
-              type: 'string'
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
             }
           }
         ],
-        requestBody: {
-          content: {
-            'application/json': {
-              schema: {
-                $ref: '#/components/schemas/Employee'
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Employee"
               }
             }
           },
-          required: true
+          "required": true
         },
-        responses: {
-          '200': {
-            description: 'OK',
-            content: {
-              'application/json': {
-                schema: {
-                  $ref: '#/components/schemas/Employee'
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Employee"
                 }
               }
             }
           }
         }
       },
-      delete: {
-        tags: ['EmployeeEndpoints'],
-        parameters: [
+      "delete": {
+        "tags": [
+          "EmployeeEndpoints"
+        ],
+        "parameters": [
           {
-            name: 'id',
-            in: 'path',
-            required: true,
-            style: 'simple',
-            schema: {
-              type: 'string'
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
             }
           }
         ],
-        responses: {
-          '200': {
-            description: 'OK'
+        "responses": {
+          "200": {
+            "description": "OK"
           }
         }
       }
     }
   },
-  components: {
-    schemas: {
-      Department: {
-        type: 'object',
-        properties: {
-          id: {
-            type: 'string',
-            nullable: true
+  "components": {
+    "schemas": {
+      "Department": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "nullable": true
           },
-          department_Name: {
-            type: 'string',
-            nullable: true
+          "department_Name": {
+            "type": "string",
+            "nullable": true
           },
-          created: {
-            type: 'string',
-            format: 'date-time'
+          "created": {
+            "type": "string",
+            "format": "date-time"
           }
         },
-        additionalProperties: false
+        "additionalProperties": false
       },
-      Employee: {
-        type: 'object',
-        properties: {
-          id: {
-            type: 'string',
-            nullable: true
+      "Employee": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "nullable": true
           },
-          employee_Name: {
-            type: 'string',
-            nullable: true
+          "employee_Name": {
+            "type": "string",
+            "nullable": true
           },
-          employee_Salary: {
-            type: 'integer',
-            format: 'int32'
+          "employee_Salary": {
+            "type": "integer",
+            "format": "int32"
           },
-          created: {
-            type: 'string',
-            format: 'date-time'
+          "created": {
+            "type": "string",
+            "format": "date-time"
           },
-          isAdmin: {
-            type: 'boolean'
+          "isAdmin": {
+            "type": "boolean"
           },
-          departmentId: {
-            type: 'string',
-            nullable: true,
-            readOnly: true
+          "departmentId": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
           }
         },
-        additionalProperties: false
+        "additionalProperties": false
+      },
+      "EmployeePagedApiResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Employee"
+            },
+            "nullable": true
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalCount": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
       }
     }
   }

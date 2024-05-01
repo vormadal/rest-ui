@@ -25,9 +25,14 @@ public class EmployeeEndpoints
         return employee;
     }
 
-    public List<Employee> GetEmployeeList()
+    public PagedApiResponse<Employee> GetEmployeeList(int pageNumber = 0, int pageSize = 10)
     {
-        return Enumerable.Range(1, 5).Select(index =>
+        return new PagedApiResponse<Employee>
+        {
+            PageNumber = pageNumber,
+            PageSize = pageSize,
+            TotalCount = 1000,
+            Data = Enumerable.Range(pageNumber * pageSize, pageSize).Select(index =>
                 new Employee
                 (
                     $"{index}",
@@ -36,6 +41,8 @@ public class EmployeeEndpoints
                     DateTime.Now,
                     index % 2 == 0
                 ))
-                .ToList();
+                .ToList(),
+
+        };
     }
 }

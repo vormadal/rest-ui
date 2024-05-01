@@ -1,13 +1,14 @@
 import type { OpenAPIV3 } from 'openapi-types'
 import type { ParserOptions } from '../ParserOptions'
-import type { AnySchema, SchemaComponentMap } from '../openApi/OpenApiTypes'
+import type { SchemaMap } from '../openApi/SchemaMap'
 import type { EndpointBuilder } from '../EndpointBuilder'
 import type { PageGroup } from '../EndpointGroup'
+import type { SchemaTypes } from '../openApi/SchemaTypes'
 
 export class PageContext {
   constructor(public readonly document: OpenAPIV3.Document, public readonly options: ParserOptions) {
-    const map: SchemaComponentMap = new Map()
-    function resolveReferences(schemas: { [key: string]: AnySchema } | undefined, prefix: string) {
+    const map: SchemaMap = new Map()
+    function resolveReferences(schemas: { [key: string]: SchemaTypes } | undefined, prefix: string) {
       const keys = Object.keys(schemas ?? {})
       if (!schemas) return
       for (const key of keys) {
@@ -25,9 +26,9 @@ export class PageContext {
     this._schemas = map
   }
 
-  private _schemas: SchemaComponentMap
+  private _schemas: SchemaMap
 
-  get schemas(): SchemaComponentMap {
+  get schemas(): SchemaMap {
     return this._schemas
   }
 

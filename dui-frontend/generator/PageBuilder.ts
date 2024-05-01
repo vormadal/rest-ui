@@ -1,18 +1,17 @@
-import { OpenAPIV3 } from 'openapi-types'
+import { DataType } from '../configurations/DataType'
 import type { DuiActionOptionsValues } from '../dui-app/actions/DuiActionOptionValues'
+import type { DuiApiActionOptions } from '../dui-app/actions/DuiApiActionOptions'
+import type { DuiRedirectActionOptions } from '../dui-app/actions/DuiRedirectActionOptions'
 import type { DuiFieldOptions } from '../dui-app/DuiFieldOptions'
 import type { DuiPageOptions } from '../dui-app/DuiPageOptions'
 import { DuiPageType } from '../dui-app/DuiPageType'
+import type { ParameterValueSource } from '../dui-app/DuiParamaterOptions'
 import { FieldContext } from './context/FieldContext'
 import type { PageContext } from './context/PageContext'
 import type { EndpointBuilder } from './EndpointBuilder'
 import { PageGroup } from './EndpointGroup'
 import { FieldBuilder } from './FieldBuilder'
 import { HttpMethods } from './openApi/HttpMethods'
-import { DataType } from '../configurations/DataType'
-import type { DuiApiActionOptions } from '../dui-app/actions/DuiApiActionOptions'
-import type { DuiRedirectActionOptions } from '../dui-app/actions/DuiRedirectActionOptions'
-import type { ParameterValueSource } from '../dui-app/DuiParamaterOptions'
 
 export class PageBuilder {
   constructor(public readonly endpoint: EndpointBuilder, public readonly context: PageContext) {
@@ -45,7 +44,7 @@ export class PageBuilder {
     switch (this.endpoint.method) {
       case HttpMethods.GET:
         // TODO handle paging cases or when data is in a nested property
-        if (this.endpoint.isResponseListType) {
+        if (this.endpoint.isPagedType || this.endpoint.schema.response?.isList) {
           //TODO move this to EndpointBuilder
           return DuiPageType.list
         }
@@ -82,22 +81,17 @@ export class PageBuilder {
   }
 
   get fields(): DuiFieldOptions<any>[] {
-    let schema = this.endpoint.responseSchema
-    if (this.pageType && [DuiPageType.createForm, DuiPageType.updateForm].includes(this.pageType)) {
-      schema = this.endpoint.requestSchema
-    }
+    const useRequestSchema = this.pageType && [DuiPageType.createForm, DuiPageType.updateForm].includes(this.pageType)
 
-    const schemaFields = Object.keys(schema?.properties ?? {})
-      .map(
-        (name) =>
-          new FieldBuilder(
-            name,
-            this.context.resolveReference<OpenAPIV3.SchemaObject>(schema!.properties![name]),
-            new FieldContext(this)
-          )
-      )
-      .filter((x) => !!x.type)
-      .map((x) => x.duiFieldOptions)
+    const schema = useRequestSchema
+      ? this.endpoint.schema.requestBody
+      : this.endpoint.schema.pagingSchema || this.endpoint.schema.response
+
+    const schemaFields =
+      schema?.properties
+        .map((property) => new FieldBuilder(property, new FieldContext(this)))
+        .filter((x) => !!x.type)
+        .map((x) => x.duiFieldOptions) || []
 
     if (this.pageType === DuiPageType.list) {
       if (this.group.record) {

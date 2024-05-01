@@ -5,6 +5,8 @@ export type ParserOptions = {
   response: {
     dataField?: string
   }
-
+  pagingResponse: {
+    dataField?: string
+  }
   fieldsToHide: string[]
 }
