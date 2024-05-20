@@ -39,7 +39,15 @@ export class FieldBuilder {
   }
   get duiFieldOptions(): DuiFieldOptions<any> {
     const hideMetadataFields = [DuiPageType.list, DuiPageType.record].includes(this.context.page.pageType!)
-    const hidden = hideMetadataFields && this.context.options.fieldsToHide.includes(this.property.name)
+    //TODO make more advanced to identify fields to hide
+    let hidden = hideMetadataFields && this.context.options.fieldsToHide.includes(this.property.name)
+
+    if (hideMetadataFields && !hidden) {
+      // if we identify it as an id field without knowing where to look that id up, we hide.
+      // this is to avoid showing any guids or similar.
+      // an exception which is not handled could a human readable id field which is required to be shown
+      hidden = this.type !== DataType.LOOKUP && this.property.name.toLowerCase().endsWith('id')
+    }
 
     const options = {
       name: this.property.name,
@@ -79,8 +87,14 @@ export class FieldBuilder {
 
   get lookupEndpoint(): EndpointBuilder | undefined {
     //TODO sanitize entity name
-    const lookupType = this.property.name.substring(0, this.property.name.length - 2)
-    console.log('lookup type', lookupType)
+
+    let lookupType = this.property.name
+    if (lookupType.toLowerCase().endsWith('guid')) {
+      lookupType = lookupType.substring(0, this.property.name.length - 4)
+    }
+    if (lookupType.toLowerCase().endsWith('id')) {
+      lookupType = lookupType.substring(0, this.property.name.length - 2)
+    }
 
     for (const endpoint of this.context.endpoints.filter((x) => x.method === HttpMethods.GET)) {
       if (endpoint.schema.response?.ref?.toLowerCase().endsWith(lookupType)) {

@@ -2,9 +2,11 @@
     <v-table>
         <thead>
             <tr>
-                <th v-for="field in props.fields" class="text-left">
+                <td v-for="field in props.fields">
+                <th class="text-left">
                     {{ field.displayName || field.name }}
                 </th>
+                </td>
             </tr>
         </thead>
         <tbody>
@@ -19,14 +21,12 @@
 
 <script setup lang="ts">
 import type { DuiField } from '~/dui-app/DuiField';
-import type { DuiActionContext } from '../dui-app/actions/DuiActionContext';
 import FieldSelector from './dui/FieldSelector';
+import type { DuiActionContext } from '~/dui-app/actions/DuiActionContext';
 
-const props = defineProps<{ fetch: () => Promise<any[]>, fields: DuiField[], context: DuiActionContext }>()
-const data = ref<any[]>([])
-
-onMounted(() => {
-    props.fetch().then(res => data.value = res)
-})
-
+const props = defineProps<{
+    fields: DuiField[]
+    context: DuiActionContext
+    data: any[]
+}>()
 </script>

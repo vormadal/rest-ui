@@ -11,9 +11,17 @@ export function stripPathParams(path: string): string {
 }
 
 export function sanitizeString(value: string) {
-  const sanitized = value.trim().replaceAll('/', '').replaceAll('_', ' ').replaceAll('-', ' ')
+  let sanitized = value.trim().replaceAll('/', '').replaceAll('_', ' ').replaceAll('-', ' ')
 
-  return addSpaceBeforeUppercase(FirstUppercase(sanitized))
+  sanitized = addSpaceBeforeUppercase(FirstUppercase(sanitized))
+  if(sanitized.toLowerCase().endsWith(' id')){
+    return sanitized.substring(0, sanitized.length-3)
+  }
+  if(sanitized.toLowerCase().endsWith(' guid')){
+    return sanitized.substring(0, sanitized.length-5)
+  }
+  
+  return sanitized
 }
 
 export function addSpaceBeforeUppercase(value: string) {

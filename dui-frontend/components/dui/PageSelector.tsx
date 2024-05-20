@@ -1,13 +1,18 @@
 import type { DuiApp } from '../../dui-app/DuiApp'
+import type { DuiPage } from '../../dui-app/DuiPage'
 import type { DuiActionContext } from '../../dui-app/actions/DuiActionContext'
+import DefaultPagination from './DefaultPagination.vue'
 
 interface Props {
   app: DuiApp<any>
+  page: DuiPage<any>
+  data: any | any[]
+  pagination?: { pageNumber: number; pageSize: number; totalCount: number }
+  fetchData: () => Promise<void>
+  submitData: (data: any | any[]) => Promise<void>
   route: string
 }
-export function PageSelector({ app, route }: Props) {
-  console.log('looking for page', route)
-  const page = app.getPage(route)
+export function PageSelector({ app, page, route, data, fetchData, submitData, pagination }: Props) {
   const router = useRouter()
 
   if (!page) {
@@ -21,16 +26,6 @@ export function PageSelector({ app, route }: Props) {
     router
   }
 
-  const fetchData = async () => {
-    return await page.dataSource?.run(context)
-  }
-
-  async function submit(data: any) {
-    if (!page?.onSubmit) return
-    context.data = data
-    await page.onSubmit.run(context)
-  }
-
   const PageComponent = page.component
   const ActionsComponent = app.actionsComponent
   return (
@@ -40,10 +35,11 @@ export function PageSelector({ app, route }: Props) {
         context={context}
       />
       <PageComponent
+        data={data}
         context={context}
-        fetch={fetchData}
+        fetchData={fetchData}
+        submitData={submitData}
         fields={page.visibleFields}
-        submit={submit}
       />
     </>
   )

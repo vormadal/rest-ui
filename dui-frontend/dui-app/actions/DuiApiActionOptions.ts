@@ -11,4 +11,10 @@ export interface DuiApiActionOptions extends DuiActionOptions {
    * This is useful if the root object also contains metadata and the actual data is in a nested field
    */
   dataField?: string
+
+  pagination?: {
+    pageNumberField: string
+    pageSizeField: string
+    totalItemCountField: string
+  }
 }

@@ -9,13 +9,12 @@
 <script setup lang="ts">
 import type { DuiField } from '~/dui-app/DuiField';
 import type { DuiActionContext } from '../dui-app/actions/DuiActionContext';
-import { DuiApp } from '../dui-app/DuiApp';
 
 const props = defineProps<{
     fetch: () => Promise<any[]>,
     context: DuiActionContext,
     fields: DuiField[]
-    submit: (data: any) => Promise<void>
+    submitData: (data: any) => Promise<void>
 }>()
 
 const disabled = ref(false)
@@ -25,12 +24,11 @@ const data = ref<any>(props.fields.reduce((formData, field) => {
 
     return formData
 }, {}))
-const app = inject<DuiApp>('dui-app')!
 
 async function handleSubmit() {
     console.log('submitting')
     disabled.value = true
-    await props.submit(data.value)
+    await props.submitData(data.value)
     disabled.value = false
 }
 

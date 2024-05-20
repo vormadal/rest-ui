@@ -11,33 +11,28 @@ import type { DuiField } from '~/dui-app/DuiField';
 import type { DuiActionContext } from '../dui-app/actions/DuiActionContext';
 
 const props = defineProps<{
-    fetch: () => Promise<any>,
+    fetchData: () => Promise<any>,
     context: DuiActionContext,
     fields: DuiField[],
-    submit: (data: any) => Promise<void>,
+    submitData: (data: any) => Promise<void>,
+    data: any
 }>()
-const data = ref<any>()
 
 const disabled = ref(false)
+
+const formData = ref(props.data)
 
 async function handleSubmit() {
     console.log('submitting')
     disabled.value = true
-    await props.submit(data.value)
+    await props.submitData(formData)
     disabled.value = false
 }
 
 function onChange(field: DuiField, value: any) {
-    if (!data.value) data.value = {}
-    data.value[field.name] = value
-    console.log('updating value', field.name, value, data.value)
+    if (!formData.value) formData.value = {}
+    formData.value[field.name] = value
+    console.log('updating value', field.name, value, formData.value)
 }
-
-onMounted(() => {
-    props.fetch().then(res => {
-        data.value = res
-        console.log('fetched data', res)
-    })
-})
 
 </script>

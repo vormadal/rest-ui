@@ -12,7 +12,9 @@ export class DuiApp<Config extends IDuiConfig> {
   actionsComponent: any
 
   constructor(options: DuiAppOptions<Config>, config: Config) {
-    this.baseUrl = options.baseUrl
+    this.baseUrl = options.baseUrl.endsWith('/')
+      ? options.baseUrl.substring(0, options.baseUrl.length - 1)
+      : options.baseUrl
     this.actionsComponent = config.components.actions
     this.pages = options.pages.map((x) => new DuiPage<Config>(x, config))
     this.dashboard = {
@@ -26,7 +28,7 @@ export class DuiApp<Config extends IDuiConfig> {
   }
 
   fetch(method: string, route: string, data?: any) {
-    return fetch(`${this.baseUrl}${this.baseUrl.endsWith('/') || route.startsWith('/') ? '' : '/'}${route}`, {
+    return fetch(`${this.baseUrl}${route.startsWith('/') ? '' : '/'}${route}`, {
       method: method,
       body: data ? JSON.stringify(data) : undefined,
       headers: {

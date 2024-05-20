@@ -18,28 +18,11 @@ const props = defineProps<{
 
 const data = ref<any>()
 
-onActivated(() => {
-    console.log('active lookup data', props.field)
-    props.field.dataSource?.run(props.context)
-        .then(res => {
-            console.log('active lookup data', res)
-            data.value = res[props.field.labelField]
-        })
-})
-console.log('lookup data', props.field)
 props.field.dataSource?.run(props.context)
     .then(res => {
-        console.log('lookup data', res)
-        data.value = res[props.field.labelField]
+        data.value = res.data[props.field.labelField]
     })
-// watch(props.context, (test, test1) => {
-//     console.log('lookup field', test, test1)
 
-// })
-// onMounted(() => {
-
-
-// })
 function onChange(value: string) {
     props.handleChange(props.field, value)
 }

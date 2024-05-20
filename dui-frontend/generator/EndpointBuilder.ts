@@ -36,12 +36,16 @@ export class EndpointBuilder {
       return undefined
     }
 
+    //TODO this should include pagination details
     return {
       type: 'api',
       method: 'GET',
       routeTemplate: this.path,
-      dataField: this.isPagedType ? this.context.options.pagingResponse.dataField : this.context.options.response.dataField,
-      paramaters: this.getDataSourceParameters()
+      dataField: this.isPagedType
+        ? this.context.options.pagingResponse.dataField
+        : this.context.options.response.dataField,
+      paramaters: this.getDataSourceParameters(),
+      pagination: this.pagingBuilder?.build(),
     }
   }
 
@@ -66,6 +70,7 @@ export class EndpointBuilder {
       method: this.mapMethod(this.method),
       routeTemplate: this.path,
       dataField: this.getDataField(),
+      pagination: this.pagingBuilder?.build(),
       paramaters: this.getDataSourceParameters(),
       label: this.label
     }
@@ -120,17 +125,17 @@ export class EndpointBuilder {
   }
 
   get pagingSchema() {
-    if(!this.isPagedType) return null
+    if (!this.isPagedType) return null
 
     return this.schema.response?.schema.properties
   }
 
   get pagingBuilder() {
-    const pageSize = this.schema.parameters?.find((x) => x.couldBe('size'))
-    const pageNumber = this.schema.parameters?.find((x) => x.couldBe('number'))
-
+    const pageSize = this.schema.response?.properties.find((x) => x.couldBe('size'))
+    const pageNumber = this.schema.response?.properties.find((x) => x.couldBe('number'))
+    const totalField = this.schema.response?.properties.find((x) => x.couldBe('total'))
     if (pageSize && pageNumber) {
-      return new PagingBuilder(pageSize, pageNumber)
+      return new PagingBuilder(pageSize.name, pageNumber.name, totalField?.name ?? '')
     }
     return null
   }

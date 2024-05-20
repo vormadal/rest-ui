@@ -15,7 +15,7 @@ const defaultOptions: ParserOptions = {
   pagingResponse: {
     dataField: 'data'
   },
-  fieldsToHide: ['id', 'created', 'modified', 'modifiedOn', 'createdOn']
+  fieldsToHide: ['id', 'href', 'created', 'modified', 'modifiedOn', 'createdOn']
 }
 export class OpenApiParser<T extends IDuiConfig> {
   readonly context: PageContext
@@ -47,7 +47,10 @@ export class OpenApiParser<T extends IDuiConfig> {
     return {
       baseUrl: this.document.servers ? this.document.servers[0].url : '/',
       dashboard: {
-        pages: pages.filter((x) => x.pageType === DuiPageType.list).map((x) => x.route)
+        pages: pages
+        .filter((x) => x.pageType === DuiPageType.list)
+        .filter(x => x.endpoint.datasourceAction?.paramaters?.filter(param => param.from === 'path').length === 0)
+        .map((x) => x.route)
       },
       pages: pages.filter((x) => !!x.pageType).map((x) => x.duiPageOptions)
     }
