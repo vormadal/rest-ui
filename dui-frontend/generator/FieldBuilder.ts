@@ -1,7 +1,12 @@
 import { DataType } from '../configurations/DataType'
-import type { DuiFieldOptions, DuiLookupFieldOptions } from '../dui-app/DuiFieldOptions'
+import type {
+  DuiArrayFieldOptions,
+  DuiFieldOptions,
+  DuiLookupFieldOptions,
+  DuiObjectFieldOptions
+} from '../dui-app/DuiFieldOptions'
 import { DuiPageType } from '../dui-app/DuiPageType'
-import type { FieldContext } from './context/FieldContext'
+import { FieldContext } from './context/FieldContext'
 import type { EndpointBuilder } from './EndpointBuilder'
 import { HttpMethods } from './openApi/HttpMethods'
 import type { SchemaProperty } from './openApi/SchemaProperty'
@@ -32,7 +37,13 @@ export class FieldBuilder {
         return DataType.NUMBER
       case 'boolean':
         return DataType.BOOLEAN
+      case 'object':
+        if (this.property.schema.isList) {
+          return DataType.ARRAY
+        }
+        return DataType.OBJECT
       default:
+        console.log('unknown field type', this.property.type, this.context.page.route)
         return null
       // throw new Error(`Property type ${this.schema.type} is not yet implemented`)
     }
@@ -75,6 +86,20 @@ export class FieldBuilder {
       lookupOptions.labelField = properties.find((x) => x.couldBe('name'))?.name || 'name' //TODO should get this from lookup endpoint response schema
 
       lookupOptions.redirectAction = redirectPage?.getRedirectAction(undefined, 'data')
+    }
+
+    if (this.type && [DataType.ARRAY, DataType.OBJECT].includes(this.type)) {
+      let objectOptions = options as unknown as DuiObjectFieldOptions
+
+      objectOptions.fields = this.property.schema.properties
+        .map((x) => new FieldBuilder(x, new FieldContext(this.context.page, `${this.context.fieldKey}.${x.name}`)))
+        .filter((x) => x.context.fieldKey.split('.').length < 3)
+        .map((x) => x.duiFieldOptions)
+      // debugger
+    }
+
+    if (this.type === DataType.ARRAY) {
+      let arrayOptions = options as unknown as DuiArrayFieldOptions
     }
     return options
   }

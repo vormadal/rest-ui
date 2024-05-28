@@ -23,6 +23,7 @@ const config = parser.parse();
 console.log('config', config)
 const app = createDuiApp(config);
 
+provide('dui-config', config)
 provide('dui-app', app)
 
 

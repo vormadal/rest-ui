@@ -31,7 +31,7 @@ export class DuiField {
   }
 
   format = (data: any) => {
-    const value = data[this.name]
+    const value = extractField(data, this.name)
     return this.formatter.format(value, this.options)
   }
 
@@ -40,10 +40,10 @@ export class DuiField {
 
     //TODO this is kinda a hack - should have a better solution such as parsing the json string and converting date strings directly to dates
     if ([DataType.DATE_TIME, DataType.DATE, DataType.TIME].includes(this.type)) {
-      return new Date(data[this.name])
+      return new Date(extractField(data, this.name))
     }
 
-    return data[this.name]
+    return extractField(data, this.name)
   }
 
   getComponentProperties = (context: DuiActionContext, handleChange?: (field: DuiField, value: any) => void): any => {

@@ -1,5 +1,5 @@
 <template>
-    <v-table>
+    <v-table style="width: fit-content">
         <thead>
             <tr>
                 <td v-for="field in props.fields">

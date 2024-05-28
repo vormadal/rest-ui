@@ -12,7 +12,10 @@
 
                 <v-container fluid>
                     <slot />
+                    
+                    <v-fab icon="mdi-code-braces" active absolute offset location="bottom-start" nuxt to="debug"></v-fab>
                 </v-container>
+
             </v-main>
 
         </v-layout>

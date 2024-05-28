@@ -89,7 +89,7 @@ export class PageBuilder {
 
     const schemaFields =
       schema?.properties
-        .map((property) => new FieldBuilder(property, new FieldContext(this)))
+        .map((property) => new FieldBuilder(property, new FieldContext(this, property.name)))
         .filter((x) => !!x.type)
         .map((x) => x.duiFieldOptions) || []
 

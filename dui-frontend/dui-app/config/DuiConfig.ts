@@ -5,12 +5,14 @@ import DefaultEditForm from '../../components/DefaultEditForm.vue'
 import DefaultTable from '../../components/DefaultTable.vue'
 import DefaultViewRecord from '../../components/DefaultViewRecord.vue'
 import DefaultDashboard from '../../components/dui/DefaultDashboard.vue'
+import DefaultArrayField from '../../components/fields/DefaultArrayField.vue'
 import DefaultBooleanEditor from '../../components/fields/DefaultBooleanEditor.vue'
 import DefaultDateEditor from '../../components/fields/DefaultDateEditor.vue'
 import DefaultDateTimeEditor from '../../components/fields/DefaultDateTimeEditor.vue'
 import DefaultLookupEditor from '../../components/fields/DefaultLookupEditor.vue'
 import DefaultLookupField from '../../components/fields/DefaultLookupField.vue'
 import DefaultNumberEditor from '../../components/fields/DefaultNumberEditor.vue'
+import DefaultObjectField from '../../components/fields/DefaultObjectField.vue'
 import DefaultTextEditor from '../../components/fields/DefaultTextEditor.vue'
 import DefaultTextField from '../../components/fields/DefaultTextField.vue'
 import DefaultTimeEditor from '../../components/fields/DefaultTimeEditor.vue'
@@ -29,10 +31,12 @@ import { DuiCompositeAction } from '../actions/DuiCompositeAction'
 import type { DuiCompositeActionOptions } from '../actions/DuiCompositeActionOptions'
 import { DuiRedirectAction } from '../actions/DuiRedirectAction'
 import type { DuiRedirectActionOptions } from '../actions/DuiRedirectActionOptions'
+import { DuiArrayField } from '../DuiArrayField'
 import { DuiButtonField } from '../DuiButtonField'
 import { DuiField } from '../DuiField'
 import type { DuiFieldOptions } from '../DuiFieldOptions'
 import { DuiLookupField } from '../DuiLookupField'
+import { DuiObjectField } from '../DuiObjectField'
 import { DuiPageType } from '../DuiPageType'
 import type { DuiConfigOptions } from './DuiConfigOptions'
 
@@ -66,6 +70,8 @@ export interface IDuiConfig {
       [DataType.BOOLEAN]: IDuiConfigComponent
       [DataType.STRING]: IDuiConfigComponent
       [DataType.LOOKUP]: IDuiConfigComponent
+      [DataType.OBJECT]: IDuiConfigComponent
+      [DataType.ARRAY]: IDuiConfigComponent
     }
     [DuiPageType.createForm]: IDuiConfigComponent
     [DuiPageType.list]: IDuiConfigComponent
@@ -106,6 +112,10 @@ export class DuiConfig implements IDuiConfig {
           return new DuiButtonField<T>(x, config)
         case DataType.LOOKUP:
           return new DuiLookupField(x, config)
+        case DataType.OBJECT:
+          return new DuiObjectField(x, config)
+        case DataType.ARRAY:
+          return new DuiArrayField(x, config)
         default:
           return new DuiField(x, config)
       }
@@ -153,6 +163,16 @@ export class DuiConfig implements IDuiConfig {
         default: DefaultLookupEditor,
         write: DefaultLookupEditor,
         read: DefaultLookupField
+      },
+      [DataType.OBJECT]: {
+        default: DefaultObjectField,
+        write: DefaultLookupEditor,
+        read: DefaultObjectField
+      },
+      [DataType.ARRAY]: {
+        default: DefaultArrayField,
+        write: DefaultLookupEditor,
+        read: DefaultArrayField
       }
     },
     [DuiPageType.list]: {

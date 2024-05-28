@@ -20,6 +20,17 @@ export type DuiLookupFieldOptions = {
   redirectAction?: DuiRedirectActionOptions
 }
 
+export type DuiObjectFieldOptions = {
+  type: DataType.OBJECT
+  fieldKey: string
+  fields: DuiFieldOptions<any>[]
+}
+
+export type DuiArrayFieldOptions = {
+  type: DataType.ARRAY
+  fieldKey: string
+}
+
 export type DuiFieldOptions<Config extends IDuiConfig> = {
   hidden?: boolean
   formatter?: keyof Config['valueFormatters']
@@ -30,4 +41,4 @@ export type DuiFieldOptions<Config extends IDuiConfig> = {
 
   component?: string
   //TODO probably not the right way to do it
-} & (DuiButtonFieldOptions | DuiLookupFieldOptions | { type: any })
+} & (DuiButtonFieldOptions | DuiLookupFieldOptions | DuiObjectFieldOptions | DuiArrayFieldOptions | { type: any })

@@ -6,5 +6,7 @@ export enum DataType {
   NUMBER = 'number',
   BUTTON = 'button',
   BOOLEAN = 'boolean',
-  LOOKUP = 'lookup'
+  LOOKUP = 'lookup',
+  OBJECT = 'object',
+  ARRAY = 'array'
 }

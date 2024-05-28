@@ -48,7 +48,8 @@ export class OpenApiParser<T extends IDuiConfig> {
       baseUrl: this.document.servers ? this.document.servers[0].url : '/',
       dashboard: {
         pages: pages
-        .filter((x) => x.pageType === DuiPageType.list)
+        // .filter((x) => x.pageType === DuiPageType.list)
+        .filter(x => x.dataSourceAction?.method === 'GET')
         .filter(x => x.endpoint.datasourceAction?.paramaters?.filter(param => param.from === 'path').length === 0)
         .map((x) => x.route)
       },
