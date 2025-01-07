@@ -1,1 +1,0 @@
-export type ValueType = string | Date | number | null | undefined

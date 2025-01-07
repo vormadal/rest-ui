@@ -1,0 +1,72 @@
+{
+  "installation": {
+    "version": "20.3.1",
+    "plugins": {
+      "@nx/eslint": "20.3.1"
+    }
+  },
+  "plugins": [
+    {
+      "plugin": "@nx/next/plugin",
+      "options": {
+        "startTargetName": "start",
+        "buildTargetName": "build",
+        "devTargetName": "dev",
+        "serveStaticTargetName": "serve-static"
+      }
+    },
+    {
+      "plugin": "@nx/playwright/plugin",
+      "options": {
+        "targetName": "e2e"
+      }
+    },
+    {
+      "plugin": "@nx/eslint/plugin",
+      "options": {
+        "targetName": "lint"
+      }
+    },
+    {
+      "plugin": "@nx/vite/plugin",
+      "options": {
+        "buildTargetName": "build",
+        "testTargetName": "test",
+        "serveTargetName": "serve",
+        "previewTargetName": "preview",
+        "serveStaticTargetName": "serve-static",
+        "typecheckTargetName": "typecheck"
+      }
+    }
+  ],
+  "targetDefaults": {
+    "e2e-ci--**/*": {
+      "dependsOn": [
+        "^build"
+      ]
+    },
+    "@nx/js:tsc": {
+      "cache": true,
+      "dependsOn": [
+        "^build"
+      ],
+      "inputs": [
+        "default",
+        "^default"
+      ]
+    }
+  },
+  "generators": {
+    "@nx/next": {
+      "application": {
+        "style": "tailwind",
+        "linter": "eslint"
+      }
+    },
+    "@nx/react": {
+      "library": {
+        "unitTestRunner": "none"
+      }
+    }
+  }
+}

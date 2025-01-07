@@ -1,6 +1,5 @@
 using ApiModels;
 using Microsoft.AspNetCore.Mvc;
-using NestedDataApi;
 
 var builder = WebApplication.CreateBuilder(args);
 

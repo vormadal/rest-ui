@@ -1,0 +1,19 @@
+{
+  "name": "rui-core",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/rui-core/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/rui-core",
+        "main": "libs/rui-core/src/index.ts",
+        "tsConfig": "libs/rui-core/tsconfig.lib.json",
+        "assets": ["libs/rui-core/*.md"]
+      }
+    }
+  }
+}

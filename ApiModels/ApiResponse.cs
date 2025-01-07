@@ -2,7 +2,7 @@
 
 public class ApiResponse<T>
 {
-    public T Data { get; set; }
+    public required T Data { get; set; }
 }
 
 public class ApiListResponse<T> : ApiResponse<List<T>>

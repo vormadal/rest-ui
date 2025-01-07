@@ -1,3 +1,0 @@
-interface StringValueOptions extends ValueOption {
-    
-  }

@@ -17,11 +17,12 @@ public class DepartmentEndpoints
 
     public void DeleteDepartment(string id)
     {
-
+        Console.WriteLine($"Department with id {id} has been deleted");
     }
 
     public Department UpdateDepartment(string id, [FromBody] Department department)
     {
+        Console.WriteLine($"Department with id {id} has been updated");
         return department;
     }
 

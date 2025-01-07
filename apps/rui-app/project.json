@@ -1,0 +1,10 @@
+{
+  "name": "rui-app",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/rui-app",
+  "projectType": "application",
+  "implicitDependencies": ["rui-core", "ui"],
+  "tags": [],
+  "// targets": "to see all targets run: nx show project rui-app --web",
+  "targets": {}
+}
