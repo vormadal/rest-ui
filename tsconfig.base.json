@@ -16,9 +16,10 @@
     "baseUrl": ".",
     "paths": {
       "@rest-ui/ui/*": ["libs/ui/src/*"],
-      "rui-core": ["libs/rui-core/src/index.ts"],
       "@ui": ["libs/ui/src/components/ui/index.ts"],
-      "@ui/*": ["libs/ui/src/*"],      
+      "@ui/*": ["libs/ui/src/*"],
+      "rui-core": ["libs/rui-core/src/index.ts"],
+      "rui-generator": ["libs/rui-generator/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

@@ -5,3 +5,5 @@ export * from './navigation-menu';
 export * from './label';
 export * from './input';
 export * from './sidebar';
+export * from './spinner';
+export * from './form';

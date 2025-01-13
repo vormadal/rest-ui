@@ -3,7 +3,11 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/rui-admin",
   "projectType": "application",
-  "implicitDependencies": ["rui-core", "ui"],
+  "implicitDependencies": [
+    "rui-core",
+    "ui",
+    "rui-generator"
+  ],
   "tags": [],
   "// targets": "to see all targets run: nx show project rui-admin --web",
   "targets": {}
