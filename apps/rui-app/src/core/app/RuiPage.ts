@@ -1,73 +1,57 @@
-import { RuiPageSpec, RuiPageType } from 'rui-core'
-import { RuiAction } from './actions/RuiAction'
-import { RuiApiAction } from './actions/RuiApiAction'
-import { RuiAppOptions } from './RuiApp'
-import { RuiField } from './fields/RuiField'
-import { RuiParameter } from './RuiParameter'
-import { RuiRedirectAction } from './actions/RuiRedirectAction'
+import { RuiPageSpec } from 'rui-core';
+import { RuiAppOptions } from './RuiApp';
+import { RuiContext } from './RuiContext';
+import { RuiDataMapping } from './RuiDataMapping';
+import { RuiComponent } from './RuiComponent';
 
-export class RuiPage<PC, FC> {
-  readonly fields: RuiField<PC, FC>[] = []
-  readonly Component: PC
-  readonly dataSource?: RuiApiAction<PC, FC>
-  readonly onSubmit?: RuiAction<PC, FC>
-  readonly actions: RuiAction<PC, FC>[] = []
-  readonly viewLink?: RuiRedirectAction<PC, FC>
-  readonly editLink?: RuiRedirectAction<PC, FC>
-  readonly displayName: string = this.spec.displayName || this.spec.route
-
-  constructor(private readonly spec: RuiPageSpec, private readonly options: RuiAppOptions<PC, FC>) {
-    this.fields = spec.fields.map((x) => options.getField(x, options))
-    this.Component = options.getPageComponent({
-      type: spec.type,
-      name: 'default', // TODO allow overrides
-      page: spec
-    })
-    this.onSubmit = spec.onSubmit ? options.getAction(spec.onSubmit, options) : undefined
-    this.dataSource = spec.dataSource ? new RuiApiAction(spec.dataSource) : undefined
-    this.actions = spec.actions ? spec.actions.map((x) => options.getAction(x, options)) : []
-    this.viewLink = spec.viewLink ? new RuiRedirectAction(spec.viewLink) : undefined
-    this.editLink = spec.editLink ? new RuiRedirectAction(spec.editLink) : undefined
+export class RuiPage<ComponentType> extends RuiComponent<ComponentType> {
+  constructor(
+    public readonly spec: RuiPageSpec,
+    options: RuiAppOptions<ComponentType>
+  ) {
+    super(spec, options);
   }
 
   get route(): string {
-    return this.spec.route
+    return this.spec.route;
   }
 
-  get type(): RuiPageType {
-    return this.spec.type
+  get parameters() {
+    const names = this.route
+      .split('/')
+      .filter((x) => !!x)
+      .filter((x) => /\{.+\}/.test(x));
+
+    return names.map((x) => ({ name: x, in: 'path' }));
   }
 
-  matches = (route: string): boolean => {
-    const routeParts = route.split('/').filter((x) => !!x)
-    const pageRouteParts = this.route.split('/').filter((x) => !!x)
+  matches = (context: RuiContext<ComponentType>): boolean => {
+    const routeParts = context.route.split('/').filter((x) => !!x);
+    const pageRouteParts = this.route.split('/').filter((x) => !!x);
 
-    if (routeParts.length !== pageRouteParts.length) return false
+    if (routeParts.length !== pageRouteParts.length) return false;
 
     for (let i = 0; i < routeParts.length; i++) {
       if (routeParts[i] === pageRouteParts[i]) {
-        continue
+        continue;
       }
       if (/\{.+\}/.test(pageRouteParts[i])) {
-        continue
+        continue;
       }
-      return false
+      return false;
     }
 
-    return true
-  }
+    return true;
+  };
 
-  getParam = (param: RuiParameter<PC, FC>, route: string): string => {
-    const routeParts = route.split('/').filter((x) => !!x)
-    const templateParts = this.route.split('/').filter((x) => !!x)
+  //TODO this is probably not the best place for this
+  getParam = (param: RuiDataMapping<ComponentType>, route: string): string => {
+    const routeParts = route.split('/').filter((x) => !!x);
+    const templateParts = this.route.split('/').filter((x) => !!x);
 
-    const templatePart = templateParts.find((x) => x === `{${param.valueFieldName}}`)
-    const index = templatePart ? templateParts.indexOf(templatePart) : -1
+    const templatePart = templateParts.find((x) => x === `{${param.source}}`);
+    const index = templatePart ? templateParts.indexOf(templatePart) : -1;
 
-    return index >= 0 ? routeParts[index] : ''
-  }
-
-  get visibleFields(): RuiField<PC, FC>[] {
-    return this.fields.filter((x) => !x.hidden)
-  }
+    return index >= 0 ? routeParts[index] : '';
+  };
 }

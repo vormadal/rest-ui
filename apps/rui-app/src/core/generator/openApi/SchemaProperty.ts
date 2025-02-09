@@ -1,12 +1,12 @@
 import type { OpenAPIV3 } from 'openapi-types'
 import type { Schema } from './Schema'
-import type { PageContext } from '../context/PageContext'
+import type { ApiBuilderContext } from '../context/ApiBuilderContext'
 
 export class SchemaProperty {
   constructor(
     public readonly name: string,
     public readonly schema: Schema<OpenAPIV3.SchemaObject>,
-    private readonly context: PageContext
+    private readonly context: ApiBuilderContext
   ) {}
 
   get type() {

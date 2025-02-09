@@ -1,7 +1,8 @@
-import { RuiActionSpec } from './RuiActionSpec.js'
-import { RuiAnyActionSpec } from './RuiAnyActionSpec.js'
+import { ComponentSpec } from '../ComponentSpec';
+import { RuiActionSpec } from './RuiActionSpec';
 
-export interface RuiCompositeActionSpec extends RuiActionSpec {
-  type: 'composite'
-  actions: RuiAnyActionSpec[]
+export interface RuiCompositeActionSpec extends ComponentSpec {
+  type: 'composite';
+  actions: RuiActionSpec[];
+  label?: string;
 }

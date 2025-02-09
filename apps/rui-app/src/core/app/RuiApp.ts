@@ -1,61 +1,65 @@
-import { DataType, RuiAnyActionSpec, RuiAppSpec, RuiFieldSpec, RuiPageSpec, RuiPageType } from 'rui-core'
-import { RuiAction } from './actions/RuiAction'
-import { RuiField } from './fields/RuiField'
-import { RuiPage } from './RuiPage'
+import {
+  ComponentSpec,
+  DataType,
+  DataValueSpec,
+  RuiActionSpec,
+  RuiAppSpec,
+} from 'rui-core';
+import { DataValue } from './DataValue';
+import { Endpoint } from './Endpoint';
+import { RuiComponent } from './RuiComponent';
+import { RuiContext } from './RuiContext';
+import { RuiPage } from './RuiPage';
+import { RuiAction } from './actions/RuiAction';
 
-export class RuiApp<PC, FC> {
-  readonly pages: RuiPage<PC, FC>[]
-  constructor(private readonly spec: RuiAppSpec, private readonly options: RuiAppOptions<PC, FC>) {
-    this.pages = spec.pages.map((x) => new RuiPage(x, options))
+export class RuiApp<ComponentType> {
+  readonly pages: RuiPage<ComponentType>[];
+  readonly endpoints: Record<string, Endpoint<ComponentType>> = {};
+  constructor(
+    public readonly spec: RuiAppSpec,
+    private readonly options: RuiAppOptions<ComponentType>
+  ) {
+    this.pages = spec.pages.map((x) => new RuiPage(x, options));
   }
 
   get baseUrl(): string {
-    return this.spec.baseUrl
+    return this.spec.baseUrl;
   }
 
-  getPage = (route: string): undefined | RuiPage<PC, FC> => {
-    return this.pages.find((x) => x.matches(route))
-  }
+  getPage = (
+    context: RuiContext<ComponentType>
+  ): undefined | RuiPage<ComponentType> => {
+    return this.pages.find((x) => x.matches(context));
+  };
 
   fetch(method: string, route: string, data?: unknown) {
     return fetch(`${this.baseUrl}${route.startsWith('/') ? '' : '/'}${route}`, {
       method: method,
       body: data ? JSON.stringify(data) : undefined,
       headers: {
-        'Content-Type': 'application/json'
-      }
-    })
+        'Content-Type': 'application/json',
+      },
+    });
   }
 }
 
-export interface FieldComponentSelector {
-  /**
-   * The name of the component to use for rendering the field
-   */
-  name: string
-
-  /**
-   * The data type for the field
-   */
-  dataType: DataType
-
-  /**
-   * the full field spec, which can be used for selecting custom components.
-   * This is not used by the default implementation
-   */
-  field: RuiFieldSpec
+export interface ComponentSelector {
+  name: string;
+  spec: ComponentSpec;
 }
 
-export interface PageComponentSelector {
-  type: RuiPageType
-  name: string
-  page: RuiPageSpec
-}
-
-export interface RuiAppOptions<PC, FC> {
-  getFieldComponent(selector: FieldComponentSelector): FC
-  getPageComponent(selector: PageComponentSelector): PC
-  getFormatter(type: DataType): undefined | ((value: unknown, options: unknown) => string)
-  getAction(spec: RuiAnyActionSpec, options: RuiAppOptions<PC, FC>): RuiAction<PC, FC>
-  getField(spec: RuiFieldSpec, options: RuiAppOptions<PC, FC>): RuiField<PC, FC>
+export interface RuiAppOptions<ComponentType> {
+  getDataValue(source: DataValueSpec): DataValue<ComponentType>;
+  getComponent(selector: ComponentSelector): ComponentType;
+  getFormatter(
+    type: DataType
+  ): undefined | ((value: unknown, options: unknown) => string);
+  getComponentConfiguration(
+    spec: ComponentSpec,
+    options: RuiAppOptions<ComponentType>
+  ): RuiComponent<ComponentType>;
+  getAction(
+    spec: RuiActionSpec,
+    options: RuiAppOptions<ComponentType>
+  ): RuiAction<ComponentType>;
 }

@@ -1,10 +1,10 @@
 'use client'
-import { PageProps } from '../../lib/PageProps'
+import { ComponentProps } from '../../lib/ComponentProps'
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '@ui'
 
 // a component for viewing a string and a component to edit a string
 
-export default function DefaultListPage({ page, response, context }: PageProps) {
+export default function DefaultListPage({ page, response, context }: ComponentProps) {
   const rows = Array.isArray(response.data) ? response.data : []
   return (
     <>

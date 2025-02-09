@@ -3,7 +3,7 @@ import type { PageContext } from './context/PageContext'
 import { HttpMethods } from './openApi/HttpMethods'
 import { OperationSchema } from './openApi/OperationSchema'
 import { PagingBuilder } from './PagingBuilder'
-import { RuiParameterSpec, RuiParameterValueSource, RuiApiActionSpec } from 'rui-core'
+import { RuiDataMappingSpec, RuiParameterValueSource, RuiApiActionSpec } from 'rui-core'
 
 export class EndpointBuilder {
   constructor(
@@ -96,7 +96,7 @@ export class EndpointBuilder {
     return this.context.options.request.dataField
   }
 
-  getDataSourceParameters(parameterSource: RuiParameterValueSource = 'path'): RuiParameterSpec[] {
+  getDataSourceParameters(parameterSource: RuiParameterValueSource = 'path'): RuiDataMappingSpec[] {
     return this.schema.parameters
       .filter((x) => x.required && x.in === 'path') // we ignore query parameters for now
       .map((x) => ({

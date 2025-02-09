@@ -1,8 +1,8 @@
 'use client'
 import React from 'react'
-import { PageProps } from '../../lib/PageProps'
+import { ComponentProps } from '../../lib/ComponentProps'
 
-export default function DefaultPage({ page, context, response }: PageProps) {
+export default function DefaultPage({ page, context, response }: ComponentProps) {
   const [data, setData] = React.useState(response.data)
   return (
     <>

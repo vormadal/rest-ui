@@ -1,17 +1,14 @@
-import PageWrapper from '../../components/PageWrapper'
-import { RuiApp } from '../../core/app/RuiApp'
-import { OpenApiParser } from '../../core/generator/OpenApiParser'
-import { nextAppOptions } from '../../lib/AppOptions'
-import { TestDocument1 } from '../../samples/test'
+import ComponentWrapper from '../../components/ComponentWrapper';
+import { RuiContext } from '../../core/app/RuiContext';
+import defaultAppProvider from '../../lib/AppProvider';
+import { ComponentProps } from '../../lib/ComponentProps';
 
 interface Props {
-  params: Promise<{ path: string[] }>
+  params: Promise<{ path: string[] }>;
 }
 export default async function Home({ params }: Props) {
-  const spec = new OpenApiParser(TestDocument1).parse()
-  spec.baseUrl = 'http://localhost:5093'
-  const app = new RuiApp(spec, nextAppOptions)
-  const path = (await params).path?.join('/')
+  const app = defaultAppProvider.app;
+  const path = (await params).path?.join('/');
 
   if (!path)
     return (
@@ -20,23 +17,28 @@ export default async function Home({ params }: Props) {
           <div key={page.route}>{page.route}</div>
         ))}
       </div>
-    )
-  const page = app.getPage(path)
-  if (!page) return <div>Page not found</div>
+    );
+  const context: RuiContext<React.FC<ComponentProps>> = {
+    app,
+    navigateTo: () => {
+      console.log('routing not supported serverside');
+    },
+    dataSources: app.endpoints,
+    route: path,
+  };
+  const page = app.getPage(context);
+  if (!page) return <div>Page not found</div>;
 
-  const data =
-    (await page.dataSource?.run({
-      app,
-      page,
-      path
-    })) || {}
+  const data: { [key: string]: unknown } = {};
+  for (const datasource of page.dataSources) {
+    data[datasource.name] = await datasource.fetch(context);
+  }
   return (
-    <>
-      <PageWrapper
-        path={path}
-        spec={spec}
-        data={data}
-      />
-    </>
-  )
+    <ComponentWrapper
+      appSpec={app.spec}
+      componentSpec={page.spec}
+      data={data}
+      route={path}
+    />
+  );
 }

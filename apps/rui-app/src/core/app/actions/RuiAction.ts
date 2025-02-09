@@ -1,14 +1,5 @@
-import { RuiActionContext } from './RuiActionContext'
+import { RuiContext } from '../RuiContext';
 
-export interface RuiAction<PC, FC> {
-  run<T>(context: RuiActionContext<PC, FC>): Promise<RuiActionResponse<T>>
-
-  get label(): string
-}
-
-export interface RuiActionResponse<T> {
-  data?: T
-  page?: number
-  size?: number
-  total?: number
+export abstract class RuiAction<ComponentType> {
+  abstract run(context: RuiContext<ComponentType>): Promise<void>;
 }

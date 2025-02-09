@@ -1,26 +1,14 @@
-'use client'
-import React from 'react'
-import { PageProps } from '../../lib/PageProps'
+'use client';
+import React from 'react';
+import { ComponentProps } from '../../lib/ComponentProps';
+import { RuiPage } from '../../core/app/RuiPage';
 
-export default function DefaultPage({ page, context, response: data }: PageProps) {
+export default function DefaultPage({ context, children }: ComponentProps) {
+  const config = context.config as RuiPage<React.FC<ComponentProps>>;
   return (
     <>
-      <h1>{page.route}</h1>
-      {page.fields.map((field) => {
-        const FieldComponent = field.Component
-        return (
-          <FieldComponent
-            key={field.name}
-            field={field}
-            context={context}
-            page={page}
-            data={data}
-            handleChange={async (value, field) => {
-              console.log('handleChange', value, field)
-            }}
-          />
-        )
-      })}
+      <h1>{config.route}</h1>
+      {children}
     </>
-  )
+  );
 }

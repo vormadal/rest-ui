@@ -8,20 +8,20 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarProvider
-} from '@ui'
-import { Scroll } from 'lucide-react'
-import Link from 'next/link'
-import { RuiAppSpec, RuiPageType } from 'rui-core'
-import { RuiApp } from '../../core/app/RuiApp'
-import { nextAppOptions } from '../../lib/AppOptions'
+  SidebarProvider,
+} from '@ui';
+import { Scroll } from 'lucide-react';
+import Link from 'next/link';
+import { RuiAppSpec } from 'rui-core';
+import { RuiApp } from '../../core/app/RuiApp';
+import { nextAppOptions } from '../../lib/AppOptions';
 
 interface Props {
-  spec: RuiAppSpec
-  children: React.ReactNode
+  spec: RuiAppSpec;
+  children: React.ReactNode;
 }
 export default function NavigationDrawer({ spec, children }: Props) {
-  const app = new RuiApp(spec, nextAppOptions)
+  const app = new RuiApp(spec, nextAppOptions);
   return (
     <SidebarProvider>
       <Sidebar>
@@ -31,13 +31,13 @@ export default function NavigationDrawer({ spec, children }: Props) {
             <SidebarGroupContent>
               <SidebarMenu>
                 {app.pages
-                  .filter((x) => x.type === RuiPageType.list)
+                  .filter((x) => x.spec.showInMenu)
                   .map((page) => (
                     <SidebarMenuItem key={page.route}>
                       <SidebarMenuButton asChild>
                         <Link href={page.route}>
                           <Scroll />
-                          <span>{page.displayName}</span>
+                          <span>{page.route}</span>
                         </Link>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
@@ -50,5 +50,5 @@ export default function NavigationDrawer({ spec, children }: Props) {
       </Sidebar>
       <main>{children}</main>
     </SidebarProvider>
-  )
+  );
 }

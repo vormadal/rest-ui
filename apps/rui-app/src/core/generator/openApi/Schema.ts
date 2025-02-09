@@ -1,9 +1,9 @@
 import { OpenAPIV3 } from 'openapi-types'
-import type { PageContext } from '../context/PageContext'
+import type { ApiBuilderContext } from '../context/ApiBuilderContext'
 import { SchemaProperty } from './SchemaProperty'
 
 export class Schema<T> {
-  constructor(protected readonly source: T | OpenAPIV3.ReferenceObject, protected readonly context: PageContext) {}
+  constructor(protected readonly source: T | OpenAPIV3.ReferenceObject, protected readonly context: ApiBuilderContext) {}
 
   /**
    * returns the name of the schema which corresponds to the last segment of the schema reference.

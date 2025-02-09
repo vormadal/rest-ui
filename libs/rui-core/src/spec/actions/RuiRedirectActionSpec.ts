@@ -1,8 +1,9 @@
-import { RuiParameterSpec } from '../RuiParameterSpec.js'
-import { RuiActionSpec } from './RuiActionSpec.js'
+import { ComponentSpec } from '../ComponentSpec.js';
+import { RuiDataMappingSpec } from '../RuiDataMappingSpec.js';
 
-export interface RuiRedirectActionSpec extends RuiActionSpec {
-  type: 'redirect'
-  urlTemplate: string
-  paramaters?: RuiParameterSpec[]
+export interface RuiRedirectActionSpec extends ComponentSpec {
+  type: 'redirect';
+  urlTemplate: string;
+  paramaters?: RuiDataMappingSpec[];
+  label?: string;
 }

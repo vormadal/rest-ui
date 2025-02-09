@@ -1,27 +1,24 @@
-import { RuiCompositeActionSpec } from 'rui-core'
-import { RuiAppOptions } from '../RuiApp'
-import { RuiAction, RuiActionResponse } from './RuiAction'
-import { RuiActionContext } from './RuiActionContext'
+import { RuiCompositeActionSpec } from 'rui-core';
+import { RuiAppOptions } from '../RuiApp';
+import { RuiContext } from '../RuiContext';
+import { RuiAction } from './RuiAction';
 
-export class RuiCompositeAction<PC, FC> implements RuiAction<PC, FC> {
-  actions: RuiAction<PC, FC>[]
+export class RuiCompositeAction<
+  ComponentType
+> extends RuiAction<ComponentType> {
+  actions: RuiAction<ComponentType>[];
 
-  _label?: string
-
-  get label() {
-    return this._label ?? ''
+  constructor(
+    private readonly spec: RuiCompositeActionSpec,
+    options: RuiAppOptions<ComponentType>
+  ) {
+    super();
+    this.actions = spec.actions.map((x) => options.getAction(x, options));
   }
 
-  constructor({ actions, label }: RuiCompositeActionSpec, options: RuiAppOptions<PC, FC>) {
-    this._label = label
-    this.actions = actions.map((x) => options.getAction(x, options))
-  }
-
-  async run<T>(context: RuiActionContext<PC, FC>): Promise<RuiActionResponse<T>> {
+  async run(context: RuiContext<ComponentType>): Promise<void> {
     for (const action of this.actions) {
-      await action.run(context)
-      //TODO inject result into context
+      await action.run(context);
     }
-    return {}
   }
 }

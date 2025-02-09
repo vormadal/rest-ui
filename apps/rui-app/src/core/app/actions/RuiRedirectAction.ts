@@ -1,36 +1,41 @@
-import { RuiRedirectActionSpec } from 'rui-core'
-import { RuiParameter } from '../RuiParameter'
-import { RuiAction, RuiActionResponse } from './RuiAction'
-import { RuiActionContext } from './RuiActionContext'
+import { RuiRedirectActionSpec } from 'rui-core';
+import { RuiAppOptions } from '../RuiApp';
+import { RuiDataMapping } from '../RuiDataMapping';
+import { RuiAction } from './RuiAction';
+import { RuiContext } from '../RuiContext';
 
-export class RuiRedirectAction<PC, FC> implements RuiAction<PC, FC> {
-  readonly parameters: RuiParameter<PC, FC>[]
-  constructor(private readonly spec: RuiRedirectActionSpec) {
-    this.parameters = spec.paramaters?.map((x) => new RuiParameter(x)) ?? []
+export class RuiRedirectAction<ComponentType>
+  implements RuiAction<ComponentType>
+{
+  readonly parameters: RuiDataMapping<ComponentType>[];
+  constructor(
+    private readonly spec: RuiRedirectActionSpec,
+    options: RuiAppOptions<ComponentType>
+  ) {
+    this.parameters =
+      spec.paramaters?.map((x) => new RuiDataMapping(x, options)) ?? [];
   }
 
-  get label(): string {
-    return this.spec.label ?? ''
+  get label() {
+    return this.spec.label;
   }
 
   get urlTemplate(): string {
-    return this.spec.urlTemplate
+    return this.spec.urlTemplate;
   }
 
-  getLink(context: RuiActionContext<PC, FC>): string {
-    let route = this.urlTemplate
-    for (const param of this.parameters) {
-      route = param.inject(route, context)
-    }
-    return route
-  }
-
-  async run<T>(context: RuiActionContext<PC, FC>): Promise<RuiActionResponse<T>> {
+  async run(context: RuiContext<ComponentType>): Promise<void> {
     if (!context.navigateTo) {
-      console.error('No navigateTo function found in context')
-      return {}
+      console.error('No navigateTo function found in context');
+      return;
     }
-    context.navigateTo(this.getLink(context))
-    return {}
+
+    context.url = this.urlTemplate;
+    context.urlTemplate = this.urlTemplate;
+    for (const param of this.parameters) {
+      param.inject(context);
+    }
+
+    context.navigateTo(context.url);
   }
 }

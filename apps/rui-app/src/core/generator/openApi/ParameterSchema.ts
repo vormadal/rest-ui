@@ -1,9 +1,9 @@
 import type { OpenAPIV3 } from 'openapi-types'
 import { Schema } from './Schema'
-import type { PageContext } from '../context/PageContext'
+import type { ApiBuilderContext } from '../context/ApiBuilderContext'
 
 export class ParameterSchema extends Schema<OpenAPIV3.ParameterObject> {
-  constructor(public readonly source: OpenAPIV3.ParameterObject | OpenAPIV3.ReferenceObject, context: PageContext) {
+  constructor(public readonly source: OpenAPIV3.ParameterObject | OpenAPIV3.ReferenceObject, context: ApiBuilderContext) {
     super(source, context)
   }
 

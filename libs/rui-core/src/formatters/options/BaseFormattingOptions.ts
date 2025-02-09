@@ -1,4 +1,4 @@
 export interface BaseFormattingOptions {
-  emptyValue?: unknown
-  skipFormattingWhenEmpty?: boolean
+  defaultValue?: string;
+  skipFormattingWhenEmpty?: boolean;
 }
