@@ -16,8 +16,11 @@ import {
   RuiPageSpec,
   RuiRedirectActionSpec,
 } from 'rui-core';
+import ActionBar from '../components/rui/ActionBar';
+import ActionBarButton from '../components/rui/ActionBarButton';
 import DefaultCheckboxField from '../components/rui/DefaultCheckboxField';
-import DefaultListPage from '../components/rui/DefaultListPage';
+import DefaultErrorComponent from '../components/rui/DefaultErrorComponent';
+import DefaultPage from '../components/rui/DefaultPage';
 import DefaultTableCell from '../components/rui/DefaultTableCell';
 import DefaultTextField from '../components/rui/DefaultTextField';
 import { ActionComponent } from '../core/app/ActionComponent';
@@ -27,18 +30,14 @@ import { PathValue } from '../core/app/PathValue';
 import { QueryValue } from '../core/app/QueryValue';
 import { ComponentSelector, RuiAppOptions } from '../core/app/RuiApp';
 import { RuiComponent } from '../core/app/RuiComponent';
+import { RuiPage } from '../core/app/RuiPage';
 import { RuiAction } from '../core/app/actions/RuiAction';
 import { RuiApiAction } from '../core/app/actions/RuiApiAction';
 import { RuiCompositeAction } from '../core/app/actions/RuiCompositeAction';
 import { RuiRedirectAction } from '../core/app/actions/RuiRedirectAction';
 import { RuiField } from '../core/app/fields/RuiField';
 import { ComponentProps } from './ComponentProps';
-import { RuiPage } from '../core/app/RuiPage';
-import { ErrorComponent } from '../core/app/ErrorComponent';
-import DefaultErrorComponent from '../components/rui/DefaultErrorComponent';
-import ActionBar from '../components/rui/ActionBar';
-import ActionBarButton from '../components/rui/ActionBarButton';
-import DefaultPage from '../components/rui/DefaultPage';
+import DefaultTable from '../components/rui/DefaultTable';
 
 type T = React.FC<ComponentProps>;
 const componentConfigurationValues: {
@@ -58,7 +57,8 @@ const defaultComponents: {
 } = {
   'field:checkbox:default': DefaultCheckboxField,
   'field:text:default': DefaultTextField,
-  'table:cell:default': DefaultTableCell,
+  'list:table-cell:default': DefaultTableCell,
+  'list:table:default': DefaultTable,
   'page:default': DefaultPage,
   'error:default': DefaultErrorComponent,
   'layout:action-bar:default': ActionBar,

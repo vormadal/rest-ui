@@ -1,12 +1,17 @@
-import { EndpointTemplate, RuiPageSpec } from 'rui-core';
-import type { ApiBuilderContext } from './context/ApiBuilderContext';
+import {
+  ArraySchemaObject,
+  EndpointTemplate,
+  RuiPageSpec,
+  SchemaObject,
+} from 'rui-core';
 
+import { GeneratorOptions } from './GeneratorOptions';
 import { HttpMethods } from './openApi/HttpMethods';
 
 export class PageBuilder {
   constructor(
     public readonly endpoint: EndpointTemplate,
-    public readonly context: ApiBuilderContext
+    public readonly options: GeneratorOptions
   ) {}
 
   get route(): string {
@@ -21,6 +26,18 @@ export class PageBuilder {
   }
 
   get spec(): RuiPageSpec {
+    const schema = this.endpoint.responseSchema as ArraySchemaObject;
+    const itemSchema =
+      this.options.schemaResolver.resolveReference<SchemaObject>(
+        schema.items ?? schema
+      );
+    const propertyNames = Object.keys(itemSchema.properties || {});
+
+    console.log('propertyNames', this.route, propertyNames, schema);
+    const columns = propertyNames.map((name) => ({
+      name,
+      displayName: name,
+    }));
     return {
       type: 'page',
       route: this.route,
@@ -34,15 +51,33 @@ export class PageBuilder {
           componentName: 'layout:action-bar:default',
           components: [
             {
+              //TODO check if this page exists?
               componentName: 'action-bar:button:default',
               type: 'action',
-              label: 'Edit',
+              label: 'Create',
               action: {
                 type: 'redirect',
-                route: this.route + '/edit',
+                route: this.route + '/create',
               },
             },
           ],
+        },
+        {
+          type: 'table',
+          componentName: 'list:table:default',
+          dataSources: [
+            {
+              name: this.endpoint.path,
+              method: 'GET',
+              routeTemplate: this.endpoint.path,
+              parameters: [], // TODO handle parameters
+            },
+          ],
+          options: {
+            dataSource: `${this.endpoint.method}:${this.endpoint.path}`,
+            dataField: this.options.listFieldName,
+            columns: columns, // TODO handle type and formatting
+          },
         },
         // action bar component, with buttons for actions
         // list component, with table and pagination
