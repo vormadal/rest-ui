@@ -58,13 +58,16 @@ export class PageBuilder {
   get dataComponent(): ComponentSpec {
     switch (this.pageType) {
       case 'list':
-        return this.tableComponent.build();
+        if (this.tableComponent.compatibleColumns.length > 0) {
+          return this.tableComponent.build();
+        }
+        break;
       default:
-        return {
-          type: 'container',
-          componentName: 'container:default',
-        };
     }
+    return {
+      type: 'container',
+      componentName: 'container:default',
+    };
   }
 
   build(): RuiPageSpec {

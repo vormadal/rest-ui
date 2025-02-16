@@ -49,7 +49,7 @@ export class OpenAPISpec {
   resolveSchemaReference<T extends OpenAPIV3.SchemaObject>(
     ref: OpenAPIV3.ReferenceObject | T | undefined
   ): T | undefined {
-    if ((ref as OpenAPIV3.ReferenceObject).$ref) {
+    if ((ref as OpenAPIV3.ReferenceObject)?.$ref) {
       const refKey = (ref as OpenAPIV3.ReferenceObject).$ref;
       return this.schemas.get(refKey) as T;
     }
@@ -59,7 +59,7 @@ export class OpenAPISpec {
   resolveRequestBodyReference(
     ref: OpenAPIV3.ReferenceObject | OpenAPIV3.RequestBodyObject | undefined
   ) {
-    if ((ref as OpenAPIV3.ReferenceObject).$ref) {
+    if ((ref as OpenAPIV3.ReferenceObject)?.$ref) {
       const refKey = (ref as OpenAPIV3.ReferenceObject).$ref;
       return this.requestBodies.get(refKey) as OpenAPIV3.RequestBodyObject;
     }
@@ -69,7 +69,7 @@ export class OpenAPISpec {
   resolveResponseReference(
     ref: OpenAPIV3.ReferenceObject | OpenAPIV3.ResponseObject | undefined
   ) {
-    if ((ref as OpenAPIV3.ReferenceObject).$ref) {
+    if ((ref as OpenAPIV3.ReferenceObject)?.$ref) {
       const refKey = (ref as OpenAPIV3.ReferenceObject).$ref;
       return this.responses.get(refKey) as OpenAPIV3.ResponseObject;
     }

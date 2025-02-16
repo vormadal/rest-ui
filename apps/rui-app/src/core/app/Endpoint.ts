@@ -41,7 +41,18 @@ export class Endpoint<ComponentType> {
       context.url,
       this.input
     );
-    this.output = await response.json();
+
+    if (!response.ok) {
+      console.error(
+        `Error fetching ${context.url}> ${response.status}:${response.statusText}`,
+        response
+      );
+      return this.output as T;
+    }
+    this.output = await response.json().catch((e) => {
+      console.error(`Error parsing response ${context.url}`, e);
+      return null;
+    });
     return this.output as T;
   }
 

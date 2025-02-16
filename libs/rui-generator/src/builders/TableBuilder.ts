@@ -91,9 +91,7 @@ export class TableBuilder {
           formatterOptions: formatter.options,
         };
       });
-    if (columns.length === 0) {
-      throw new Error('No compatible columns found');
-    }
+
     return columns;
   }
 
@@ -108,6 +106,10 @@ export class TableBuilder {
   }
 
   build(): ComponentSpec {
+    const columns = this.compatibleColumns;
+    if (columns.length === 0) {
+      throw new Error('No compatible columns found');
+    }
     return {
       type: 'table',
       componentName: this.componentName,
