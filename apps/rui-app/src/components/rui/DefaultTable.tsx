@@ -8,7 +8,6 @@ import {
   TableHeader,
   TableRow,
 } from '@ui';
-import { use, useEffect, useState } from 'react';
 import { RuiField } from '../../core/app/fields/RuiField';
 import { ComponentProps } from '../../lib/ComponentProps';
 import { extractField } from '../../lib/utils';
@@ -17,22 +16,27 @@ import { extractField } from '../../lib/utils';
 
 export default function DefaultTable({ context }: ComponentProps) {
   const config = context.config as RuiField<React.FC<ComponentProps>>;
-  const [data, setData] = useState<unknown[]>([]);
-
-  useEffect(() => {
-    const datasourceName = config.getOption<string>('dataSource');
-    const datasource = config.getDataSource(datasourceName);
-    console.log('datasource', datasource);
-    datasource?.fetch<unknown[]>(context).then((json) => setData(json));
-  }, []);
 
   const rows = extractField<unknown[]>(
-    data,
+    context.data[config.getOption<string>('dataSource')],
     config.getOption<string>('dataField')
   ).get();
   //TODO get formatter, maybe the columns should have their own components? ?
-  const columns =
-    config.getOption<{ name: string; displayName: string }[]>('columns');
+  const columns = config
+    .getOption<
+      {
+        name: string;
+        displayName: string;
+        formatter?: string;
+        formatterOptions?: unknown;
+      }[]
+    >('columns')
+    .map((x) => ({
+      ...x,
+      format:
+        context.app.getFormatter(x.formatter) ||
+        ((value): string => value?.toString() ?? ''),
+    }));
   return (
     <>
       <Table>
@@ -52,7 +56,10 @@ export default function DefaultTable({ context }: ComponentProps) {
             >
               {columns.map((field) => (
                 <TableCell key={field.name}>
-                  {extractField<string>(row, field.name).get().toString()}
+                  {field.format(
+                    extractField<string>(row, field.name).get(),
+                    field.formatterOptions
+                  )}
                   {/* <field.Component
                     field={field}
                     response={response}

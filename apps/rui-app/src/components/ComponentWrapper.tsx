@@ -32,17 +32,17 @@ export default function ComponentWrapper({
     nextAppOptions.getComponentConfiguration(componentSpec, nextAppOptions);
 
   if (!config?.Component) return <p>missing component configuration</p>;
-
   const appInstance = app || new RuiApp(appSpec, nextAppOptions);
 
   for (const source of config.dataSources) {
-    source.output = data[source.name];
+    source.output = data[source.id];
   }
 
   return (
     <config.Component
       context={{
         app: appInstance,
+        data,
         config,
         navigateTo: (path) => router.push(path),
         route: route,

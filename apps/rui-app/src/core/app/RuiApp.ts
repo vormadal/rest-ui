@@ -26,6 +26,10 @@ export class RuiApp<ComponentType> {
     return this.spec.baseUrl;
   }
 
+  getFormatter(name?: string) {
+    return this.options.getFormatter(name);
+  }
+
   getPage = (
     context: RuiContext<ComponentType>
   ): undefined | RuiPage<ComponentType> => {
@@ -52,7 +56,7 @@ export interface RuiAppOptions<ComponentType> {
   getDataValue(source: DataValueSpec): DataValue<ComponentType>;
   getComponent(selector: ComponentSelector): ComponentType;
   getFormatter(
-    type: DataType
+    type?: string
   ): undefined | ((value: unknown, options: unknown) => string);
   getComponentConfiguration(
     spec: ComponentSpec,

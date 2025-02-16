@@ -17,7 +17,9 @@ export interface RuiContext<ComponentType> {
   navigateTo: (path: string) => void;
   app: RuiApp<ComponentType>;
 
-  dataSources: { [key: string]: Endpoint<ComponentType> };
+  dataSources: Record<string, Endpoint<ComponentType>>;
+
+  data: Record<string, unknown>;
 
   /**
    * The url of the endpoint that is in scope.

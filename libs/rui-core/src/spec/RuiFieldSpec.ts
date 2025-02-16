@@ -18,6 +18,4 @@ export interface RuiFieldSpec extends ComponentSpec {
    * Options to be passed to the formatter
    */
   formatterOptions?: unknown;
-
-  options?: unknown;
 }

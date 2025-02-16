@@ -1,13 +1,7 @@
+import '@ui/styles/globals.css';
 import type { Metadata } from 'next';
 import { Roboto, Roboto_Mono } from 'next/font/google';
-import '@ui/styles/globals.css';
-import { ApiBuilder } from '../core/generator/ApiBuilder';
-import { TestDocument1 } from '../samples/test';
 import NavigationDrawer from '../components/rui/NavigationDrawer';
-import { RuiApp } from '../core/app/RuiApp';
-import { PageBuilder } from '../core/generator/PageBuilder';
-import { ApiBuilderContext } from '../core/generator/context/ApiBuilderContext';
-import { nextAppOptions } from '../lib/AppOptions';
 import defaultAppProvider from '../lib/AppProvider';
 
 const roboto = Roboto({

@@ -20,6 +20,7 @@ export default async function Home({ params }: Props) {
     );
   const context: RuiContext<React.FC<ComponentProps>> = {
     app,
+    data: {},
     navigateTo: () => {
       console.log('routing not supported serverside');
     },
@@ -31,7 +32,7 @@ export default async function Home({ params }: Props) {
 
   const data: { [key: string]: unknown } = {};
   for (const datasource of page.dataSources) {
-    data[datasource.name] = await datasource.fetch(context);
+    data[datasource.id] = await datasource.fetch({ ...context, data });
   }
   return (
     <ComponentWrapper

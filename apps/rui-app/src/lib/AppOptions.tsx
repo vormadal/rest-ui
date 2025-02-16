@@ -40,21 +40,17 @@ import { ComponentProps } from './ComponentProps';
 import DefaultTable from '../components/rui/DefaultTable';
 
 type T = React.FC<ComponentProps>;
-const componentConfigurationValues: {
-  [key: string]: (
-    spec: ComponentSpec,
-    options: RuiAppOptions<T>
-  ) => RuiComponent<T>;
-} = {
+const componentConfigurationValues: Record<
+  string,
+  (spec: ComponentSpec, options: RuiAppOptions<T>) => RuiComponent<T>
+> = {
   action: (spec, options) =>
     new ActionComponent<T>(spec as ActionComponentSpec, options),
   field: (spec, options) => new RuiField(spec as RuiFieldSpec, options),
   page: (spec, options) => new RuiPage<T>(spec as RuiPageSpec, options),
 };
 
-const defaultComponents: {
-  [key: string]: T;
-} = {
+const defaultComponents: Record<string, T> = {
   'field:checkbox:default': DefaultCheckboxField,
   'field:text:default': DefaultTextField,
   'list:table-cell:default': DefaultTableCell,
@@ -63,6 +59,16 @@ const defaultComponents: {
   'error:default': DefaultErrorComponent,
   'layout:action-bar:default': ActionBar,
   'action-bar:button:default': ActionBarButton,
+};
+
+const defaultFormatters: Record<
+  string,
+  (value: unknown, options: unknown) => string
+> = {
+  'string:date:default': defaultDateFormatter,
+  'string:date-time:default': defaultDateTimeFormatter,
+  'number:double:default': defaultNumberFormatter,
+  'boolean:boolean:default': (value: unknown) => (value ? 'Yes' : 'No'),
 };
 
 class NextAppOptions implements RuiAppOptions<T> {
@@ -95,29 +101,31 @@ class NextAppOptions implements RuiAppOptions<T> {
     return defaultComponents[`${spec.componentName}`];
   }
 
-  getFormatter<V, O>(
-    type: DataType
-  ): undefined | ((value: V, options: O) => string) {
-    switch (type) {
-      case DataType.DATE:
-        return defaultDateFormatter as (value: V, options: O) => string;
-      case DataType.DATE_TIME:
-        return defaultDateTimeFormatter as (value: V, options: O) => string;
-      case DataType.NUMBER:
-        return defaultNumberFormatter as (value: V, options: O) => string;
-      case DataType.TIME:
-        return defaultTimeFormatter as (value: V, options: O) => string;
-      case DataType.STRING:
-      case DataType.BUTTON:
-      case DataType.BOOLEAN:
-      case DataType.LOOKUP:
-      case DataType.OBJECT:
-        return undefined;
-      case DataType.ARRAY:
-        return defaultArrayFormatter as (value: V, options: O) => string;
-      default:
-        return undefined;
-    }
+  getFormatter(
+    name?: string
+  ): undefined | ((value: unknown, options: unknown) => string) {
+    if (!name) return undefined;
+    return defaultFormatters[name];
+    // switch (type) {
+    //   case DataType.DATE:
+    //     return defaultDateFormatter as (value: V, options: O) => string;
+    //   case DataType.DATE_TIME:
+    //     return defaultDateTimeFormatter as (value: V, options: O) => string;
+    //   case DataType.NUMBER:
+    //     return defaultNumberFormatter as (value: V, options: O) => string;
+    //   case DataType.TIME:
+    //     return defaultTimeFormatter as (value: V, options: O) => string;
+    //   case DataType.STRING:
+    //   case DataType.BUTTON:
+    //   case DataType.BOOLEAN:
+    //   case DataType.LOOKUP:
+    //   case DataType.OBJECT:
+    //     return undefined;
+    //   case DataType.ARRAY:
+    //     return defaultArrayFormatter as (value: V, options: O) => string;
+    //   default:
+    //     return undefined;
+    // }
   }
 
   getDataValue(source: DataValueSpec): DataValue<T> {
