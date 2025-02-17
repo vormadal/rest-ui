@@ -4,10 +4,13 @@ import {
   EndpointSpec,
   NumberFormattingOptions,
   prettifyFieldName,
+  RuiRedirectActionSpec,
 } from 'rui-core';
 import { Schema } from '../openApi/Schema';
 import { OpenAPIV3 } from 'openapi-types';
 import { OperationSchema } from '../openApi/OperationSchema';
+import { OpenAPISpec } from '../openApi/OpenAPISpec';
+import { GeneratorOptions } from '../GeneratorOptions';
 
 export class TableBuilder {
   private componentName = 'list:table:default';
@@ -16,7 +19,9 @@ export class TableBuilder {
   constructor(
     private readonly schema: Schema<
       OpenAPIV3.ArraySchemaObject | OpenAPIV3.NonArraySchemaObject
-    >
+    >,
+    private readonly apiSpec: OpenAPISpec,
+    private readonly options: GeneratorOptions
   ) {}
 
   withComponentName(componentName: string): this {
@@ -77,6 +82,43 @@ export class TableBuilder {
     return { name, options };
   }
 
+  get onClick() {
+    if (!this.dataSource?.routeTemplate) {
+      return undefined;
+    }
+    const viewOperation = this.apiSpec.operations.find(
+      (x) =>
+        x.path.startsWith(this.dataSource?.routeTemplate || '') &&
+        // check if the path has a single path parameter after the matching route
+        /{.+}\/?/.test(
+          x.path.replace(this.dataSource?.routeTemplate || '', '')
+        ) &&
+        x.method.toLowerCase() === 'get'
+    );
+    if (!viewOperation) {
+      return undefined;
+    }
+
+    const idProperty = this.tableSchema.properties.find(
+      (x) => x.propertyName === 'id'
+    );
+    if (!idProperty) {
+      return undefined;
+    }
+
+    return {
+      urlTemplate: viewOperation.path,
+      parameters: [
+        {
+          name: viewOperation.parameters[viewOperation.parameters.length - 1]
+            .name,
+          source: 'row',
+          value: idProperty.propertyName,
+        },
+      ],
+    };
+  }
+
   get compatibleColumns() {
     const compatibleTypes = ['boolean', 'number', 'string', 'integer'];
     const columns = this.tableSchema.properties
@@ -116,6 +158,7 @@ export class TableBuilder {
       options: {
         dataSource: `${this.dataSource?.method}:${this.dataSource?.name}`,
         dataField: this.dataField,
+        onClick: this.onClick,
         columns: this.compatibleColumns, // TODO handle type and formatting
       },
     };

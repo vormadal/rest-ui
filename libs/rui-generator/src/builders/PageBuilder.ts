@@ -5,10 +5,12 @@ import { HttpMethods } from '../openApi/HttpMethods';
 
 import { TableBuilder } from './TableBuilder';
 import { OperationSchema } from '../openApi/OperationSchema';
+import { OpenAPISpec } from '../openApi/OpenAPISpec';
 
 export class PageBuilder {
   constructor(
     public readonly endpoint: OperationSchema,
+    private readonly apiSpec: OpenAPISpec,
     public readonly options: GeneratorOptions
   ) {}
 
@@ -50,9 +52,44 @@ export class PageBuilder {
         'Response schema is missing. Cannot build table without response schema'
       );
     }
-    return new TableBuilder(this.endpoint.responseSchema)
+    return new TableBuilder(
+      this.endpoint.responseSchema,
+      this.apiSpec,
+      this.options
+    )
       .withDataField(this.options.listFieldName || '')
       .withDataSource(this.endpoint);
+  }
+
+  get createAction() {
+    const createOperation = this.apiSpec.operations.find(
+      (x) => x.path == this.endpoint.path && x.method.toLowerCase() === 'post'
+    );
+    if (!createOperation) {
+      return undefined;
+    }
+    return {
+      componentName: 'action-bar:button:default',
+      type: 'action',
+      label: 'Create',
+      action: {
+        type: 'redirect',
+        route: this.route + '/create',
+      },
+    };
+  }
+
+  get actionComponents(): ComponentSpec[] {
+    const components: ComponentSpec[] = [];
+    switch (this.pageType) {
+      case 'list':
+        if (this.createAction) {
+          components.push(this.createAction);
+        }
+        break;
+      default:
+    }
+    return components;
   }
 
   get dataComponent(): ComponentSpec {
@@ -82,18 +119,7 @@ export class PageBuilder {
         {
           type: 'action-bar',
           componentName: 'layout:action-bar:default',
-          components: [
-            {
-              //TODO check if this page exists?
-              componentName: 'action-bar:button:default',
-              type: 'action',
-              label: 'Create',
-              action: {
-                type: 'redirect',
-                route: this.route + '/create',
-              },
-            },
-          ],
+          components: this.actionComponents,
         },
         this.dataComponent,
         // action bar component, with buttons for actions
