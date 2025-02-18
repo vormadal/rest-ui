@@ -16,12 +16,16 @@ export class RuiField<ComponentType> extends RuiComponent<ComponentType> {
     return this.spec.componentName;
   }
 
-  get displayName(): string {
-    return this.spec.displayName;
+  get dataType(): string {
+    return this.spec.dataType;
   }
 
-  get hidden(): boolean {
-    return this.spec.hidden === true;
+  get fieldName(): string {
+    return this.spec.fieldName;
+  }
+
+  get displayName(): string {
+    return this.spec.displayName;
   }
 
   formatValue(data: unknown): string {

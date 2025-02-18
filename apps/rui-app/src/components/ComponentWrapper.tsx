@@ -31,7 +31,7 @@ export default function ComponentWrapper({
     componentConfig ||
     nextAppOptions.getComponentConfiguration(componentSpec, nextAppOptions);
 
-  if (!config?.Component) return <p>missing component configuration</p>;
+  if (!config?.Component) return <p>missing component configuration: {config.componentSpec.type}: {config.componentSpec.componentName}</p>;
   const appInstance = app || new RuiApp(appSpec, nextAppOptions);
 
   for (const source of config.dataSources) {

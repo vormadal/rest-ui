@@ -32,6 +32,7 @@ export class Endpoint<ComponentType> {
 
   async fetch<T>(context: RuiContext<ComponentType>): Promise<T> {
     context.url = this.routeTemplate;
+    context.urlTemplate = this.routeTemplate;
     for (const param of this.parameters) {
       param.inject(context);
     }

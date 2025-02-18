@@ -5,17 +5,17 @@ import { ComponentProps } from '../../lib/ComponentProps';
 import { RuiField } from '../../core/app/fields/RuiField';
 import { extractField } from '../../lib/utils';
 
-export default function DefaultTextField({ context }: ComponentProps) {
+export default function DefaultNumberField({ context }: ComponentProps) {
   const config = context.config as RuiField<React.FC<ComponentProps>>;
 
-  const value = extractField<string>(
+  const value = extractField<number>(
     context.data[config.getOption<string>('dataSource')],
     config.fieldName
   ).get();
   return (
     <RuiInput
-      type={config.dataType}
-      defaultValue={value || ''}
+      type={'number'}
+      defaultValue={`${value}` || ''}
       name={config.fieldName}
       label={config.displayName}
     />

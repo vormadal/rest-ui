@@ -2,13 +2,10 @@ import React from 'react';
 import {
   ActionComponentSpec,
   ComponentSpec,
-  DataType,
   DataValueSpec,
-  defaultArrayFormatter,
   defaultDateFormatter,
   defaultDateTimeFormatter,
   defaultNumberFormatter,
-  defaultTimeFormatter,
   RuiActionSpec,
   RuiApiActionSpec,
   RuiCompositeActionSpec,
@@ -19,8 +16,10 @@ import {
 import ActionBar from '../components/rui/ActionBar';
 import ActionBarButton from '../components/rui/ActionBarButton';
 import DefaultCheckboxField from '../components/rui/DefaultCheckboxField';
+import DefaultDateTimeField from '../components/rui/DefaultDateTimeField';
 import DefaultErrorComponent from '../components/rui/DefaultErrorComponent';
 import DefaultPage from '../components/rui/DefaultPage';
+import DefaultTable from '../components/rui/DefaultTable';
 import DefaultTableCell from '../components/rui/DefaultTableCell';
 import DefaultTextField from '../components/rui/DefaultTextField';
 import { ActionComponent } from '../core/app/ActionComponent';
@@ -37,7 +36,6 @@ import { RuiCompositeAction } from '../core/app/actions/RuiCompositeAction';
 import { RuiRedirectAction } from '../core/app/actions/RuiRedirectAction';
 import { RuiField } from '../core/app/fields/RuiField';
 import { ComponentProps } from './ComponentProps';
-import DefaultTable from '../components/rui/DefaultTable';
 
 type T = React.FC<ComponentProps>;
 const componentConfigurationValues: Record<
@@ -51,8 +49,11 @@ const componentConfigurationValues: Record<
 };
 
 const defaultComponents: Record<string, T> = {
-  'field:checkbox:default': DefaultCheckboxField,
-  'field:text:default': DefaultTextField,
+  'field:boolean:default': DefaultCheckboxField,
+  'field:integer:int32': DefaultTextField,
+  'field:number:double': DefaultTextField,
+  'field:string:default': DefaultTextField,
+  'field:string:date-time': DefaultDateTimeField,
   'list:table-cell:default': DefaultTableCell,
   'list:table:default': DefaultTable,
   'page:default': DefaultPage,

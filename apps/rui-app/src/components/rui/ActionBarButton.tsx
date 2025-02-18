@@ -8,6 +8,7 @@ import { ComponentProps } from '../../lib/ComponentProps';
 
 export default function ActionBarButton({ context }: ComponentProps) {
   const config = context.config as ActionComponent<React.FC<ComponentProps>>;
+
   return (
     <NavigationMenuItem
       key={config.spec.label}

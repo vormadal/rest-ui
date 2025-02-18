@@ -11,7 +11,7 @@ export class PathValue<ComponentType> extends DataValue<ComponentType> {
     segments: string[];
     valuePosition: number;
   } {
-    const route = context.url || '';
+    const route = context.route || '';
     const routeTemplate = context.urlTemplate || '';
     const routeParts = route.split('/').filter((x) => !!x);
     const templateParts = routeTemplate.split('/').filter((x) => !!x);
