@@ -1,9 +1,6 @@
-import { RuiApp } from '../core/app/RuiApp';
-import { OpenAPISpec, PageBuilder, GeneratorOptions } from 'rui-generator';
-import { TestDocument1 } from '../samples/test';
-import { nextAppOptions } from './AppOptions';
-import { ComponentProps } from './ComponentProps';
-import { StamdataDocument } from '../samples/stamdata';
+import { OpenAPISpec, PageBuilder, StamdataDocument, TestDocument1 } from 'rui-generator';
+import { RuiApp } from 'rui-core/app';
+import { nextAppOptions, ComponentProps } from 'rui-react-config';
 
 const testApi = new OpenAPISpec(TestDocument1);
 const testApp = new RuiApp(
@@ -29,7 +26,7 @@ const stamdataApp = new RuiApp(
 class AppProvider {
   _app: RuiApp<React.FC<ComponentProps>>;
   constructor() {
-    this._app = testApp;
+    this._app = stamdataApp;
   }
   get app() {
     return this._app;

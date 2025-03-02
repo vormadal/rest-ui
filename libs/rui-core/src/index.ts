@@ -1,7 +1,6 @@
 export type * from './spec/RuiFieldSpec';
 export type * from './spec/ComponentSpec';
 
-export type * from './spec/EndpointTemplate';
 export type * from './spec/RuiAppSpec';
 export type * from './spec/RuiPageSpec';
 export type * from './spec/ActionComponentSpec';

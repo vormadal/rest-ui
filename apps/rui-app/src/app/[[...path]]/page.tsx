@@ -1,7 +1,6 @@
-import ComponentWrapper from '../../components/ComponentWrapper';
-import { RuiContext } from '../../core/app/RuiContext';
+import { RuiContext } from 'rui-core/app';
+import { ComponentProps, ComponentWrapper } from 'rui-react-config';
 import defaultAppProvider from '../../lib/AppProvider';
-import { ComponentProps } from '../../lib/ComponentProps';
 
 interface Props {
   params: Promise<{ path: string[] }>;
