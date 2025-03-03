@@ -5,12 +5,14 @@ import React, { useEffect } from 'react';
 import { ComponentSpecValues, RuiAppSpec } from 'rui-core';
 import { Endpoint, RuiApp, RuiComponent } from 'rui-core/app';
 import { ComponentProps, nextAppOptions } from 'rui-react-config';
+import { useComponentOptions } from '../context/ComponentOptionsContext';
 
 export interface ComponentWrapperProps {
   app?: RuiApp<React.FC<ComponentProps>>;
   appSpec: RuiAppSpec;
   componentSpec: ComponentSpecValues;
   componentConfig?: RuiComponent<React.FC<ComponentProps>>;
+  priority: number;
 }
 
 export function EditorComponentWrapper({
@@ -18,6 +20,7 @@ export function EditorComponentWrapper({
   appSpec,
   componentSpec,
   componentConfig,
+  priority,
 }: ComponentWrapperProps) {
   const componentRef = React.useRef(null);
   const [dimensions, setDimensions] = React.useState({
@@ -27,6 +30,7 @@ export function EditorComponentWrapper({
     width: 10,
   });
 
+  const [, setOptions] = useComponentOptions();
   useEffect(() => {
     const el = componentRef.current as unknown as HTMLElement;
     if (!el) return;
@@ -73,6 +77,7 @@ export function EditorComponentWrapper({
         >
           {config.children.map((child, i) => (
             <EditorComponentWrapper
+              priority={priority + 1}
               key={i}
               appSpec={appSpec}
               componentSpec={child.componentSpec}
@@ -83,12 +88,13 @@ export function EditorComponentWrapper({
         </config.Component>
       </div>
       <div
-        id="highlighter"
+        onClick={() => setOptions(componentSpec)}
         style={{
           top: dimensions.y,
           left: dimensions.x,
           height: dimensions.height,
           width: dimensions.width,
+          zIndex: priority,
         }}
         className={cn('border-cyan-400 absolute hover:border-2')}
       ></div>
