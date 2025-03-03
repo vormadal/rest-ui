@@ -1,6 +1,8 @@
+'use client';
 import { RuiApp } from 'rui-core/app';
 import { OpenAPISpec, PageBuilder, TestDocument1 } from 'rui-generator';
 import { nextAppOptions } from 'rui-react-config';
+import { EditorComponentWrapper } from '../../components/EditorComponentWrapper';
 
 export default function Index() {
   const testApi = new OpenAPISpec(TestDocument1);
@@ -13,14 +15,13 @@ export default function Index() {
     },
     nextAppOptions
   );
-  /*
-   * Replace the elements below with your own.
-   *
-   * Note: The corresponding styles are in the ./index.tailwind file.
-   */
+
   return (
-    <div className="container mx-auto bg-red-400">
-      <h1 className="text-6xl font-bold text-center bg-red-50">Editor</h1>
-    </div>
+    <EditorComponentWrapper
+      appSpec={testApp.spec}
+      componentSpec={testApp.pages[0].spec}
+      app={testApp}
+      componentConfig={testApp.pages[0]}
+    />
   );
 }

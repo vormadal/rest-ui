@@ -12,6 +12,6 @@ export default function DefaultDateTimeField({ context }: ComponentProps) {
     context.data[config.getOption<string>('dataSource')],
     config.fieldName
   ).get();
-  const dateTimeValue = new Date(Date.parse(value));
+  const dateTimeValue = value ? new Date(Date.parse(value)) : undefined;
   return <DateTimePicker value={dateTimeValue} granularity="day" />;
 }

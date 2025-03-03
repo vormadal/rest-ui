@@ -120,6 +120,7 @@ export class PageBuilder {
         }
         break;
       case 'read':
+      case 'create':
         return this.viewComponent;
       default:
     }
