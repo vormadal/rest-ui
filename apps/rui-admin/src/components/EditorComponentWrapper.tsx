@@ -2,24 +2,19 @@
 
 import { cn } from '@ui/lib/utils';
 import React, { useEffect } from 'react';
-import { ComponentSpecValues, RuiAppSpec } from 'rui-core';
 import { Endpoint, RuiApp, RuiComponent } from 'rui-core/app';
-import { ComponentProps, nextAppOptions } from 'rui-react-config';
+import { ComponentProps } from 'rui-react-config';
 import { useComponentOptions } from '../context/ComponentOptionsContext';
 
 export interface ComponentWrapperProps {
-  app?: RuiApp<React.FC<ComponentProps>>;
-  appSpec: RuiAppSpec;
-  componentSpec: ComponentSpecValues;
-  componentConfig?: RuiComponent<React.FC<ComponentProps>>;
+  app: RuiApp<React.FC<ComponentProps>>;
+  component: RuiComponent<React.FC<ComponentProps>>;
   priority: number;
 }
 
 export function EditorComponentWrapper({
   app,
-  appSpec,
-  componentSpec,
-  componentConfig,
+  component,
   priority,
 }: ComponentWrapperProps) {
   const componentRef = React.useRef(null);
@@ -42,32 +37,27 @@ export function EditorComponentWrapper({
     });
   }, [componentRef]);
 
-  const config =
-    componentConfig ||
-    nextAppOptions.getComponentConfiguration(componentSpec, nextAppOptions);
-
-  if (!config?.Component)
+  if (!component?.Component)
     return (
       <p>
-        missing component configuration: {config.componentSpec.type}:{' '}
-        {config.componentSpec.componentName}
+        missing component configuration: {component.componentSpec.type}:{' '}
+        {component.componentSpec.componentName}
       </p>
     );
-  const appInstance = app || new RuiApp(appSpec, nextAppOptions);
 
   return (
     <>
       {/* use this to add another component */}
       {/* <div className='w-full border-green-400 min-h-4 bg-green-400'></div> */}
       <div ref={componentRef}>
-        <config.Component
+        <component.Component
           context={{
-            app: appInstance,
+            app,
             data: {},
-            config,
+            config: component,
             navigateTo: (path) => console.log('navigate to', path),
             route: 'editor',
-            dataSources: config.dataSources.reduce<{
+            dataSources: component.dataSources.reduce<{
               [key: string]: Endpoint<React.FC<ComponentProps>>;
             }>((map, source) => {
               map[source.name] = source;
@@ -75,20 +65,18 @@ export function EditorComponentWrapper({
             }, {}),
           }}
         >
-          {config.children.map((child, i) => (
+          {component.children.map((child, i) => (
             <EditorComponentWrapper
               priority={priority + 1}
               key={i}
-              appSpec={appSpec}
-              componentSpec={child.componentSpec}
-              app={appInstance}
-              componentConfig={child}
+              app={app}
+              component={child}
             />
           ))}
-        </config.Component>
+        </component.Component>
       </div>
       <div
-        onClick={() => setOptions(componentSpec)}
+        onClick={() => setOptions(component.componentSpec)}
         style={{
           top: dimensions.y,
           left: dimensions.x,

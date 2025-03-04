@@ -43,14 +43,15 @@ export default function DefaultTable({ context }: ComponentProps) {
   const rows = extractField<unknown[]>(
     context.data[config.getOption<string>('dataSource')],
     config.getOption<string>('dataField')
-  ).get();
+  ).get() ?? [];
   //TODO get formatter, maybe the columns should have their own components? ?
-  const columns = config.getOption<ColumnType[]>('columns').map((x) => ({
-    ...x,
-    format:
-      context.app.getFormatter(x.formatter) ||
-      ((value): string => value?.toString() ?? ''),
-  }));
+  const columns =
+    config.getOption<ColumnType[]>('columns')?.map((x) => ({
+      ...x,
+      format:
+        context.app.getFormatter(x.formatter) ||
+        ((value): string => value?.toString() ?? ''),
+    })) ?? [];
   return (
     <Table>
       <TableCaption>A list of data.</TableCaption>

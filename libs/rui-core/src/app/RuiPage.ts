@@ -1,8 +1,8 @@
-import { RuiPageSpec } from 'rui-core';
 import { RuiAppOptions } from './RuiApp';
 import { RuiContext } from './RuiContext';
 import { RuiDataMapping } from './RuiDataMapping';
 import { RuiComponent } from './RuiComponent';
+import { RuiPageSpec } from '../spec/RuiPageSpec';
 
 export class RuiPage<ComponentType> extends RuiComponent<ComponentType> {
   constructor(

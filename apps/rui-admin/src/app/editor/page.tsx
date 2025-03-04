@@ -1,8 +1,4 @@
 'use client';
-import { RuiApp } from 'rui-core/app';
-import { OpenAPISpec, PageBuilder, TestDocument1 } from 'rui-generator';
-import { nextAppOptions } from 'rui-react-config';
-import { EditorComponentWrapper } from '../../components/EditorComponentWrapper';
 import {
   Button,
   Drawer,
@@ -12,16 +8,23 @@ import {
   DrawerFooter,
   DrawerHeader,
   DrawerOverlay,
-  DrawerTitle,
-  DrawerTrigger,
+  DrawerTitle
 } from '@ui';
-import { useContext, useState } from 'react';
+import { FC, useState } from 'react';
 import { ComponentSpecValues } from 'rui-core';
+import { RuiApp, RuiPage } from 'rui-core/app';
+import { OpenAPISpec, PageBuilder, TestDocument1 } from 'rui-generator';
+import { ComponentProps, nextAppOptions } from 'rui-react-config';
+import { EditorComponentWrapper } from '../../components/EditorComponentWrapper';
+import EditorSidebar from '../../components/EditorSidebar';
 import { ComponentOptionsContext } from '../../context/ComponentOptionsContext';
+import { PageContext } from '../../context/PageContext';
 
 export default function Index() {
   const [componentOptions, setComponentOptions] =
     useState<ComponentSpecValues | null>(null);
+  const [page, setPage] = useState<RuiPage<FC<ComponentProps>> | null>(null);
+
   const testApi = new OpenAPISpec(TestDocument1);
   const testApp = new RuiApp(
     {
@@ -38,37 +41,46 @@ export default function Index() {
       <ComponentOptionsContext.Provider
         value={[componentOptions, setComponentOptions]}
       >
-        <EditorComponentWrapper
-          appSpec={testApp.spec}
-          componentSpec={testApp.pages[0].spec}
-          app={testApp}
-          componentConfig={testApp.pages[0]}
-          priority={500}
-        />
-        <Drawer
-          modal={false}
-          open={!!componentOptions}
-          onClose={() => setComponentOptions(null)}
-        >
-          <DrawerContent>
-            <DrawerHeader>
-              <DrawerTitle>Are you absolutely sure?</DrawerTitle>
+        <PageContext.Provider value={[page, setPage]}>
+          <EditorSidebar pages={testApp.pages}>
+            {page && (
+              <EditorComponentWrapper
+                app={testApp}
+                component={page}
+                priority={500}
+              />
+            )}
+            <Drawer
+              modal={false}
+              open={!!componentOptions}
+              onClose={() => setComponentOptions(null)}
+            >
+              <DrawerOverlay asChild>
+                <div className="hidden"></div>
+              </DrawerOverlay>
+              <DrawerContent>
+                <DrawerHeader>
+                  <DrawerTitle>Are you absolutely sure?</DrawerTitle>
 
-              <DrawerDescription>
-                <p>Type: {componentOptions?.type}</p>
-                <p>Component: {componentOptions?.componentName}</p>
-                {JSON.stringify(componentOptions)}
-              </DrawerDescription>
-            </DrawerHeader>
+                  <DrawerDescription>
+                    Type: {componentOptions?.type}
+                    <br />
+                    Component: {componentOptions?.componentName}
+                    <br />
+                    {JSON.stringify(componentOptions)}
+                  </DrawerDescription>
+                </DrawerHeader>
 
-            <DrawerFooter>
-              <Button>Submit</Button>
-              <DrawerClose>
-                <Button variant="outline">Cancel</Button>
-              </DrawerClose>
-            </DrawerFooter>
-          </DrawerContent>
-        </Drawer>
+                <DrawerFooter>
+                  <Button>Submit</Button>
+                  <DrawerClose>
+                    <Button variant="outline">Cancel</Button>
+                  </DrawerClose>
+                </DrawerFooter>
+              </DrawerContent>
+            </Drawer>
+          </EditorSidebar>
+        </PageContext.Provider>
       </ComponentOptionsContext.Provider>
     </>
   );
