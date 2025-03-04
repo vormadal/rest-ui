@@ -30,7 +30,7 @@ export default function Index() {
     {
       baseUrl: 'http://localhost:5093',
       pages: testApi.operations
-        .filter((x) => !['DELETE', 'PATCH', 'OPTIONS'].includes(x.method))
+        .filter((x) => !['delete', 'patch', 'options'].includes(x.method.toLowerCase()))
         .map((x) => new PageBuilder(x, testApi, {}).build()),
     },
     nextAppOptions

@@ -1,3 +1,4 @@
+import { ComponentConfiguration } from '../ComponentConfiguration';
 import { ComponentSpec } from '../spec/ComponentSpec';
 import { RuiAppSpec } from '../spec/RuiAppSpec';
 import { RuiActionSpec } from '../spec/actions/RuiActionSpec';
@@ -67,7 +68,9 @@ export interface RuiAppOptions<ComponentType> {
     statusText: string;
     json: () => Promise<unknown>;
   };
-  getComponent(selector: ComponentSelector): ComponentType;
+  getComponent(
+    selector: ComponentSelector
+  ): ComponentConfiguration<ComponentType>;
   getFormatter(
     type?: string
   ): undefined | ((value: unknown, options: unknown) => string);

@@ -5,18 +5,30 @@ import {
 } from '@ui';
 import { ComponentProps } from '../lib/ComponentProps';
 import { ActionComponent } from 'rui-core/app';
+import { ComponentConfiguration } from 'rui-core';
 
-export default function ActionBarButton({ context }: ComponentProps) {
+function ActionBarButtonComponent({ context }: ComponentProps) {
   const config = context.config as ActionComponent<React.FC<ComponentProps>>;
 
+  const label = config.getOption<string>('label');
   return (
-    <NavigationMenuItem
-      key={config.spec.label}
-      onClick={() => config.exec(context)}
-    >
+    <NavigationMenuItem onClick={() => config.exec(context)}>
       <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-        {config.spec.label}
+        {label}
       </NavigationMenuLink>
     </NavigationMenuItem>
   );
 }
+
+const ActionBarButton: ComponentConfiguration<React.FC<ComponentProps>> = {
+  name: 'action-bar:button:default',
+  component: ActionBarButtonComponent,
+  options: [
+    {
+      name: 'label',
+      type: 'string',
+    },
+  ],
+};
+
+export default ActionBarButton;

@@ -1,17 +1,17 @@
 // text field component based on input component
 import React from 'react';
-import RuiInput from './ruiInput';
-import { extractField } from 'rui-core';
+import { ComponentConfiguration } from 'rui-core';
 import { RuiField } from 'rui-core/app';
 import { ComponentProps } from '../lib/ComponentProps';
+import RuiInput from './ruiInput';
 
-export default function DefaultTextField({ context }: ComponentProps) {
+function DefaultTextFieldComponent({ context }: ComponentProps) {
   const config = context.config as RuiField<React.FC<ComponentProps>>;
-
-  const value = extractField<string>(
-    context.data[config.getOption<string>('dataSource')],
+  const value = config.getFieldValue<string>(
+    context.data,
+    'dataSource',
     config.fieldName
-  ).get();
+  );
   return (
     <RuiInput
       type={config.dataType}
@@ -21,3 +21,17 @@ export default function DefaultTextField({ context }: ComponentProps) {
     />
   );
 }
+
+const DefaultTextField: ComponentConfiguration<React.FC<ComponentProps>> = {
+  component: DefaultTextFieldComponent,
+  name: 'field:string:default',
+  alias: ['field:integer:int32', 'field:number:double'],
+  options: [
+    {
+      name: 'dataSource',
+      type: 'string',
+    },
+  ],
+};
+
+export default DefaultTextField;

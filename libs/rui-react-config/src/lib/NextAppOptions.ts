@@ -1,6 +1,7 @@
 import React from 'react';
 import {
   ActionComponentSpec,
+  ComponentConfiguration,
   ComponentSpec,
   DataValueSpec,
   defaultDateFormatter,
@@ -29,14 +30,7 @@ import {
   RuiPage,
   RuiRedirectAction,
 } from 'rui-core/app';
-import ActionBar from '../components/ActionBar';
-import ActionBarButton from '../components/ActionBarButton';
-import DefaultCheckboxField from '../components/DefaultCheckboxField';
-import DefaultDateTimeField from '../components/DefaultDateTimeField';
-import DefaultErrorComponent from '../components/DefaultErrorComponent';
-import DefaultPage from '../components/DefaultPage';
-import DefaultTable from '../components/DefaultTable';
-import DefaultTextField from '../components/DefaultTextField';
+import componentLibrary from './ComponentLibrary';
 import { ComponentProps } from './ComponentProps';
 
 type T = React.FC<ComponentProps>;
@@ -50,19 +44,6 @@ const componentConfigurationValues: Record<
   page: (spec, options) => new RuiPage<T>(spec as RuiPageSpec, options),
 };
 
-const defaultComponents: Record<string, T> = {
-  'field:boolean:default': DefaultCheckboxField,
-  'field:integer:int32': DefaultTextField,
-  'field:number:double': DefaultTextField,
-  'field:string:default': DefaultTextField,
-  'field:string:date-time': DefaultDateTimeField,
-  'list:table-cell:default': DefaultTextField, //TODO: make this a table cell
-  'list:table:default': DefaultTable,
-  'page:default': DefaultPage,
-  'error:default': DefaultErrorComponent,
-  'layout:action-bar:default': ActionBar,
-  'action-bar:button:default': ActionBarButton,
-};
 
 const defaultFormatters: Record<
   string,
@@ -76,8 +57,7 @@ const defaultFormatters: Record<
 
 class NextAppOptions implements RuiAppOptions<T> {
   componentConfigurationValues = componentConfigurationValues;
-  components = defaultComponents;
-
+  
   sendRequest(
     route: string,
     options: { method: string; body?: unknown; headers: unknown }
@@ -90,7 +70,6 @@ class NextAppOptions implements RuiAppOptions<T> {
     return fetch(route, options as unknown as any) as any; //TODO figure out a better way
   }
   reset() {
-    this.components = defaultComponents;
     this.componentConfigurationValues = componentConfigurationValues;
   }
 
@@ -111,8 +90,11 @@ class NextAppOptions implements RuiAppOptions<T> {
         return new RuiApiAction(spec as RuiApiActionSpec, options);
     }
   }
-  getComponent({ spec, name }: ComponentSelector): React.FC<ComponentProps> {
-    return defaultComponents[`${spec.componentName}`];
+  getComponent({
+    spec,
+    name,
+  }: ComponentSelector): ComponentConfiguration<React.FC<ComponentProps>> {
+    return componentLibrary.getComponent(name);
   }
 
   getFormatter(

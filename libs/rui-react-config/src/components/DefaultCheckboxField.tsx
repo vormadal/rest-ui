@@ -1,15 +1,16 @@
 import { Checkbox } from '@ui';
-import { ComponentProps } from '../lib/ComponentProps';
-import { extractField } from 'rui-core';
+import { ComponentConfiguration } from 'rui-core';
 import { RuiField } from 'rui-core/app';
+import { ComponentProps } from '../lib/ComponentProps';
 
-export default function DefaultCheckboxField({ context }: ComponentProps) {
+function DefaultCheckboxComponent({ context }: ComponentProps) {
   const config = context.config as RuiField<React.FC<ComponentProps>>;
 
-  const value = extractField<boolean>(
-    context.data[config.getOption<string>('dataSource')],
+  const value = config.getFieldValue<boolean>(
+    context.data,
+    'dataSource',
     config.fieldName
-  ).get();
+  );
 
   return (
     <div className="flex items-center space-x-2 pt-2 pb-2">
@@ -23,3 +24,16 @@ export default function DefaultCheckboxField({ context }: ComponentProps) {
     </div>
   );
 }
+
+const DefaultCheckbox: ComponentConfiguration<React.FC<ComponentProps>> = {
+  component: DefaultCheckboxComponent,
+  name: 'field:boolean:default',
+  options: [
+    {
+      name: 'dataSource',
+      type: 'string',
+    },
+  ],
+};
+
+export default DefaultCheckbox;

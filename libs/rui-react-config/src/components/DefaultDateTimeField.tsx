@@ -1,17 +1,32 @@
+'use client';
 // text field component based on input component
 import { DateTimePicker } from '@ui';
 import * as React from 'react';
-import { ComponentProps } from '../lib/ComponentProps';
+import { ComponentConfiguration } from 'rui-core';
 import { RuiField } from 'rui-core/app';
-import { extractField } from 'rui-core';
+import { ComponentProps } from '../lib/ComponentProps';
 
-export default function DefaultDateTimeField({ context }: ComponentProps) {
+function DefaultDateTimeComponent({ context }: ComponentProps) {
   const config = context.config as RuiField<React.FC<ComponentProps>>;
 
-  const value = extractField<string>(
-    context.data[config.getOption<string>('dataSource')],
+  const value = config.getFieldValue<string>(
+    context.data,
+    'dataSource',
     config.fieldName
-  ).get();
+  );
   const dateTimeValue = value ? new Date(Date.parse(value)) : undefined;
   return <DateTimePicker value={dateTimeValue} granularity="day" />;
 }
+
+const DefaultDateTimeField: ComponentConfiguration<React.FC<ComponentProps>> = {
+  component: DefaultDateTimeComponent,
+  name: 'field:string:date-time',
+  options: [
+    {
+      name: 'dataSource',
+      type: 'string',
+    },
+  ],
+};
+
+export default DefaultDateTimeField;

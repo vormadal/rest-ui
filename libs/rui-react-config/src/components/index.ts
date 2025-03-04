@@ -2,7 +2,7 @@ export * from './ActionBar';
 export * from './ActionBarButton';
 export * from './DefaultCheckboxField';
 export * from './DefaultDateTimeField';
-export * from './DefaultErrorComponent';
+export * from './FallbackComponent';
 export * from './DefaultNumberField';
 export * from './DefaultPage';
 export * from './DefaultTable';

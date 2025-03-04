@@ -10,7 +10,7 @@ import {
 } from '@ui';
 import { ComponentProps } from '../lib/ComponentProps';
 import { RuiField } from 'rui-core/app';
-import { extractField } from 'rui-core';
+import { ComponentConfiguration, extractField } from 'rui-core';
 
 // a component for viewing a string and a component to edit a string
 
@@ -26,7 +26,7 @@ type OnClickType = {
   urlTemplate: string;
   parameters: { name: string; source: 'row'; value: string }[];
 };
-export default function DefaultTable({ context }: ComponentProps) {
+function DefaultTableComponent({ context }: ComponentProps) {
   const config = context.config as RuiField<React.FC<ComponentProps>>;
   const onClick = (_row: unknown) => {
     const onClick = config.getOption<OnClickType>('onClick');
@@ -40,10 +40,12 @@ export default function DefaultTable({ context }: ComponentProps) {
     }
     context.navigateTo(route);
   };
-  const rows = extractField<unknown[]>(
-    context.data[config.getOption<string>('dataSource')],
-    config.getOption<string>('dataField')
-  ).get() ?? [];
+  const rows =
+    config.getFieldValue<unknown[]>(
+      context.data,
+      'dataSource',
+      config.getOption<string>('dataField')
+    ) ?? [];
   //TODO get formatter, maybe the columns should have their own components? ?
   const columns =
     config.getOption<ColumnType[]>('columns')?.map((x) => ({
@@ -79,3 +81,21 @@ export default function DefaultTable({ context }: ComponentProps) {
     </Table>
   );
 }
+
+const DefaultTable: ComponentConfiguration<React.FC<ComponentProps>> = {
+  component: DefaultTableComponent,
+  name: 'list:table:default',
+  options: [
+    {
+      name: 'dataSource',
+      type: 'string',
+    },
+    {
+      name: 'dataField',
+      type: 'string',
+    },
+    //TODO onClick
+  ],
+};
+
+export default DefaultTable;

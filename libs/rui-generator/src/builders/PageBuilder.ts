@@ -91,7 +91,9 @@ export class PageBuilder {
     return {
       componentName: 'action-bar:button:default',
       type: 'action',
-      label: 'Create',
+      options: {
+        label: 'Create',
+      },
       action: {
         type: 'redirect',
         urlTemplate: this.route + '/create',

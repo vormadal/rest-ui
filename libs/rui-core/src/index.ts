@@ -15,6 +15,7 @@ export type * from './formatters/options/DateTimeFormattingOptions';
 export type * from './formatters/options/NumberFormattingOptions';
 
 export * from './DataType';
+export * from './ComponentConfiguration';
 
 export * from './lib/utils';
 export * from './formatters/defaultDateFormatter';

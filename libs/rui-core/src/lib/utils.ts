@@ -54,7 +54,8 @@ export function extractField<V = unknown>(
   path?: string
 ): { get: () => V; set: (value: V) => void } {
   if (!path || !data) return { get: () => data as V, set: () => {} };
-  if (typeof data !== 'object') return { get: () => data as V, set: () => {} };
+  if (typeof data !== 'object')
+    return { get: () => undefined as V, set: () => {} };
 
   const segments = path.split('.');
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
