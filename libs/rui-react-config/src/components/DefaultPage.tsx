@@ -1,11 +1,11 @@
 'use client';
-import React from 'react';
-import { ComponentProps } from '../lib/ComponentProps';
-import { RuiPage } from 'rui-core/app';
 import { ComponentConfiguration } from 'rui-core';
+import { RuiPage } from 'rui-core/app';
+import { ComponentProps } from '../lib/ComponentProps';
+import { ReactRuiComponent } from '../lib/ReactRuiComponent';
 
 function DefaultPageComponent({ context, children }: ComponentProps) {
-  const config = context.config as RuiPage<React.FC<ComponentProps>>;
+  const config = context.config as RuiPage<ReactRuiComponent>;
 
   const title = config.getOption<string>('title');
   return (
@@ -16,7 +16,7 @@ function DefaultPageComponent({ context, children }: ComponentProps) {
   );
 }
 
-const DefaultPage: ComponentConfiguration<React.FC<ComponentProps>> = {
+const DefaultPage: ComponentConfiguration<ReactRuiComponent> = {
   name: 'page:default',
   component: DefaultPageComponent,
   options: [{ name: 'title', type: 'string' }],

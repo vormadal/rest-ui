@@ -3,14 +3,14 @@
 import { useRouter } from 'next/navigation';
 import { ComponentSpecValues, RuiAppSpec } from 'rui-core';
 import { Endpoint, RuiApp, RuiComponent } from 'rui-core/app';
-import { ComponentProps } from './ComponentProps';
 import { nextAppOptions } from './NextAppOptions';
+import { ReactRuiComponent } from './ReactRuiComponent';
 
 export interface ComponentWrapperProps {
-  app?: RuiApp<React.FC<ComponentProps>>;
+  app?: RuiApp<ReactRuiComponent>;
   appSpec: RuiAppSpec;
   componentSpec: ComponentSpecValues;
-  componentConfig?: RuiComponent<React.FC<ComponentProps>>;
+  componentConfig?: RuiComponent<ReactRuiComponent>;
   route: string;
   data: { [key: string]: unknown };
 }
@@ -51,7 +51,7 @@ export function ComponentWrapper({
         navigateTo: (path) => router.push(path),
         route: route,
         dataSources: config.dataSources.reduce<{
-          [key: string]: Endpoint<React.FC<ComponentProps>>;
+          [key: string]: Endpoint<ReactRuiComponent>;
         }>((map, source) => {
           map[source.name] = source;
           return map;

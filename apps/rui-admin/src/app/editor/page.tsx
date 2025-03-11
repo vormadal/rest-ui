@@ -1,36 +1,38 @@
 'use client';
 import {
-  Button,
   Drawer,
-  DrawerClose,
   DrawerContent,
-  DrawerDescription,
-  DrawerFooter,
   DrawerHeader,
   DrawerOverlay,
-  DrawerTitle
+  DrawerTitle,
 } from '@ui';
-import { FC, useState } from 'react';
-import { ComponentSpecValues } from 'rui-core';
+import TextField from 'libs/rui-react-config/src/components/ruiInput';
+import { useState } from 'react';
 import { RuiApp, RuiPage } from 'rui-core/app';
 import { OpenAPISpec, PageBuilder, TestDocument1 } from 'rui-generator';
-import { ComponentProps, nextAppOptions } from 'rui-react-config';
+import { nextAppOptions, ReactRuiComponent } from 'rui-react-config';
 import { EditorComponentWrapper } from '../../components/EditorComponentWrapper';
 import EditorSidebar from '../../components/EditorSidebar';
-import { ComponentOptionsContext } from '../../context/ComponentOptionsContext';
+import {
+  ComponentOptionsContext,
+  ComponentOptionsContextType,
+} from '../../context/ComponentOptionsContext';
 import { PageContext } from '../../context/PageContext';
 
 export default function Index() {
   const [componentOptions, setComponentOptions] =
-    useState<ComponentSpecValues | null>(null);
-  const [page, setPage] = useState<RuiPage<FC<ComponentProps>> | null>(null);
+    useState<ComponentOptionsContextType | null>(null);
+  const [page, setPage] = useState<RuiPage<ReactRuiComponent> | null>(null);
 
   const testApi = new OpenAPISpec(TestDocument1);
   const testApp = new RuiApp(
     {
       baseUrl: 'http://localhost:5093',
       pages: testApi.operations
-        .filter((x) => !['delete', 'patch', 'options'].includes(x.method.toLowerCase()))
+        .filter(
+          (x) =>
+            !['delete', 'patch', 'options'].includes(x.method.toLowerCase())
+        )
         .map((x) => new PageBuilder(x, testApi, {}).build()),
     },
     nextAppOptions
@@ -60,23 +62,21 @@ export default function Index() {
               </DrawerOverlay>
               <DrawerContent>
                 <DrawerHeader>
-                  <DrawerTitle>Are you absolutely sure?</DrawerTitle>
+                  <DrawerTitle>
+                    {componentOptions?.value.componentName}
+                  </DrawerTitle>
 
-                  <DrawerDescription>
-                    Type: {componentOptions?.type}
-                    <br />
-                    Component: {componentOptions?.componentName}
-                    <br />
-                    {JSON.stringify(componentOptions)}
-                  </DrawerDescription>
+                  {componentOptions?.fields.map((field) => (
+                    <TextField
+                      label={field.name}
+                      type={field.type}
+                      name={field.name}
+                      defaultValue={
+                        componentOptions.value[field.name] as string
+                      }
+                    />
+                  ))}
                 </DrawerHeader>
-
-                <DrawerFooter>
-                  <Button>Submit</Button>
-                  <DrawerClose>
-                    <Button variant="outline">Cancel</Button>
-                  </DrawerClose>
-                </DrawerFooter>
               </DrawerContent>
             </Drawer>
           </EditorSidebar>

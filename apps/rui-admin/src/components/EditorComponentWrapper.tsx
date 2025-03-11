@@ -3,12 +3,12 @@
 import { cn } from '@ui/lib/utils';
 import React, { useEffect } from 'react';
 import { Endpoint, RuiApp, RuiComponent } from 'rui-core/app';
-import { ComponentProps } from 'rui-react-config';
+import { ComponentProps, ReactRuiComponent } from 'rui-react-config';
 import { useComponentOptions } from '../context/ComponentOptionsContext';
 
 export interface ComponentWrapperProps {
-  app: RuiApp<React.FC<ComponentProps>>;
-  component: RuiComponent<React.FC<ComponentProps>>;
+  app: RuiApp<ReactRuiComponent>;
+  component: RuiComponent<ReactRuiComponent>;
   priority: number;
 }
 
@@ -58,7 +58,7 @@ export function EditorComponentWrapper({
             navigateTo: (path) => console.log('navigate to', path),
             route: 'editor',
             dataSources: component.dataSources.reduce<{
-              [key: string]: Endpoint<React.FC<ComponentProps>>;
+              [key: string]: Endpoint<ReactRuiComponent>;
             }>((map, source) => {
               map[source.name] = source;
               return map;
@@ -76,7 +76,12 @@ export function EditorComponentWrapper({
         </component.Component>
       </div>
       <div
-        onClick={() => setOptions(component.componentSpec)}
+        onClick={() =>
+          setOptions({
+            value: component.componentSpec,
+            fields: component.componentOptions,
+          })
+        }
         style={{
           top: dimensions.y,
           left: dimensions.x,

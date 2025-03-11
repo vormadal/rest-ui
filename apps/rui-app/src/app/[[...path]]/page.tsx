@@ -1,5 +1,8 @@
 import { RuiContext } from 'rui-core/app';
-import { ComponentProps, ComponentWrapper } from 'rui-react-config';
+import {
+  ComponentWrapper,
+  ReactRuiComponent
+} from 'rui-react-config';
 import defaultAppProvider from '../../lib/AppProvider';
 
 interface Props {
@@ -17,7 +20,7 @@ export default async function Home({ params }: Props) {
         ))}
       </div>
     );
-  const context: RuiContext<React.FC<ComponentProps>> = {
+  const context: RuiContext<ReactRuiComponent> = {
     app,
     data: {},
     navigateTo: () => {

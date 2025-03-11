@@ -20,13 +20,5 @@ export default async function EditorLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return (
-    <html lang="en">
-      <body
-        className={`m-2 ${roboto.className} ${robotoMono.variable} antialiased`}
-      >
-        {children}
-      </body>
-    </html>
-  );
+  return <>{children}</>;
 }

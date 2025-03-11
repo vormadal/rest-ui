@@ -11,6 +11,7 @@ import {
 import { ComponentProps } from '../lib/ComponentProps';
 import { RuiField } from 'rui-core/app';
 import { ComponentConfiguration, extractField } from 'rui-core';
+import { ReactRuiComponent } from '../lib/ReactRuiComponent';
 
 // a component for viewing a string and a component to edit a string
 
@@ -27,7 +28,7 @@ type OnClickType = {
   parameters: { name: string; source: 'row'; value: string }[];
 };
 function DefaultTableComponent({ context }: ComponentProps) {
-  const config = context.config as RuiField<React.FC<ComponentProps>>;
+  const config = context.config as RuiField<ReactRuiComponent>;
   const onClick = (_row: unknown) => {
     const onClick = config.getOption<OnClickType>('onClick');
     if (!onClick) return;
@@ -82,7 +83,7 @@ function DefaultTableComponent({ context }: ComponentProps) {
   );
 }
 
-const DefaultTable: ComponentConfiguration<React.FC<ComponentProps>> = {
+const DefaultTable: ComponentConfiguration<ReactRuiComponent> = {
   component: DefaultTableComponent,
   name: 'list:table:default',
   options: [

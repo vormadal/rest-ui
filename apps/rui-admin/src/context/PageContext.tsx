@@ -1,9 +1,9 @@
-import { createContext, FC, useContext } from 'react';
+import { createContext, useContext } from 'react';
 
 import { RuiPage } from 'rui-core/app';
-import { ComponentProps } from 'rui-react-config';
+import { ReactRuiComponent } from 'rui-react-config';
 
-type PageContextType = RuiPage<FC<ComponentProps>>;
+type PageContextType = RuiPage<ReactRuiComponent>;
 export const PageContext = createContext<
   [PageContextType | null, (value: PageContextType | null) => void]
 >([null, () => null]);

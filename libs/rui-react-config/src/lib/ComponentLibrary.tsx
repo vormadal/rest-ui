@@ -1,19 +1,17 @@
-import React from 'react';
 import { ComponentConfiguration } from 'rui-core';
-import { ComponentProps } from './ComponentProps';
-import DefaultPage from '../components/DefaultPage';
-import FallbackComponent from '../components/FallbackComponent';
 import ActionBar from '../components/ActionBar';
 import ActionBarButton from '../components/ActionBarButton';
-import DefaultTextField from '../components/DefaultTextField';
 import DefaultCheckbox from '../components/DefaultCheckboxField';
 import DefaultDateTimeField from '../components/DefaultDateTimeField';
+import DefaultPage from '../components/DefaultPage';
 import DefaultTable from '../components/DefaultTable';
+import DefaultTextField from '../components/DefaultTextField';
+import FallbackComponent from '../components/FallbackComponent';
+import { ReactRuiComponent } from './ReactRuiComponent';
 
 class ComponentLibrary {
-  private readonly _components: ComponentConfiguration<
-    React.FC<ComponentProps>
-  >[] = [];
+  private readonly _components: ComponentConfiguration<ReactRuiComponent>[] =
+    [];
 
   constructor() {
     this._components = [

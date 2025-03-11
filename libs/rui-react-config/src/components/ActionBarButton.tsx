@@ -3,12 +3,13 @@ import {
   NavigationMenuLink,
   navigationMenuTriggerStyle,
 } from '@ui';
-import { ComponentProps } from '../lib/ComponentProps';
-import { ActionComponent } from 'rui-core/app';
 import { ComponentConfiguration } from 'rui-core';
+import { ActionComponent } from 'rui-core/app';
+import { ComponentProps } from '../lib/ComponentProps';
+import { ReactRuiComponent } from '../lib/ReactRuiComponent';
 
 function ActionBarButtonComponent({ context }: ComponentProps) {
-  const config = context.config as ActionComponent<React.FC<ComponentProps>>;
+  const config = context.config as ActionComponent<ReactRuiComponent>;
 
   const label = config.getOption<string>('label');
   return (
@@ -20,7 +21,7 @@ function ActionBarButtonComponent({ context }: ComponentProps) {
   );
 }
 
-const ActionBarButton: ComponentConfiguration<React.FC<ComponentProps>> = {
+const ActionBarButton: ComponentConfiguration<ReactRuiComponent> = {
   name: 'action-bar:button:default',
   component: ActionBarButtonComponent,
   options: [

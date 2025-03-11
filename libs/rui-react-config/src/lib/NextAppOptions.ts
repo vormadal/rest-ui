@@ -1,4 +1,3 @@
-import React from 'react';
 import {
   ActionComponentSpec,
   ComponentConfiguration,
@@ -31,9 +30,9 @@ import {
   RuiRedirectAction,
 } from 'rui-core/app';
 import componentLibrary from './ComponentLibrary';
-import { ComponentProps } from './ComponentProps';
+import { ReactRuiComponent } from './ReactRuiComponent';
 
-type T = React.FC<ComponentProps>;
+type T = ReactRuiComponent;
 const componentConfigurationValues: Record<
   string,
   (spec: ComponentSpec, options: RuiAppOptions<T>) => RuiComponent<T>
@@ -43,7 +42,6 @@ const componentConfigurationValues: Record<
   field: (spec, options) => new RuiField(spec as RuiFieldSpec, options),
   page: (spec, options) => new RuiPage<T>(spec as RuiPageSpec, options),
 };
-
 
 const defaultFormatters: Record<
   string,
@@ -57,7 +55,7 @@ const defaultFormatters: Record<
 
 class NextAppOptions implements RuiAppOptions<T> {
   componentConfigurationValues = componentConfigurationValues;
-  
+
   sendRequest(
     route: string,
     options: { method: string; body?: unknown; headers: unknown }
@@ -93,7 +91,7 @@ class NextAppOptions implements RuiAppOptions<T> {
   getComponent({
     spec,
     name,
-  }: ComponentSelector): ComponentConfiguration<React.FC<ComponentProps>> {
+  }: ComponentSelector): ComponentConfiguration<ReactRuiComponent> {
     return componentLibrary.getComponent(name);
   }
 
