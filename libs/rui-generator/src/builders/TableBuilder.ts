@@ -1,10 +1,11 @@
 import { OpenAPIV3 } from 'openapi-types';
+import { v7 as uuid } from 'uuid';
 import {
   ComponentSpec,
   DateTimeFormattingOptions,
   EndpointSpec,
   NumberFormattingOptions,
-  prettifyFieldName
+  prettifyFieldName,
 } from 'rui-core';
 import { GeneratorOptions } from '../GeneratorOptions';
 import { OpenAPISpec } from '../openApi/OpenAPISpec';
@@ -152,6 +153,7 @@ export class TableBuilder {
       throw new Error('No compatible columns found');
     }
     return {
+      id: uuid(),
       type: 'table',
       componentName: this.componentName,
       options: {

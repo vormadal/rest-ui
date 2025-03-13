@@ -34,6 +34,10 @@ export class RuiComponent<ComponentType> {
       ) ?? [];
   }
 
+  get id() {
+    return this.componentSpec.id;
+  }
+
   getFieldValue<T>(
     dataAccess: Record<string, unknown>,
     sourceOptionName: string,

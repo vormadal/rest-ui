@@ -95,6 +95,10 @@ const DefaultTable: ComponentConfiguration<ReactRuiComponent> = {
       name: 'dataField',
       type: 'string',
     },
+    {
+      name: 'columns',
+      type: 'string', // TODO column type?
+    },
     //TODO onClick
   ],
 };

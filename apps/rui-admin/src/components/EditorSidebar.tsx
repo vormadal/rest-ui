@@ -1,14 +1,14 @@
 import {
-    Sidebar,
-    SidebarContent,
-    SidebarFooter,
-    SidebarGroup,
-    SidebarGroupContent,
-    SidebarHeader,
-    SidebarMenu,
-    SidebarMenuButton,
-    SidebarMenuItem,
-    SidebarProvider,
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarProvider,
 } from '@ui';
 import { Scroll } from 'lucide-react';
 import { FC } from 'react';
@@ -31,7 +31,7 @@ export default function EditorSidebar({ children, pages }: Props) {
             <SidebarGroupContent>
               <SidebarMenu>
                 {pages.map((page) => (
-                  <SidebarMenuItem key={page.route}>
+                  <SidebarMenuItem key={page.id}>
                     <SidebarMenuButton onClick={() => setPage(page)}>
                       <Scroll />
                       <span>{page.route}</span>

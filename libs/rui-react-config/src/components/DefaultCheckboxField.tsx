@@ -30,6 +30,8 @@ const DefaultCheckbox: ComponentConfiguration<ReactRuiComponent> = {
   component: DefaultCheckboxComponent,
   name: 'field:boolean:default',
   options: [
+    { name: 'name', type: 'string' },
+    { name: 'displayName', type: 'string' },
     {
       name: 'dataSource',
       type: 'string',

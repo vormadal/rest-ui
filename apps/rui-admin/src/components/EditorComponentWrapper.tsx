@@ -3,7 +3,7 @@
 import { cn } from '@ui/lib/utils';
 import React, { useEffect } from 'react';
 import { Endpoint, RuiApp, RuiComponent } from 'rui-core/app';
-import { ComponentProps, ReactRuiComponent } from 'rui-react-config';
+import { ReactRuiComponent } from 'rui-react-config';
 import { useComponentOptions } from '../context/ComponentOptionsContext';
 
 export interface ComponentWrapperProps {
@@ -65,10 +65,10 @@ export function EditorComponentWrapper({
             }, {}),
           }}
         >
-          {component.children.map((child, i) => (
+          {component.children.map((child) => (
             <EditorComponentWrapper
               priority={priority + 1}
-              key={i}
+              key={child.id}
               app={app}
               component={child}
             />

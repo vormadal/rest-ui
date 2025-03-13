@@ -2,6 +2,7 @@
 import {
   Drawer,
   DrawerContent,
+  DrawerDescription,
   DrawerHeader,
   DrawerOverlay,
   DrawerTitle,
@@ -65,9 +66,12 @@ export default function Index() {
                   <DrawerTitle>
                     {componentOptions?.value.componentName}
                   </DrawerTitle>
-                  <p>{JSON.stringify(componentOptions?.value)}</p>
+                  <DrawerDescription>
+                    {JSON.stringify(componentOptions?.value)}
+                  </DrawerDescription>
                   {componentOptions?.fields.map((field) => (
                     <TextField
+                      key={field.name}
                       label={field.name}
                       type={field.type}
                       name={field.name}

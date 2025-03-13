@@ -19,6 +19,9 @@ function DefaultPageComponent({ context, children }: ComponentProps) {
 const DefaultPage: ComponentConfiguration<ReactRuiComponent> = {
   name: 'page:default',
   component: DefaultPageComponent,
-  options: [{ name: 'title', type: 'string' }],
+  options: [
+    { name: 'title', type: 'string' },
+    { name: 'route', type: 'string' },
+  ],
 };
 export default DefaultPage;

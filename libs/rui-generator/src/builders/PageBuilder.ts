@@ -1,5 +1,5 @@
 import { ComponentSpec, prettifyFieldName, RuiPageSpec } from 'rui-core';
-
+import { v7 as uuid } from 'uuid';
 import { GeneratorOptions } from '../GeneratorOptions';
 import { HttpMethods } from '../openApi/HttpMethods';
 
@@ -67,6 +67,7 @@ export class PageBuilder {
         .filter((x) => !['array', 'object'].includes(x.type || ''))
         .map((x) => {
           return {
+            id: uuid(),
             type: 'field',
             componentName: `field:${x.type}:${x.format || 'default'}`,
             options: {
@@ -89,6 +90,7 @@ export class PageBuilder {
       return undefined;
     }
     return {
+      id: uuid(),
       componentName: 'action-bar:button:default',
       type: 'action',
       options: {
@@ -128,6 +130,7 @@ export class PageBuilder {
     }
     return [
       {
+        id: uuid(),
         type: 'container',
         componentName: 'container:default',
         options: {},
@@ -137,6 +140,7 @@ export class PageBuilder {
 
   build(): RuiPageSpec {
     return {
+      id: uuid(),
       type: 'page',
       options: {
         route: this.route,
@@ -147,6 +151,7 @@ export class PageBuilder {
       componentName: 'page:default',
       components: [
         {
+          id: uuid(),
           type: 'action-bar',
           componentName: 'layout:action-bar:default',
           components: this.actionComponents,

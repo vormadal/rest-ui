@@ -58,9 +58,9 @@ export function ComponentWrapper({
         }, {}),
       }}
     >
-      {config.children.map((child, i) => (
+      {config.children.map((child) => (
         <ComponentWrapper
-          key={i}
+          key={child.id}
           appSpec={appSpec}
           route={route}
           componentSpec={child.componentSpec}

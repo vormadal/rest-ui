@@ -1,8 +1,5 @@
 import { RuiContext } from 'rui-core/app';
-import {
-  ComponentWrapper,
-  ReactRuiComponent
-} from 'rui-react-config';
+import { ComponentWrapper, ReactRuiComponent } from 'rui-react-config';
 import defaultAppProvider from '../../lib/AppProvider';
 
 interface Props {
@@ -16,7 +13,7 @@ export default async function Home({ params }: Props) {
     return (
       <div>
         {app.pages.map((page) => (
-          <div key={page.route}>{page.route}</div>
+          <div key={page.id}>{page.route}</div>
         ))}
       </div>
     );

@@ -22,6 +22,8 @@ const DefaultDateTimeField: ComponentConfiguration<ReactRuiComponent> = {
   component: DefaultDateTimeComponent,
   name: 'field:string:date-time',
   options: [
+    { name: 'name', type: 'string' },
+    { name: 'displayName', type: 'string' },
     {
       name: 'dataSource',
       type: 'string',
