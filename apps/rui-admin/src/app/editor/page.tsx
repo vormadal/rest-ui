@@ -65,14 +65,14 @@ export default function Index() {
                   <DrawerTitle>
                     {componentOptions?.value.componentName}
                   </DrawerTitle>
-
+                  <p>{JSON.stringify(componentOptions?.value)}</p>
                   {componentOptions?.fields.map((field) => (
                     <TextField
                       label={field.name}
                       type={field.type}
                       name={field.name}
                       defaultValue={
-                        componentOptions.value[field.name] as string
+                        componentOptions.value.options[field.name] as string
                       }
                     />
                   ))}

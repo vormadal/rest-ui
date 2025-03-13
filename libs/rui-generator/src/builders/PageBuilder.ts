@@ -69,11 +69,11 @@ export class PageBuilder {
           return {
             type: 'field',
             componentName: `field:${x.type}:${x.format || 'default'}`,
-            displayName: prettifyFieldName(x.propertyName),
-            fieldName: x.propertyName,
-            dataType: x.type,
-            formatter: `${x.type}:${x.format || x.type}:default`,
             options: {
+              dataType: x.type,
+              name: x.propertyName,
+              displayName: prettifyFieldName(x.propertyName),
+              formatter: `${x.type}:${x.format || x.type}:default`,
               dataSource: `${this.endpoint.method}:${this.endpoint.path}`,
             },
           };
@@ -130,6 +130,7 @@ export class PageBuilder {
       {
         type: 'container',
         componentName: 'container:default',
+        options: {},
       },
     ];
   }
@@ -137,16 +138,19 @@ export class PageBuilder {
   build(): RuiPageSpec {
     return {
       type: 'page',
-      route: this.route,
-      showInMenu:
-        this.endpoint.method === HttpMethods.GET &&
-        (this.endpoint.parameters?.length || 0) === 0,
+      options: {
+        route: this.route,
+        showInMenu:
+          this.endpoint.method === HttpMethods.GET &&
+          (this.endpoint.parameters?.length || 0) === 0,
+      },
       componentName: 'page:default',
       components: [
         {
           type: 'action-bar',
           componentName: 'layout:action-bar:default',
           components: this.actionComponents,
+          options: {},
         },
         ...this.dataComponent,
         // action bar component, with buttons for actions

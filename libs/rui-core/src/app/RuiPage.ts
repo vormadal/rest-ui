@@ -13,9 +13,12 @@ export class RuiPage<ComponentType> extends RuiComponent<ComponentType> {
   }
 
   get route(): string {
-    return this.spec.route;
+    return this.getOption<string>('route') ?? '';
   }
 
+  get showInMenu(): boolean {
+    return this.getOption<boolean>('showInMenu') ?? false;
+  }
   get parameters() {
     const names = this.route
       .split('/')

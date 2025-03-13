@@ -16,15 +16,15 @@ export class RuiField<ComponentType> extends RuiComponent<ComponentType> {
   }
 
   get dataType(): string {
-    return this.spec.dataType;
+    return this.getOption<string>('dataType') ?? '';
   }
 
   get fieldName(): string {
-    return this.spec.fieldName;
+    return this.getOption<string>('name') ?? '';
   }
 
   get displayName(): string {
-    return this.spec.displayName;
+    return this.getOption<string>('displayName') ?? '';
   }
 
   formatValue(data: unknown): string {

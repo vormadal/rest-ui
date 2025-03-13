@@ -1,7 +1,6 @@
 // text field component based on input component
-import * as React from 'react';
 import { Input, Label } from '@ui';
-import { cn } from '@ui/lib/utils';
+import * as React from 'react';
 
 export interface RuiInputProps {
   name: string;
@@ -21,7 +20,7 @@ const TextField: React.FC<RuiInputProps> = ({
   onChange,
 }) => {
   return (
-    <div className={cn('w-full pb-2')}>
+    <div className={'w-full pb-2'}>
       <Label htmlFor={name}>{label}</Label>
       <Input
         id={name}

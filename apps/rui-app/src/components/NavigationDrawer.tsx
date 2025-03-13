@@ -31,7 +31,7 @@ export default function NavigationDrawer({ spec, children }: Props) {
             <SidebarGroupContent>
               <SidebarMenu>
                 {app.pages
-                  .filter((x) => x.spec.showInMenu)
+                  .filter((x) => x.showInMenu)
                   .map((page) => (
                     <SidebarMenuItem key={page.route}>
                       <SidebarMenuButton asChild>

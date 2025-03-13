@@ -1,16 +1,15 @@
+import { OpenAPIV3 } from 'openapi-types';
 import {
   ComponentSpec,
   DateTimeFormattingOptions,
   EndpointSpec,
   NumberFormattingOptions,
-  prettifyFieldName,
-  RuiRedirectActionSpec,
+  prettifyFieldName
 } from 'rui-core';
-import { Schema } from '../openApi/Schema';
-import { OpenAPIV3 } from 'openapi-types';
-import { OperationSchema } from '../openApi/OperationSchema';
-import { OpenAPISpec } from '../openApi/OpenAPISpec';
 import { GeneratorOptions } from '../GeneratorOptions';
+import { OpenAPISpec } from '../openApi/OpenAPISpec';
+import { OperationSchema } from '../openApi/OperationSchema';
+import { Schema } from '../openApi/Schema';
 
 export class TableBuilder {
   private componentName = 'list:table:default';

@@ -24,10 +24,7 @@ export interface ComponentSpec {
    */
   components?: ComponentSpecValues[];
 
-  options?: { [key: string]: unknown };
-  
-  // any additional fields
-  [key: string]: unknown;
+  options: { [key: string]: unknown };
 }
 
 export type ComponentSpecValues =
