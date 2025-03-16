@@ -69,7 +69,7 @@ export class PageBuilder {
           return {
             id: uuid(),
             type: 'field',
-            componentName: `field:${x.type}:${x.format || 'default'}`,
+            name: `field:${x.type}:${x.format || 'default'}`,
             options: {
               dataType: x.type,
               name: x.propertyName,
@@ -82,7 +82,7 @@ export class PageBuilder {
     );
   }
 
-  get createAction() {
+  get createAction(): ComponentSpec | undefined {
     const createOperation = this.apiSpec.operations.find(
       (x) => x.path == this.endpoint.path && x.method.toLowerCase() === 'post'
     );
@@ -91,14 +91,14 @@ export class PageBuilder {
     }
     return {
       id: uuid(),
-      componentName: 'action-bar:button:default',
+      name: 'action-bar:button:default',
       type: 'action',
       options: {
         label: 'Create',
-      },
-      action: {
-        type: 'redirect',
-        urlTemplate: this.route + '/create',
+        action: {
+          type: 'redirect',
+          urlTemplate: this.route + '/create',
+        },
       },
     };
   }
@@ -132,7 +132,7 @@ export class PageBuilder {
       {
         id: uuid(),
         type: 'container',
-        componentName: 'container:default',
+        name: 'container:default',
         options: {},
       },
     ];
@@ -141,19 +141,22 @@ export class PageBuilder {
   build(): RuiPageSpec {
     return {
       id: uuid(),
-      type: 'page',
+      route: {
+        template: this.route,
+        parameters: [],
+      },
+      name: this.route,
       options: {
         route: this.route,
         showInMenu:
           this.endpoint.method === HttpMethods.GET &&
           (this.endpoint.parameters?.length || 0) === 0,
       },
-      componentName: 'page:default',
       components: [
         {
           id: uuid(),
           type: 'action-bar',
-          componentName: 'layout:action-bar:default',
+          name: 'layout:action-bar:default',
           components: this.actionComponents,
           options: {},
         },
@@ -162,22 +165,24 @@ export class PageBuilder {
         // list component, with table and pagination
         // form component, with fields for input (create/edit)
       ],
-      dataScope: '$',
+
       dataSources: [
         {
           name: this.endpoint.path,
           method: this.endpoint.method,
-          routeTemplate: this.endpoint.path,
-          parameters: this.endpoint.parameters.map((x) => ({
-            source: {
-              type: 'path',
-              name: x.name,
-            },
-            target: {
-              type: 'path',
-              name: x.name,
-            },
-          })),
+          route: {
+            template: this.endpoint.path,
+            parameters: this.endpoint.parameters.map((x) => ({
+              source: {
+                type: 'path',
+                name: x.name,
+              },
+              target: {
+                type: 'path',
+                name: x.name,
+              },
+            })),
+          },
         },
       ],
     };

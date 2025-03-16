@@ -1,0 +1,20 @@
+{
+  "name": "rui-database",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/rui-database/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/rui-database",
+        "tsConfig": "libs/rui-database/tsconfig.lib.json",
+        "packageJson": "libs/rui-database/package.json",
+        "main": "libs/rui-database/src/index.ts",
+        "assets": ["libs/rui-database/*.md"]
+      }
+    }
+  }
+}

@@ -16,7 +16,6 @@ export interface RuiContext<ComponentType> {
   navigateTo: (path: string) => void;
   app: RuiApp<ComponentType>;
 
-  dataSources: Record<string, Endpoint<ComponentType>>;
 
   data: Record<string, unknown>;
 

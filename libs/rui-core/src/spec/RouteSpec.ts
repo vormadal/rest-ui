@@ -2,13 +2,9 @@ import { RuiDataMappingSpec } from './RuiDataMappingSpec';
 
 export interface RouteSpec {
   /**
-   * The route template
+   * The route template e.g. /users/{userId}
    */
-  route: string;
+  template: string;
 
   parameters: RuiDataMappingSpec[];
-  /**
-   * The display name of the route
-   */
-  displayName?: string;
 }

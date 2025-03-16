@@ -33,11 +33,11 @@ export default function NavigationDrawer({ spec, children }: Props) {
                 {app.pages
                   .filter((x) => x.showInMenu)
                   .map((page) => (
-                    <SidebarMenuItem key={page.route}>
+                    <SidebarMenuItem key={page.id}>
                       <SidebarMenuButton asChild>
-                        <Link href={page.route}>
+                        <Link href={page.route.template}>
                           <Scroll />
-                          <span>{page.route}</span>
+                          <span>{page.route.template}</span>
                         </Link>
                       </SidebarMenuButton>
                     </SidebarMenuItem>

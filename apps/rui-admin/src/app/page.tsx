@@ -1,15 +1,15 @@
+import { getAppList } from 'rui-database';
 import GettingStartedForm from '../components/gettingStartedForm';
+import ProjectView from '../components/ProjectView';
 
-export default function Index() {
-  /*
-   * Replace the elements below with your own.
-   *
-   * Note: The corresponding styles are in the ./index.tailwind file.
-   */
+export default async function Index() {
+  const apps = await getAppList();
   return (
     <div className="container mx-auto bg-red-400">
-      <h1 className="text-6xl font-bold text-center bg-red-50">Welcome to RUI Admin!</h1>
-
+      <h1 className="text-6xl font-bold text-center bg-red-50">
+        Welcome to RUI Admin!
+      </h1>
+      <ProjectView apps={apps} />
       <GettingStartedForm />
     </div>
   );

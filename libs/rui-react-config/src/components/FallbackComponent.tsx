@@ -6,8 +6,7 @@ function Fallback({ context }: ComponentProps) {
   return (
     <div>
       <h1>
-        The component is not supported{' '}
-        "{context.config?.componentSpec.componentName}"
+        The component is not supported "{context.config?.componentSpec.name}"
       </h1>
     </div>
   );

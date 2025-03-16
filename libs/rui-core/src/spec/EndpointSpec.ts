@@ -1,8 +1,7 @@
-import { RuiDataMappingSpec as RuiDataMappingSpec } from './RuiDataMappingSpec';
+import { RouteSpec } from './RouteSpec';
 
 export interface EndpointSpec {
   name: string;
-  routeTemplate: string;
+  route: RouteSpec;
   method: string; // 'GET' | 'POST' | 'PUT' | 'DELETE';
-  parameters?: RuiDataMappingSpec[];
 }

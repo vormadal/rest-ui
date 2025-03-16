@@ -2,7 +2,7 @@
 
 import { cn } from '@ui/lib/utils';
 import React, { useEffect } from 'react';
-import { Endpoint, RuiApp, RuiComponent } from 'rui-core/app';
+import { RuiApp, RuiComponent } from 'rui-core/app';
 import { ReactRuiComponent } from 'rui-react-config';
 import { useComponentOptions } from '../context/ComponentOptionsContext';
 
@@ -41,7 +41,7 @@ export function EditorComponentWrapper({
     return (
       <p>
         missing component configuration: {component.componentSpec.type}:{' '}
-        {component.componentSpec.componentName}
+        {component.componentSpec.name}
       </p>
     );
 
@@ -57,12 +57,6 @@ export function EditorComponentWrapper({
             config: component,
             navigateTo: (path) => console.log('navigate to', path),
             route: 'editor',
-            dataSources: component.dataSources.reduce<{
-              [key: string]: Endpoint<ReactRuiComponent>;
-            }>((map, source) => {
-              map[source.name] = source;
-              return map;
-            }, {}),
           }}
         >
           {component.children.map((child) => (

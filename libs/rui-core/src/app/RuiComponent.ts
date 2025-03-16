@@ -12,8 +12,6 @@ import { extractField } from '../lib/utils';
 export class RuiComponent<ComponentType> {
   readonly Component: ComponentType;
   readonly componentOptions: ComponentOption[] = [];
-  readonly dataSources: Endpoint<ComponentType>[];
-
   readonly children: RuiComponent<ComponentType>[];
 
   constructor(
@@ -21,13 +19,11 @@ export class RuiComponent<ComponentType> {
     options: RuiAppOptions<ComponentType>
   ) {
     const componentConfiguration = options.getComponent({
-      name: componentSpec.componentName || 'default',
+      name: componentSpec.name || 'default',
       spec: componentSpec,
     });
     this.Component = componentConfiguration.component;
     this.componentOptions = componentConfiguration.options;
-    this.dataSources =
-      componentSpec.dataSources?.map((x) => new Endpoint(x, options)) ?? [];
     this.children =
       componentSpec.components?.map((x) =>
         options.getComponentConfiguration(x, options)
@@ -56,15 +52,9 @@ export class RuiComponent<ComponentType> {
   getOption<T>(name: string): T | undefined {
     if (!this.componentOptions.find((x) => x.name === name)) {
       console.warn(
-        `Option ${name} not found in component ${this.componentSpec.componentName}`
+        `Option ${name} not found in component ${this.componentSpec.name}`
       );
     }
     return this.componentSpec.options?.[name] as T;
-  }
-
-  getDataSource(name: string): Endpoint<ComponentType> | undefined {
-    return this.dataSources.find(
-      (x) => x.id.toLowerCase() === name.toLowerCase()
-    );
   }
 }

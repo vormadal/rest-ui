@@ -2,8 +2,6 @@
 
 import {
   Button,
-  Input,
-  Spinner,
   Form,
   FormControl,
   FormDescription,
@@ -11,14 +9,12 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
+  Input
 } from '@ui';
 // import { zodResolver } from '@hookform/resolvers/zod';
 // import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 
-import { toast } from '@ui/hooks/use-toast';
-import { useState } from 'react';
-import { isDebuggerStatement } from 'typescript';
 
 export default function GettingStartedForm() {
   const urlForm = useForm({
@@ -45,9 +41,14 @@ export default function GettingStartedForm() {
         <Form {...urlForm}>
           <form
             onSubmit={urlForm.handleSubmit(async (data, e) => {
+              e?.preventDefault()
               if (!e?.target) return;
               const content = new FormData(e.target);
               const file = content.get('url');
+              fetch('/api', {
+                method: 'POST',
+                body: JSON.stringify({ url: file }),
+              });
               console.log('url data', data, file);
             })}
           >

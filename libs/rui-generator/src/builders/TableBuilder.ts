@@ -33,8 +33,10 @@ export class TableBuilder {
     this.dataSource = {
       name: endpoint.path,
       method: endpoint.method,
-      routeTemplate: endpoint.path,
-      parameters: [], // TODO handle from this.endpoint.parameters
+      route: {
+        template: endpoint.path,
+        parameters: [], // TODO handle from this.endpoint.parameters
+      },
     };
     return this;
   }
@@ -83,15 +85,15 @@ export class TableBuilder {
   }
 
   get onClick() {
-    if (!this.dataSource?.routeTemplate) {
+    if (!this.dataSource?.route) {
       return undefined;
     }
     const viewOperation = this.apiSpec.operations.find(
       (x) =>
-        x.path.startsWith(this.dataSource?.routeTemplate || '') &&
+        x.path.startsWith(this.dataSource?.route.template || '') &&
         // check if the path has a single path parameter after the matching route
         /{.+}\/?/.test(
-          x.path.replace(this.dataSource?.routeTemplate || '', '')
+          x.path.replace(this.dataSource?.route.template || '', '')
         ) &&
         x.method.toLowerCase() === 'get'
     );
@@ -155,7 +157,7 @@ export class TableBuilder {
     return {
       id: uuid(),
       type: 'table',
-      componentName: this.componentName,
+      name: this.componentName,
       options: {
         dataSource: `${this.dataSource?.method}:${this.dataSource?.name}`,
         dataField: this.dataField,

@@ -10,7 +10,10 @@ export class RuiApiAction<ComponentType> implements RuiAction<ComponentType> {
   ) {}
 
   async run(context: RuiContext<ComponentType>): Promise<void> {
-    const dataSource = context.dataSources[this.spec.dataSource];
+    const dataSource = context.app.getDataSource(this.spec.dataSource, context);
+    if (!dataSource) {
+      throw new Error(`Data source ${this.spec.dataSource} not found`);
+    }
     await dataSource.fetch(context);
   }
 }

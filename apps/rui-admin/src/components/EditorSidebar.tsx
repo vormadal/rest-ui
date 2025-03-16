@@ -34,7 +34,7 @@ export default function EditorSidebar({ children, pages }: Props) {
                   <SidebarMenuItem key={page.id}>
                     <SidebarMenuButton onClick={() => setPage(page)}>
                       <Scroll />
-                      <span>{page.route}</span>
+                      <span>{page.route.template}</span>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 ))}

@@ -1,10 +1,17 @@
 import { RuiApp } from 'rui-core/app';
-import { OpenAPISpec, PageBuilder, StamdataDocument, TestDocument1 } from 'rui-generator';
+import {
+  OpenAPISpec,
+  PageBuilder,
+  StamdataDocument,
+  TestDocument1,
+} from 'rui-generator';
 import { nextAppOptions, ReactRuiComponent } from 'rui-react-config';
 
 const testApi = new OpenAPISpec(TestDocument1);
 const testApp = new RuiApp(
   {
+    id: 'test',
+    name: 'test',
     baseUrl: 'http://localhost:5093',
     pages: testApi.operations
       .filter((x) => !['DELETE', 'PATCH', 'OPTIONS'].includes(x.method))
@@ -16,6 +23,8 @@ const testApp = new RuiApp(
 const stamdataApi = new OpenAPISpec(StamdataDocument);
 const stamdataApp = new RuiApp(
   {
+    id: 'stamdata',
+    name: 'stamdata',
     baseUrl: 'https://api2.ski.dk/stamdata/v1',
     pages: stamdataApi.operations
       .filter((x) => !['DELETE', 'PATCH', 'OPTIONS'].includes(x.method))

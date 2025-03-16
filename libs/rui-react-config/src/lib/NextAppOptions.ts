@@ -10,8 +10,7 @@ import {
   RuiApiActionSpec,
   RuiCompositeActionSpec,
   RuiFieldSpec,
-  RuiPageSpec,
-  RuiRedirectActionSpec,
+  RuiRedirectActionSpec
 } from 'rui-core';
 import {
   ActionComponent,
@@ -26,8 +25,7 @@ import {
   RuiComponent,
   RuiCompositeAction,
   RuiField,
-  RuiPage,
-  RuiRedirectAction,
+  RuiRedirectAction
 } from 'rui-core/app';
 import componentLibrary from './ComponentLibrary';
 import { ReactRuiComponent } from './ReactRuiComponent';
@@ -40,7 +38,6 @@ const componentConfigurationValues: Record<
   action: (spec, options) =>
     new ActionComponent<T>(spec as ActionComponentSpec, options),
   field: (spec, options) => new RuiField(spec as RuiFieldSpec, options),
-  page: (spec, options) => new RuiPage<T>(spec as RuiPageSpec, options),
 };
 
 const defaultFormatters: Record<

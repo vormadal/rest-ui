@@ -3,7 +3,6 @@ import ActionBar from '../components/ActionBar';
 import ActionBarButton from '../components/ActionBarButton';
 import DefaultCheckbox from '../components/DefaultCheckboxField';
 import DefaultDateTimeField from '../components/DefaultDateTimeField';
-import DefaultPage from '../components/DefaultPage';
 import DefaultTable from '../components/DefaultTable';
 import DefaultTextField from '../components/DefaultTextField';
 import FallbackComponent from '../components/FallbackComponent';
@@ -15,7 +14,6 @@ class ComponentLibrary {
 
   constructor() {
     this._components = [
-      DefaultPage,
       ActionBar,
       ActionBarButton,
       DefaultTextField,

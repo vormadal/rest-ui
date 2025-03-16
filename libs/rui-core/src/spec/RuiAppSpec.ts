@@ -5,6 +5,8 @@
 import { RuiPageSpec } from './RuiPageSpec.js';
 
 export interface RuiAppSpec {
+  id: string;
+  name: string;
   baseUrl: string;
   pages: RuiPageSpec[];
 }

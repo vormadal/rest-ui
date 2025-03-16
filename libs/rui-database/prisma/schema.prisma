@@ -1,0 +1,74 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model App {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  pages     Page[]
+}
+
+model Page {
+  id         String      @id @default(auto()) @map("_id") @db.ObjectId
+  name       String
+  route      Route
+  components Component[]
+  options    Json?
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  app        App?        @relation(fields: [appId], references: [id])
+  appId      String?     @db.ObjectId
+}
+
+model Component {
+  id   String @id @default(auto()) @map("_id") @db.ObjectId
+  type String
+  name String
+
+  components Component[] @relation("ComponentChildren")
+  options    Json?
+
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  parentId  String?    @db.ObjectId
+  parent    Component? @relation("ComponentChildren", fields: [parentId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  page      Page?      @relation(fields: [pageId], references: [id])
+  pageId    String?    @db.ObjectId
+}
+
+type Endpoint {
+  name   String
+  route  Route
+  method String
+}
+
+type Route {
+  template   String
+  parameters DataMapping[]
+}
+
+type DataMapping {
+  source DataValueReference
+  target DataValueReference
+}
+
+type DataValueReference {
+  type String
+  name String
+
+  dataSource String?
+  source     String?
+}

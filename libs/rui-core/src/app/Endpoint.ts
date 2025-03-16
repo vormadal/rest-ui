@@ -19,15 +19,16 @@ export class Endpoint<ComponentType> {
   output?: unknown;
 
   constructor(
-    { method, routeTemplate, parameters }: EndpointSpec,
+    { method, route }: EndpointSpec,
     options: RuiAppOptions<ComponentType>
   ) {
     this.method = method;
-    this.routeTemplate = routeTemplate;
-    this.name = routeTemplate; //TODO maybe make smarter?
+    this.routeTemplate = route.template;
+    this.name = route.template; //TODO maybe make smarter?
     this.parameters =
-      parameters?.map((x) => new RuiDataMapping<ComponentType>(x, options)) ??
-      [];
+      route.parameters?.map(
+        (x) => new RuiDataMapping<ComponentType>(x, options)
+      ) ?? [];
   }
 
   async fetch<T>(context: RuiContext<ComponentType>): Promise<T> {

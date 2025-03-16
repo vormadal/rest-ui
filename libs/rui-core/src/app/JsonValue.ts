@@ -9,7 +9,10 @@ export class JsonValue<ComponentType> extends DataValue<ComponentType> {
   }
 
   get(context: RuiContext<ComponentType>): unknown {
-    const dataSource = context.dataSources[this.spec.dataSource];
+    const dataSource = context.app.getDataSource(this.spec.dataSource, context);
+    if (!dataSource) {
+      throw new Error(`Data source ${this.spec.dataSource} not found`);
+    }
     return extractField(
       this.spec.source == 'input' ? dataSource.input : dataSource.output,
       this.name
@@ -17,7 +20,10 @@ export class JsonValue<ComponentType> extends DataValue<ComponentType> {
   }
 
   set(context: RuiContext<ComponentType>, value: unknown): void {
-    const dataSource = context.dataSources[this.spec.dataSource];
+    const dataSource = context.app.getDataSource(this.spec.dataSource, context);
+    if (!dataSource) {
+      throw new Error(`Data source ${this.spec.dataSource} not found`);
+    }
     return extractField(
       this.spec.source == 'input' ? dataSource.input : dataSource.output,
       this.name

@@ -1,18 +1,18 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { ComponentSpecValues, RuiAppSpec } from 'rui-core';
-import { Endpoint, RuiApp, RuiComponent } from 'rui-core/app';
+import { ComponentSpec, GeneralOptionSpec, RuiAppSpec } from 'rui-core';
+import { RuiApp, RuiComponent } from 'rui-core/app';
 import { nextAppOptions } from './NextAppOptions';
 import { ReactRuiComponent } from './ReactRuiComponent';
 
 export interface ComponentWrapperProps {
   app?: RuiApp<ReactRuiComponent>;
   appSpec: RuiAppSpec;
-  componentSpec: ComponentSpecValues;
+  componentSpec: ComponentSpec;
   componentConfig?: RuiComponent<ReactRuiComponent>;
   route: string;
-  data: { [key: string]: unknown };
+  data: GeneralOptionSpec;
 }
 
 export function ComponentWrapper({
@@ -33,14 +33,10 @@ export function ComponentWrapper({
     return (
       <p>
         missing component configuration: {config.componentSpec.type}:{' '}
-        {config.componentSpec.componentName}
+        {config.componentSpec.name}
       </p>
     );
   const appInstance = app || new RuiApp(appSpec, nextAppOptions);
-
-  for (const source of config.dataSources) {
-    source.output = data[source.id];
-  }
 
   return (
     <config.Component
@@ -50,12 +46,6 @@ export function ComponentWrapper({
         config,
         navigateTo: (path) => router.push(path),
         route: route,
-        dataSources: config.dataSources.reduce<{
-          [key: string]: Endpoint<ReactRuiComponent>;
-        }>((map, source) => {
-          map[source.name] = source;
-          return map;
-        }, {}),
       }}
     >
       {config.children.map((child) => (

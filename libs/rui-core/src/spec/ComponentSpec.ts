@@ -1,7 +1,4 @@
-import { ActionComponentSpec } from './ActionComponentSpec';
-import { EndpointSpec } from './EndpointSpec';
-import { RuiFieldSpec } from './RuiFieldSpec';
-import { RuiPageSpec } from './RuiPageSpec';
+import { GeneralOptionSpec } from './GeneralOptionSpec';
 
 export interface ComponentSpec {
   /**
@@ -13,30 +10,12 @@ export interface ComponentSpec {
   /**
    * The key of the component used to render this component in the UI
    */
-  componentName: string;
-  /**
-   * datasources that this component is responsible for.
-   */
-  dataSources?: EndpointSpec[];
-
-  /**
-   * Is used to scope data for nested components
-   */
-  dataScope?: string;
+  name: string;
 
   /**
    * child components
    */
-  components?: ComponentSpecValues[];
+  components?: ComponentSpec[];
 
-  options: { [key: string]: unknown };
+  options: GeneralOptionSpec;
 }
-
-export type ComponentSpecValues =
-  | ComponentSpec
-  | ActionComponentSpec
-  // | RuiRedirectActionSpec
-  // | RuiCompositeActionSpec
-  // | RuiApiActionSpec
-  | RuiPageSpec
-  | RuiFieldSpec;

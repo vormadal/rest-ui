@@ -34,6 +34,10 @@ export class RuiApp<ComponentType> {
     return this.pages.find((x) => x.matches(context));
   };
 
+  getDataSource(dataSource: string, context: RuiContext<ComponentType>) {
+    return this.getPage(context)?.getDataSource(dataSource);
+  }
+
   fetch(method: string, route: string, data?: unknown) {
     return this.options.sendRequest(
       `${this.baseUrl}${route.startsWith('/') ? '' : '/'}${route}`,

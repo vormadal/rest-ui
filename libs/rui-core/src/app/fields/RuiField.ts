@@ -12,7 +12,7 @@ export class RuiField<ComponentType> extends RuiComponent<ComponentType> {
   }
 
   get name(): string {
-    return this.spec.componentName;
+    return this.spec.name;
   }
 
   get dataType(): string {

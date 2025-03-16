@@ -7,12 +7,9 @@ import {
   DrawerOverlay,
   DrawerTitle,
 } from '@ui';
-import TextField from 'libs/rui-react-config/src/components/ruiInput';
 import { useState } from 'react';
-import { RuiApp, RuiPage } from 'rui-core/app';
-import { OpenAPISpec, PageBuilder, TestDocument1 } from 'rui-generator';
-import { nextAppOptions, ReactRuiComponent } from 'rui-react-config';
-import { EditorComponentWrapper } from '../../components/EditorComponentWrapper';
+import { RuiPage } from 'rui-core/app';
+import { ReactRuiComponent } from 'rui-react-config';
 import EditorSidebar from '../../components/EditorSidebar';
 import {
   ComponentOptionsContext,
@@ -25,34 +22,20 @@ export default function Index() {
     useState<ComponentOptionsContextType | null>(null);
   const [page, setPage] = useState<RuiPage<ReactRuiComponent> | null>(null);
 
-  const testApi = new OpenAPISpec(TestDocument1);
-  const testApp = new RuiApp(
-    {
-      baseUrl: 'http://localhost:5093',
-      pages: testApi.operations
-        .filter(
-          (x) =>
-            !['delete', 'patch', 'options'].includes(x.method.toLowerCase())
-        )
-        .map((x) => new PageBuilder(x, testApi, {}).build()),
-    },
-    nextAppOptions
-  );
-
   return (
     <>
       <ComponentOptionsContext.Provider
         value={[componentOptions, setComponentOptions]}
       >
         <PageContext.Provider value={[page, setPage]}>
-          <EditorSidebar pages={testApp.pages}>
-            {page && (
+          <EditorSidebar pages={[]}>
+            {/* {page && (
               <EditorComponentWrapper
                 app={testApp}
                 component={page}
                 priority={500}
               />
-            )}
+            )} */}
             <Drawer
               modal={false}
               open={!!componentOptions}
@@ -64,13 +47,13 @@ export default function Index() {
               <DrawerContent>
                 <DrawerHeader>
                   <DrawerTitle>
-                    {componentOptions?.value.componentName}
+                    {componentOptions?.value.name}
                   </DrawerTitle>
                   <DrawerDescription>
                     {JSON.stringify(componentOptions?.value)}
                   </DrawerDescription>
-                  {componentOptions?.fields.map((field) => (
-                    <TextField
+                  {/* {componentOptions?.fields.map((field) => (
+                    <RuiInput
                       key={field.name}
                       label={field.name}
                       type={field.type}
@@ -79,7 +62,7 @@ export default function Index() {
                         componentOptions.value.options[field.name] as string
                       }
                     />
-                  ))}
+                  ))} */}
                 </DrawerHeader>
               </DrawerContent>
             </Drawer>

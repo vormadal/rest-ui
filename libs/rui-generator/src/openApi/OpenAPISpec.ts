@@ -46,6 +46,14 @@ export class OpenAPISpec {
     );
   }
 
+  get name() {
+    return this.document.info.title || 'OpenAPI Spec';
+  }
+
+  get baseUrl() {
+    return this.document.servers?.[0]?.url || '';
+  }
+
   resolveSchemaReference<T extends OpenAPIV3.SchemaObject>(
     ref: OpenAPIV3.ReferenceObject | T | undefined
   ): T | undefined {

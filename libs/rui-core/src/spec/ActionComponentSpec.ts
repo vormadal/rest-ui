@@ -1,4 +1,3 @@
-import { RuiActionSpec } from './actions/RuiActionSpec';
 import { ComponentSpec } from './ComponentSpec';
 
 /**
@@ -6,6 +5,5 @@ import { ComponentSpec } from './ComponentSpec';
  */
 export interface ActionComponentSpec extends ComponentSpec {
   type: 'action';
-  action: RuiActionSpec;
-  label: string;
+
 }

@@ -1,26 +1,48 @@
+import { RouteSpec } from '../spec/RouteSpec';
+import { RuiPageSpec } from '../spec/RuiPageSpec';
+import { Endpoint } from './Endpoint';
 import { RuiAppOptions } from './RuiApp';
+import { RuiComponent } from './RuiComponent';
 import { RuiContext } from './RuiContext';
 import { RuiDataMapping } from './RuiDataMapping';
-import { RuiComponent } from './RuiComponent';
-import { RuiPageSpec } from '../spec/RuiPageSpec';
 
-export class RuiPage<ComponentType> extends RuiComponent<ComponentType> {
+export class RuiPage<ComponentType> {
+  readonly dataSources: Endpoint<ComponentType>[];
+
   constructor(
     public readonly spec: RuiPageSpec,
-    options: RuiAppOptions<ComponentType>
+    private readonly options: RuiAppOptions<ComponentType>
   ) {
-    super(spec, options);
+    this.dataSources =
+      spec.dataSources?.map((x) => new Endpoint(x, options)) ?? [];
   }
 
-  get route(): string {
-    return this.getOption<string>('route') ?? '';
+  getDataSource(name: string): Endpoint<ComponentType> | undefined {
+    return this.dataSources.find(
+      (x) => x.id.toLowerCase() === name.toLowerCase()
+    );
+  }
+
+  get id(): string {
+    return this.spec.id;
+  }
+
+  get route(): RouteSpec {
+    return this.spec.route;
   }
 
   get showInMenu(): boolean {
-    return this.getOption<boolean>('showInMenu') ?? false;
+    return !!this.spec.showInMenu;
   }
+
+  get components(): RuiComponent<ComponentType>[] {
+    return (
+      this.spec.components.map((x) => new RuiComponent(x, this.options)) ?? []
+    );
+  }
+
   get parameters() {
-    const names = this.route
+    const names = this.route.template
       .split('/')
       .filter((x) => !!x)
       .filter((x) => /\{.+\}/.test(x));
@@ -30,7 +52,7 @@ export class RuiPage<ComponentType> extends RuiComponent<ComponentType> {
 
   matches = (context: RuiContext<ComponentType>): boolean => {
     const routeParts = context.route.split('/').filter((x) => !!x);
-    const pageRouteParts = this.route.split('/').filter((x) => !!x);
+    const pageRouteParts = this.route.template.split('/').filter((x) => !!x);
 
     if (routeParts.length !== pageRouteParts.length) return false;
 
@@ -50,7 +72,7 @@ export class RuiPage<ComponentType> extends RuiComponent<ComponentType> {
   //TODO this is probably not the best place for this
   getParam = (param: RuiDataMapping<ComponentType>, route: string): string => {
     const routeParts = route.split('/').filter((x) => !!x);
-    const templateParts = this.route.split('/').filter((x) => !!x);
+    const templateParts = this.route.template.split('/').filter((x) => !!x);
 
     const templatePart = templateParts.find((x) => x === `{${param.source}}`);
     const index = templatePart ? templateParts.indexOf(templatePart) : -1;
