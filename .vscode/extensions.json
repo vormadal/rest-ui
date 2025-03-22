@@ -2,6 +2,8 @@
   "recommendations": [
     "ms-playwright.playwright",
     "esbenp.prettier-vscode",
-    "firsttris.vscode-jest-runner"
+    "firsttris.vscode-jest-runner",
+    "prisma.prisma",
+    "bradlc.vscode-tailwindcss"
   ]
 }
