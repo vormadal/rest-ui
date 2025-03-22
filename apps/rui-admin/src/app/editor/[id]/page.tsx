@@ -7,19 +7,40 @@ import {
   DrawerOverlay,
   DrawerTitle,
 } from '@ui';
-import { useState } from 'react';
-import { RuiPage } from 'rui-core/app';
-import { ReactRuiComponent } from 'rui-react-config';
-import EditorSidebar from '../../components/EditorSidebar';
+import { use, useState } from 'react';
+import { RuiApp, RuiPage } from 'rui-core/app';
+import { nextAppOptions, ReactRuiComponent } from 'rui-react-config';
+import EditorSidebar from '../../../components/EditorSidebar';
 import {
   ComponentOptionsContext,
   ComponentOptionsContextType,
-} from '../../context/ComponentOptionsContext';
-import { PageContext } from '../../context/PageContext';
+} from '../../../context/ComponentOptionsContext';
+import { PageContext } from '../../../context/PageContext';
+import { useQuery } from '@tanstack/react-query';
+import { RuiAppSpec } from 'rui-core';
+import { EditorComponentWrapper } from 'apps/rui-admin/src/components/EditorComponentWrapper';
 
-export default function Index() {
+function useApp(props: { id: string }) {
+  const query = useQuery({
+    queryKey: ['app', props.id],
+    queryFn: async () => {
+      const url = `/apps/${props.id}`;
+      const res = await fetch(url);
+      const body = await res.json();
+
+      const app = new RuiApp(body, nextAppOptions);
+      return app;
+    },
+  });
+
+  return [query.data, query] as const;
+}
+
+export default function Index({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params);
   const [componentOptions, setComponentOptions] =
     useState<ComponentOptionsContextType | null>(null);
+  const [app] = useApp({ id });
   const [page, setPage] = useState<RuiPage<ReactRuiComponent> | null>(null);
 
   return (
@@ -28,14 +49,15 @@ export default function Index() {
         value={[componentOptions, setComponentOptions]}
       >
         <PageContext.Provider value={[page, setPage]}>
-          <EditorSidebar pages={[]}>
-            {/* {page && (
+          {/* {JSON.stringify(app)} */}
+          <EditorSidebar pages={app?.pages ?? []}>
+            {page && app && (
               <EditorComponentWrapper
-                app={testApp}
-                component={page}
+                app={app}
+                component={page.components[0]}
                 priority={500}
               />
-            )} */}
+            )}
             <Drawer
               modal={false}
               open={!!componentOptions}
@@ -46,9 +68,7 @@ export default function Index() {
               </DrawerOverlay>
               <DrawerContent>
                 <DrawerHeader>
-                  <DrawerTitle>
-                    {componentOptions?.value.name}
-                  </DrawerTitle>
+                  <DrawerTitle>{componentOptions?.value.name}</DrawerTitle>
                   <DrawerDescription>
                     {JSON.stringify(componentOptions?.value)}
                   </DrawerDescription>

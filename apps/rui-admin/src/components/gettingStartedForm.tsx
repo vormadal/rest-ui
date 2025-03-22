@@ -9,12 +9,11 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-  Input
+  Input,
 } from '@ui';
 // import { zodResolver } from '@hookform/resolvers/zod';
 // import { z } from 'zod';
 import { useForm } from 'react-hook-form';
-
 
 export default function GettingStartedForm() {
   const urlForm = useForm({
@@ -29,8 +28,8 @@ export default function GettingStartedForm() {
   });
 
   return (
-    <div className="w-6/12 mx-auto items-center">
-      <p className="text-center">
+    <div>
+      <p>
         Create a new project by importing a OpenAPI spec directly with a URL or
         by uploading a file
       </p>
@@ -41,7 +40,7 @@ export default function GettingStartedForm() {
         <Form {...urlForm}>
           <form
             onSubmit={urlForm.handleSubmit(async (data, e) => {
-              e?.preventDefault()
+              e?.preventDefault();
               if (!e?.target) return;
               const content = new FormData(e.target);
               const file = content.get('url');
