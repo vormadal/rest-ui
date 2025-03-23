@@ -6,13 +6,14 @@ import { RuiComponent } from './RuiComponent';
 import { RuiContext } from './RuiContext';
 import { RuiDataMapping } from './RuiDataMapping';
 
-export class RuiPage<ComponentType> {
+export class RuiPage<ComponentType> extends RuiComponent<ComponentType> {
   readonly dataSources: Endpoint<ComponentType>[];
 
   constructor(
     public readonly spec: RuiPageSpec,
     private readonly options: RuiAppOptions<ComponentType>
   ) {
+    super(spec, options);
     this.dataSources =
       spec.dataSources?.map((x) => new Endpoint(x, options)) ?? [];
   }
@@ -23,22 +24,12 @@ export class RuiPage<ComponentType> {
     );
   }
 
-  get id(): string {
-    return this.spec.id;
-  }
-
   get route(): RouteSpec {
     return this.spec.route;
   }
 
   get showInMenu(): boolean {
     return !!this.spec.showInMenu;
-  }
-
-  get components(): RuiComponent<ComponentType>[] {
-    return (
-      this.spec.components.map((x) => new RuiComponent(x, this.options)) ?? []
-    );
   }
 
   get parameters() {

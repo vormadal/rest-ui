@@ -9,6 +9,14 @@ import {
 
 const prisma = new PrismaClient();
 
+export async function getAppComponents(appId: string): Promise<ComponentSpec[]>{
+  const components = await prisma.component.findMany({
+    where: {
+      
+    }
+  })
+}
+
 export async function createApp(app: RuiAppSpec): Promise<RuiAppSpec> {
   const createdApp = await prisma.app.create({
     data: {
