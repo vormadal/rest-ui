@@ -2,8 +2,8 @@ import { createContext, useContext } from 'react';
 import { ComponentOption, ComponentSpec } from 'rui-core';
 
 export type ComponentOptionsContextType = {
-  value: ComponentSpec;
-  fields: ComponentOption[];
+  spec: ComponentSpec;
+  options: ComponentOption[];
 };
 export const ComponentOptionsContext = createContext<
   [

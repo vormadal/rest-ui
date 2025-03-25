@@ -5,7 +5,7 @@ import ProjectView from '../components/ProjectView';
 export default async function Index() {
   const apps = await getAppList();
   return (
-    <div className="container mx-auto bg-red-400">
+    <div className="container mx-auto">
       <h1 className="text-6xl font-bold text-center bg-red-50">
         Welcome to RUI Admin!
       </h1>

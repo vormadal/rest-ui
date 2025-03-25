@@ -1,4 +1,5 @@
 'use client';
+import { useQuery } from '@tanstack/react-query';
 import {
   Drawer,
   DrawerContent,
@@ -7,8 +8,10 @@ import {
   DrawerOverlay,
   DrawerTitle,
 } from '@ui';
+import { EditorPageWrapper } from 'apps/rui-admin/src/components/EditorPageWrapper';
 import { use, useState } from 'react';
-import { RuiApp, RuiComponent, RuiPage } from 'rui-core/app';
+import { ComponentSpec, RuiAppSpec, RuiPageSpec } from 'rui-core';
+import { RuiComponent } from 'rui-core/app';
 import { nextAppOptions, ReactRuiComponent } from 'rui-react-config';
 import EditorSidebar from '../../../components/EditorSidebar';
 import {
@@ -16,10 +19,6 @@ import {
   ComponentOptionsContextType,
 } from '../../../context/ComponentOptionsContext';
 import { PageContext } from '../../../context/PageContext';
-import { useQuery } from '@tanstack/react-query';
-import { ComponentSpec, RuiAppSpec } from 'rui-core';
-import { EditorComponentWrapper } from 'apps/rui-admin/src/components/EditorComponentWrapper';
-import { EditorPageWrapper } from 'apps/rui-admin/src/components/EditorPageWrapper';
 
 function useApp(props: { id: string }) {
   const query = useQuery({
@@ -28,9 +27,7 @@ function useApp(props: { id: string }) {
       const url = `/apps/${props.id}`;
       const res = await fetch(url);
       const body = await res.json();
-
-      const app = new RuiApp(body, nextAppOptions);
-      return app;
+      return body as RuiAppSpec;
     },
   });
 
@@ -58,8 +55,9 @@ export default function Index({ params }: { params: Promise<{ id: string }> }) {
   const [componentOptions, setComponentOptions] =
     useState<ComponentOptionsContextType | null>(null);
   const [app] = useApp({ id });
-  // const [components] = useComponents({ appId: id });
-  const [page, setPage] = useState<RuiPage<ReactRuiComponent> | null>(null);
+  const [component, setComponent] =
+    useState<RuiComponent<ReactRuiComponent> | null>(null);
+  const [page, setPage] = useState<RuiPageSpec | null>(null);
 
   return (
     <>
@@ -68,7 +66,7 @@ export default function Index({ params }: { params: Promise<{ id: string }> }) {
       >
         <PageContext.Provider value={[page, setPage]}>
           <EditorSidebar pages={app?.pages ?? []}>
-            {page && app && <EditorPageWrapper app={app} page={page} />}
+            {page && <EditorPageWrapper page={page} />}
             <Drawer
               modal={false}
               open={!!componentOptions}
@@ -79,9 +77,9 @@ export default function Index({ params }: { params: Promise<{ id: string }> }) {
               </DrawerOverlay>
               <DrawerContent>
                 <DrawerHeader>
-                  <DrawerTitle>{componentOptions?.value.name}</DrawerTitle>
+                  <DrawerTitle>{componentOptions?.spec.name}</DrawerTitle>
                   <DrawerDescription>
-                    {JSON.stringify(componentOptions?.value)}
+                    {JSON.stringify(componentOptions?.spec)}
                   </DrawerDescription>
                   {/* {componentOptions?.fields.map((field) => (
                     <RuiInput

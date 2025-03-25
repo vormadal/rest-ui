@@ -36,7 +36,7 @@ export default async function Home({ params }: Props) {
 
   return (
     <>
-      {page.components.map((component) => (
+      {page.children.map((component) => (
         <ComponentWrapper
           key={component.id}
           appSpec={app.spec}

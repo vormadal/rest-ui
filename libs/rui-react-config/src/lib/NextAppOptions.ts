@@ -10,11 +10,10 @@ import {
   RuiApiActionSpec,
   RuiCompositeActionSpec,
   RuiFieldSpec,
-  RuiRedirectActionSpec
+  RuiRedirectActionSpec,
 } from 'rui-core';
 import {
   ActionComponent,
-  ComponentSelector,
   DataValue,
   JsonValue,
   PathValue,
@@ -85,10 +84,7 @@ class NextAppOptions implements RuiAppOptions<T> {
         return new RuiApiAction(spec as RuiApiActionSpec, options);
     }
   }
-  getComponent({
-    spec,
-    name,
-  }: ComponentSelector): ComponentConfiguration<ReactRuiComponent> {
+  getComponent(name: string): ComponentConfiguration<ReactRuiComponent> {
     return componentLibrary.getComponent(name);
   }
 

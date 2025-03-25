@@ -52,11 +52,6 @@ export class RuiApp<ComponentType> {
   }
 }
 
-export interface ComponentSelector {
-  name: string;
-  spec: ComponentSpec;
-}
-
 export interface RuiAppOptions<ComponentType> {
   getDataValue(source: DataValueSpec): DataValue<ComponentType>;
   sendRequest(
@@ -72,9 +67,7 @@ export interface RuiAppOptions<ComponentType> {
     statusText: string;
     json: () => Promise<unknown>;
   };
-  getComponent(
-    selector: ComponentSelector
-  ): ComponentConfiguration<ComponentType>;
+  getComponent(name: string): ComponentConfiguration<ComponentType>;
   getFormatter(
     type?: string
   ): undefined | ((value: unknown, options: unknown) => string);

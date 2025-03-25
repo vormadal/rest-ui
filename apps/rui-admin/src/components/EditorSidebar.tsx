@@ -11,14 +11,12 @@ import {
   SidebarProvider,
 } from '@ui';
 import { Scroll } from 'lucide-react';
-import { FC } from 'react';
-import { RuiPage } from 'rui-core/app';
-import { ComponentProps } from 'rui-react-config';
+import { RuiPageSpec } from '../../../../libs/rui-core/src';
 import { usePage } from '../context/PageContext';
 
 type Props = {
   children: React.ReactNode;
-  pages: RuiPage<FC<ComponentProps>>[];
+  pages: RuiPageSpec[];
 };
 export default function EditorSidebar({ children, pages }: Props) {
   const [, setPage] = usePage();

@@ -1,9 +1,8 @@
 import { createContext, useContext } from 'react';
 
-import { RuiPage } from 'rui-core/app';
-import { ReactRuiComponent } from 'rui-react-config';
+import { RuiPageSpec } from '../../../../libs/rui-core/src';
 
-type PageContextType = RuiPage<ReactRuiComponent>;
+type PageContextType = RuiPageSpec;
 export const PageContext = createContext<
   [PageContextType | null, (value: PageContextType | null) => void]
 >([null, () => null]);

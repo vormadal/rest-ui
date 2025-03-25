@@ -2,19 +2,17 @@
 
 import { cn } from '@ui/lib/utils';
 import React, { useEffect } from 'react';
-import { RuiApp, RuiComponent } from 'rui-core/app';
-import { ReactRuiComponent } from 'rui-react-config';
+import { ComponentSpec } from 'rui-core';
 import { useComponentOptions } from '../context/ComponentOptionsContext';
+import { nextAppOptions } from '../../../../libs/rui-react-config/src';
 
 export interface ComponentWrapperProps {
-  app: RuiApp<ReactRuiComponent>;
-  component: RuiComponent<ReactRuiComponent>;
+  spec: ComponentSpec;
   priority: number;
 }
 
 export function EditorComponentWrapper({
-  app,
-  component,
+  spec,
   priority,
 }: ComponentWrapperProps) {
   const componentRef = React.useRef(null);
@@ -37,11 +35,13 @@ export function EditorComponentWrapper({
     });
   }, [componentRef]);
 
-  if (!component?.Component)
+  const componentConfig = nextAppOptions.getComponent(spec.name);
+  const Component = componentConfig?.component;
+
+  if (!Component)
     return (
       <p>
-        missing component configuration: {component.componentSpec.type}:{' '}
-        {component.componentSpec.name}
+        missing component configuration: {spec.type}: {spec.name}
       </p>
     );
 
@@ -50,30 +50,28 @@ export function EditorComponentWrapper({
       {/* use this to add another component */}
       {/* <div className='w-full border-green-400 min-h-4 bg-green-400'></div> */}
       <div ref={componentRef}>
-        <component.Component
+        <Component
           context={{
-            app,
-            data: {},
-            config: component,
-            navigateTo: (path) => console.log('navigate to', path),
-            route: 'editor',
+            config: nextAppOptions.getComponentConfiguration(
+              spec,
+              nextAppOptions
+            ),
           }}
         >
-          {component.children.map((child) => (
+          {(spec.components ?? []).map((child) => (
             <EditorComponentWrapper
               priority={priority + 1}
               key={child.id}
-              app={app}
-              component={child}
+              spec={child}
             />
           ))}
-        </component.Component>
+        </Component>
       </div>
       <div
         onClick={() =>
           setOptions({
-            value: component.componentSpec,
-            fields: component.componentOptions,
+            spec: spec,
+            options: componentConfig.options,
           })
         }
         style={{

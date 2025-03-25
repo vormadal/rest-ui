@@ -1,0 +1,11 @@
+version: '3.7'
+
+services:
+  database: 
+    image: postgres
+    environment:
+      - POSTGRES_PASSWORD=top-secret
+      - POSTGRES_USER=restui
+      - POSTGRES_DB=restui
+    ports:
+      - "5432:5432"

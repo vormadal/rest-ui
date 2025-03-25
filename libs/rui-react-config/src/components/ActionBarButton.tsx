@@ -1,4 +1,5 @@
 import {
+  NavigationMenu,
   NavigationMenuItem,
   NavigationMenuLink,
   navigationMenuTriggerStyle,
@@ -13,11 +14,13 @@ function ActionBarButtonComponent({ context }: ComponentProps) {
 
   const label = config.getOption<string>('label');
   return (
-    <NavigationMenuItem onClick={() => config.exec(context)}>
-      <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-        {label}
-      </NavigationMenuLink>
-    </NavigationMenuItem>
+    <NavigationMenu>
+      <NavigationMenuItem onClick={() => config.exec(context)}>
+        <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+          {label}
+        </NavigationMenuLink>
+      </NavigationMenuItem>
+    </NavigationMenu>
   );
 }
 

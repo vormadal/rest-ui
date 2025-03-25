@@ -39,7 +39,7 @@ function DefaultTableComponent({ context }: ComponentProps) {
         extractField<string>(_row, parameter.value).get()
       );
     }
-    context.navigateTo(route);
+    context.navigateTo && context.navigateTo(route);
   };
   const rows =
     config.getFieldValue<unknown[]>(
@@ -52,7 +52,7 @@ function DefaultTableComponent({ context }: ComponentProps) {
     config.getOption<ColumnType[]>('columns')?.map((x) => ({
       ...x,
       format:
-        context.app.getFormatter(x.formatter) ||
+        context.app?.getFormatter(x.formatter) || //TODO formatter function should be found on the component itself
         ((value): string => value?.toString() ?? ''),
     })) ?? [];
   return (

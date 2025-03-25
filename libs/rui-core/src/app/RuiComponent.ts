@@ -1,8 +1,7 @@
-import { RuiAppOptions } from './RuiApp';
-import { Endpoint } from './Endpoint';
-import { ComponentSpec } from '../spec/ComponentSpec';
 import { ComponentOption } from '../ComponentConfiguration';
 import { extractField } from '../lib/utils';
+import { ComponentSpec } from '../spec/ComponentSpec';
+import { RuiAppOptions } from './RuiApp';
 
 /**
  * Represents a component in the RUI app.
@@ -18,10 +17,7 @@ export class RuiComponent<ComponentType> {
     public readonly componentSpec: ComponentSpec,
     options: RuiAppOptions<ComponentType>
   ) {
-    const componentConfiguration = options.getComponent({
-      name: componentSpec.name || 'default',
-      spec: componentSpec,
-    });
+    const componentConfiguration = options.getComponent(componentSpec.name);
     this.Component = componentConfiguration.component;
     this.componentOptions = componentConfiguration.options;
     this.children =
@@ -35,7 +31,7 @@ export class RuiComponent<ComponentType> {
   }
 
   getFieldValue<T>(
-    dataAccess: Record<string, unknown>,
+    dataAccess: Record<string, unknown> | undefined,
     sourceOptionName: string,
     field?: string
   ): T | undefined {
@@ -45,7 +41,9 @@ export class RuiComponent<ComponentType> {
       return undefined;
     }
 
-    const data = (dataAccess[dataSource ?? ''] as T) ?? undefined;
+    const data = !dataAccess
+      ? undefined
+      : (dataAccess[dataSource ?? ''] as T) ?? undefined;
     return extractField<T>(data, field).get();
   }
 
