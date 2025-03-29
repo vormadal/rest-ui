@@ -31,6 +31,18 @@ export class ComponentRepository {
     return components.map(this.toDto);
   }
 
+  async updateComponent(component: DbComponent) {
+    const updatedComponent = await this.client.component.update({
+      where: { id: component.id },
+      data: {
+        name: component.name,
+        type: component.type,
+        options: component.options as Prisma.JsonObject,
+        parentId: component.parentId,
+      },
+    });
+    return this.toDto(updatedComponent);
+  }
   async createComponent(component: DbComponent, createChildComponents = false) {
     const createdComponent = await this.client.component.create({
       data: {

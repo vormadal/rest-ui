@@ -1,17 +1,18 @@
 'use client';
 import { useQuery } from '@tanstack/react-query';
 import {
+  Checkbox,
   Drawer,
   DrawerContent,
   DrawerDescription,
   DrawerHeader,
   DrawerOverlay,
   DrawerTitle,
+  Input,
 } from '@ui';
 import { use, useState } from 'react';
-import { ComponentSpec, RuiAppSpec, RuiPageSpec } from 'rui-core';
-import { RuiComponent } from 'rui-core/app';
-import { nextAppOptions, ReactRuiComponent } from 'rui-react-config';
+import { ComponentOption, RuiAppSpec, RuiPageSpec } from 'rui-core';
+import { type StringOptions } from 'rui-core/app';
 import { EditorPageWrapper } from '../../../components/EditorPageWrapper';
 import EditorSidebar from '../../../components/EditorSidebar';
 import {
@@ -19,6 +20,7 @@ import {
   ComponentOptionsContextType,
 } from '../../../context/ComponentOptionsContext';
 import { PageContext } from '../../../context/PageContext';
+import { OptionsEditor } from '../../../components/optionsEditor/OptionsEditor';
 
 function useApp(props: { id: string }) {
   const query = useQuery({
@@ -34,29 +36,11 @@ function useApp(props: { id: string }) {
   return [query.data, query] as const;
 }
 
-function useComponents(props: { appId: string }) {
-  const query = useQuery({
-    queryKey: ['app', props.appId, 'components'],
-    queryFn: async () => {
-      const url = `/apps/${props.appId}/components`;
-      const res = await fetch(url);
-      const body = await res.json();
-
-      return (body as ComponentSpec[]).map(
-        (x) => new RuiComponent(x, nextAppOptions)
-      );
-    },
-  });
-  return [query.data, query] as const;
-}
-
 export default function Index({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const [componentOptions, setComponentOptions] =
     useState<ComponentOptionsContextType | null>(null);
   const [app] = useApp({ id });
-  const [component, setComponent] =
-    useState<RuiComponent<ReactRuiComponent> | null>(null);
   const [page, setPage] = useState<RuiPageSpec | null>(null);
 
   return (
@@ -79,19 +63,15 @@ export default function Index({ params }: { params: Promise<{ id: string }> }) {
                 <DrawerHeader>
                   <DrawerTitle>{componentOptions?.spec.name}</DrawerTitle>
                   <DrawerDescription>
-                    {JSON.stringify(componentOptions?.spec)}
+                    {componentOptions?.spec.id}
                   </DrawerDescription>
-                  {/* {componentOptions?.fields.map((field) => (
-                    <RuiInput
-                      key={field.name}
-                      label={field.name}
-                      type={field.type}
-                      name={field.name}
-                      defaultValue={
-                        componentOptions.value.options[field.name] as string
-                      }
+
+                  {componentOptions && page && (
+                    <OptionsEditor
+                      pageId={page.id}
+                      componentOptions={componentOptions}
                     />
-                  ))} */}
+                  )}
                 </DrawerHeader>
               </DrawerContent>
             </Drawer>

@@ -6,6 +6,7 @@ function useComponents(pageId: string) {
   const query = useQuery({
     queryKey: ['page', pageId, 'components'],
     queryFn: async () => {
+      console.log('fetching components for page', pageId);
       const url = `/pages/${pageId}/components`;
       const res = await fetch(url);
       const body = await res.json();
