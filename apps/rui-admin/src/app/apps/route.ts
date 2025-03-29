@@ -1,10 +1,18 @@
 import { RuiAppSpec } from 'rui-core';
-import { createApp, getAppList } from 'rui-database';
 import { OpenAPISpec, PageBuilder } from 'rui-generator';
 import { v7 as uuid } from 'uuid';
+import {
+  AppRepository,
+  ComponentRepository,
+  PageRepository,
+} from 'rui-database';
+
+const appRepository = AppRepository.getInstance();
+const pageRepository = PageRepository.getInstance();
+const componentRepository = ComponentRepository.getInstance();
 
 export async function GET(request: Request) {
-  const apps = await getAppList();
+  const apps = await appRepository.getAll();
 
   return Response.json(apps);
 }
@@ -34,4 +42,21 @@ export async function POST(request: Request) {
     console.log('failed to create app', e.stack);
     return Response.json({ error: 'failed' }, { status: 200 });
   }
+}
+
+async function createApp(app: RuiAppSpec) {
+  const createdApp = await appRepository.createApp(app);
+
+  for (const page of app.pages) {
+    const createdPage = await pageRepository.createPage(page, createdApp.id);
+
+    for (const component of page.components ?? []) {
+      await componentRepository.createComponent(
+        { ...component, pageId: createdPage.id },
+        true
+      );
+    }
+  }
+
+  return createdApp;
 }

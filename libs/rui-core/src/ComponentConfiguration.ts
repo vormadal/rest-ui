@@ -13,4 +13,5 @@ export interface ComponentConfiguration<ComponentType> {
 export interface ComponentOption {
   name: string;
   type: 'string' | 'number' | 'boolean';
+  options?: unknown;
 }

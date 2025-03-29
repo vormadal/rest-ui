@@ -15,3 +15,4 @@ export * from './PathValue';
 export * from './QueryValue';
 export * from './RuiDataMapping';
 export * from './RuiPage';
+export * from './OptionEditorFactory';

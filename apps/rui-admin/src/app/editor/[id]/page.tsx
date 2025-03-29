@@ -8,11 +8,11 @@ import {
   DrawerOverlay,
   DrawerTitle,
 } from '@ui';
-import { EditorPageWrapper } from 'apps/rui-admin/src/components/EditorPageWrapper';
 import { use, useState } from 'react';
 import { ComponentSpec, RuiAppSpec, RuiPageSpec } from 'rui-core';
 import { RuiComponent } from 'rui-core/app';
 import { nextAppOptions, ReactRuiComponent } from 'rui-react-config';
+import { EditorPageWrapper } from '../../../components/EditorPageWrapper';
 import EditorSidebar from '../../../components/EditorSidebar';
 import {
   ComponentOptionsContext,

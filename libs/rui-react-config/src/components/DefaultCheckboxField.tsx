@@ -1,6 +1,6 @@
 import { Checkbox } from '@ui';
 import { ComponentConfiguration } from 'rui-core';
-import { RuiField } from 'rui-core/app';
+import { optionEditorFactory, RuiField } from 'rui-core/app';
 import { ComponentProps } from '../lib/ComponentProps';
 import { ReactRuiComponent } from '../lib/ReactRuiComponent';
 
@@ -30,12 +30,9 @@ const DefaultCheckbox: ComponentConfiguration<ReactRuiComponent> = {
   component: DefaultCheckboxComponent,
   name: 'field:boolean:default',
   options: [
-    { name: 'name', type: 'string' },
-    { name: 'displayName', type: 'string' },
-    {
-      name: 'dataSource',
-      type: 'string',
-    },
+    optionEditorFactory.string('name'),
+    optionEditorFactory.string('displayName'),
+    optionEditorFactory.string('dataSource'),
   ],
 };
 

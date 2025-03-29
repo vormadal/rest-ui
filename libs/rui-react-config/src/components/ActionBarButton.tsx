@@ -7,6 +7,7 @@ import {
 import { ComponentConfiguration } from 'rui-core';
 import { ActionComponent } from 'rui-core/app';
 import { ComponentProps } from '../lib/ComponentProps';
+import { optionEditorFactory } from 'rui-core/app';
 import { ReactRuiComponent } from '../lib/ReactRuiComponent';
 
 function ActionBarButtonComponent({ context }: ComponentProps) {
@@ -27,12 +28,7 @@ function ActionBarButtonComponent({ context }: ComponentProps) {
 const ActionBarButton: ComponentConfiguration<ReactRuiComponent> = {
   name: 'action-bar:button:default',
   component: ActionBarButtonComponent,
-  options: [
-    {
-      name: 'label',
-      type: 'string',
-    },
-  ],
+  options: [optionEditorFactory.string('label')],
 };
 
 export default ActionBarButton;

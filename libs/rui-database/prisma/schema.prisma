@@ -19,7 +19,6 @@ model App {
   createdAt  DateTime    @default(now())
   updatedAt  DateTime    @updatedAt
   pages      Page[]
-  components Component[]
 }
 
 model Page {
@@ -48,8 +47,6 @@ model Component {
   parent    Component? @relation("ComponentChildren", fields: [parentId], references: [id], onUpdate: NoAction, onDelete: NoAction)
   page      Page?      @relation(fields: [pageId], references: [id])
   pageId    String?    @db.ObjectId
-  app       App?       @relation(fields: [appId], references: [id])
-  appId     String?    @db.ObjectId
 }
 
 type Endpoint {

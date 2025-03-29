@@ -1,9 +1,9 @@
-import { getAppList } from 'rui-database';
 import GettingStartedForm from '../components/gettingStartedForm';
 import ProjectView from '../components/ProjectView';
+import { AppRepository } from 'rui-database';
 
 export default async function Index() {
-  const apps = await getAppList();
+  const apps = await AppRepository.getInstance().getAll();
   return (
     <div className="container mx-auto">
       <h1 className="text-6xl font-bold text-center bg-red-50">
