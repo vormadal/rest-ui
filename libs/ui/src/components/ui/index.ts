@@ -11,3 +11,4 @@ export * from './calendar';
 export * from './select';
 export * from './datepicker';
 export * from './drawer';
+export * from './dialog';

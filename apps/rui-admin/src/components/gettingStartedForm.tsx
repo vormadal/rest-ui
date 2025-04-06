@@ -44,7 +44,7 @@ export default function GettingStartedForm() {
               if (!e?.target) return;
               const content = new FormData(e.target);
               const file = content.get('url');
-              fetch('/api', {
+              fetch('/apps', {
                 method: 'POST',
                 body: JSON.stringify({ url: file }),
               });

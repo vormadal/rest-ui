@@ -14,11 +14,12 @@ datasource db {
 }
 
 model App {
-  id         String      @id @default(auto()) @map("_id") @db.ObjectId
-  name       String
-  createdAt  DateTime    @default(now())
-  updatedAt  DateTime    @updatedAt
-  pages      Page[]
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  pages     Page[]
+  apis      Api[]
 }
 
 model Page {
@@ -49,10 +50,16 @@ model Component {
   pageId    String?    @db.ObjectId
 }
 
+type Api {
+  name     String
+  document String
+}
+
 type Endpoint {
-  name   String
-  route  Route
-  method String
+  apiName String
+  name    String
+  route   Route
+  method  String
 }
 
 type Route {

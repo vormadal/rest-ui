@@ -10,25 +10,27 @@ import {
   SidebarMenuItem,
   SidebarProvider,
 } from '@ui';
-import { Scroll } from 'lucide-react';
-import { RuiPageSpec } from '../../../../libs/rui-core/src';
+import { Scroll, Settings } from 'lucide-react';
+import { RuiAppSpec, RuiPageSpec } from 'rui-core';
 import { usePage } from '../context/PageContext';
+import AppSettingsDialog from './AppSettingsDialog';
 
 type Props = {
   children: React.ReactNode;
-  pages: RuiPageSpec[];
+  app?: RuiAppSpec;
 };
-export default function EditorSidebar({ children, pages }: Props) {
+export default function EditorSidebar({ children, app }: Props) {
   const [, setPage] = usePage();
   return (
     <SidebarProvider>
       <Sidebar>
         <SidebarHeader>Rest UI</SidebarHeader>
         <SidebarContent>
+          {!app && <div>Loading...</div>}
           <SidebarGroup>
             <SidebarGroupContent>
               <SidebarMenu>
-                {pages.map((page) => (
+                {(app?.pages || []).map((page) => (
                   <SidebarMenuItem key={page.id}>
                     <SidebarMenuButton onClick={() => setPage(page)}>
                       <Scroll />
@@ -40,7 +42,22 @@ export default function EditorSidebar({ children, pages }: Props) {
             </SidebarGroupContent>
           </SidebarGroup>
         </SidebarContent>
-        <SidebarFooter />
+        <SidebarFooter>
+          <SidebarGroup>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                <SidebarMenuItem>
+                  <AppSettingsDialog app={app}>
+                    <SidebarMenuButton>
+                      <Settings />
+                      <span>Settings</span>
+                    </SidebarMenuButton>
+                  </AppSettingsDialog>
+                </SidebarMenuItem>
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        </SidebarFooter>
       </Sidebar>
       <main>{children}</main>
     </SidebarProvider>

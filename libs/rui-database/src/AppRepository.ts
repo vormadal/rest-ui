@@ -48,6 +48,10 @@ export class AppRepository {
     const createdApp = await this.client.app.create({
       data: {
         name: app.name,
+        apis: app.apis.map((api) => ({
+          name: api.name,
+          document: JSON.stringify(api.document),
+        })),
       },
     });
 
@@ -55,10 +59,20 @@ export class AppRepository {
       baseUrl: 'test', //createdApp.baseUrl,
       id: createdApp.id,
       name: createdApp.name,
+      apis: createdApp.apis.map((api) => ({
+        name: api.name,
+        document: JSON.parse(api.document),
+      })),
       pages: [],
     };
   }
 
+  async deleteApp(appId: string): Promise<void> {
+    await this.client.app.delete({
+      where: { id: appId },
+    });
+  }
+  
   toDto(
     app: Prisma.AppGetPayload<{
       include: { pages: true };
@@ -68,6 +82,10 @@ export class AppRepository {
       id: app.id,
       name: app.name,
       baseUrl: 'test', //app.baseUrl,
+      apis: app.apis.map((api) => ({
+        name: api.name,
+        document: JSON.parse(api.document),
+      })),
       pages: app.pages.map((page) => ({
         id: page.id,
         type: 'page',

@@ -141,6 +141,8 @@ export class PageBuilder {
   build(): RuiPageSpec {
     return {
       id: uuid(),
+      type: 'page',
+
       route: {
         template: this.route,
         parameters: [],
@@ -168,6 +170,7 @@ export class PageBuilder {
 
       dataSources: [
         {
+          apiName: this.apiSpec.name,
           name: this.endpoint.path,
           method: this.endpoint.method,
           route: {

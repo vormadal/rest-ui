@@ -49,7 +49,7 @@ export default function Index({ params }: { params: Promise<{ id: string }> }) {
         value={[componentOptions, setComponentOptions]}
       >
         <PageContext.Provider value={[page, setPage]}>
-          <EditorSidebar pages={app?.pages ?? []}>
+          <EditorSidebar app={app}>
             {page && <EditorPageWrapper page={page} />}
             <Drawer
               modal={false}

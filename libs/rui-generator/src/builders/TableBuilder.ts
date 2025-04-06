@@ -31,6 +31,7 @@ export class TableBuilder {
 
   withDataSource(endpoint: OperationSchema): this {
     this.dataSource = {
+      apiName: this.apiSpec.name,
       name: endpoint.path,
       method: endpoint.method,
       route: {

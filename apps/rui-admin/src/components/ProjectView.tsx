@@ -7,12 +7,20 @@ type Props = {
   apps: RuiAppSpec[];
 };
 export default function ProjectView({ apps }: Props) {
+  if (!apps || apps.length === 0) {
+    return <p>No projects available</p>;
+  }
   return (
-    <div className='pt-4 pb-4'>
+    <div className="pt-4 pb-4">
       <p>Continue with...</p>
       {apps.map((app) => (
         <div key={app.id} className="shadow-lg">
-          <Link className='flex w-full h-full px-4 py-6 hover:bg-secondary' href={`/editor/${app.id}`}>{app.name}</Link>
+          <Link
+            className="flex w-full h-full px-4 py-6 hover:bg-secondary"
+            href={`/editor/${app.id}`}
+          >
+            {app.name}
+          </Link>
         </div>
       ))}
     </div>

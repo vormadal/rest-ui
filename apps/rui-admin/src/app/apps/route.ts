@@ -23,9 +23,16 @@ export async function POST(request: Request) {
     return Response.json({ error: 'No URL provided' }, { status: 400 });
   }
 
-  const apiSpec = new OpenAPISpec(await fetch(body.url).then((x) => x.json()));
+  const apiDocument = await fetch(body.url).then((x) => x.json());
+  const apiSpec = new OpenAPISpec(apiDocument);
   const appSpec: RuiAppSpec = {
     baseUrl: apiSpec.baseUrl,
+    apis: [
+      {
+        name: apiSpec.name,
+        document: apiDocument,
+      },
+    ],
     id: uuid(),
     name: apiSpec.name,
     pages: apiSpec.operations
