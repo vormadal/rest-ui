@@ -12,3 +12,5 @@ export * from './select';
 export * from './datepicker';
 export * from './drawer';
 export * from './dialog';
+export * from './menubar';
+export * from './separator';

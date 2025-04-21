@@ -1,4 +1,3 @@
-import { RuiDataMappingSpec } from './RuiDataMappingSpec';
 
 export interface RouteSpec {
   /**
@@ -6,5 +5,10 @@ export interface RouteSpec {
    */
   template: string;
 
-  parameters: RuiDataMappingSpec[];
+  parameters: {
+    name: string;
+    type: string;
+    in: 'path' | 'query';
+    required?: boolean;
+  }[];
 }

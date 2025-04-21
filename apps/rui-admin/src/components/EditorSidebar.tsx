@@ -30,11 +30,11 @@ export default function EditorSidebar({ children, app }: Props) {
           <SidebarGroup>
             <SidebarGroupContent>
               <SidebarMenu>
-                {(app?.pages || []).map((page) => (
-                  <SidebarMenuItem key={page.id}>
-                    <SidebarMenuButton onClick={() => setPage(page)}>
+                {(app?.pages || []).map((p) => (
+                  <SidebarMenuItem key={p.id}>
+                    <SidebarMenuButton onClick={() => setPage(p)}>
                       <Scroll />
-                      <span>{page.route.template}</span>
+                      <span>{p.route.template}</span>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 ))}

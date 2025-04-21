@@ -1,26 +1,27 @@
 'use client';
 import { useQuery } from '@tanstack/react-query';
 import {
-  Checkbox,
   Drawer,
   DrawerContent,
   DrawerDescription,
   DrawerHeader,
   DrawerOverlay,
   DrawerTitle,
-  Input,
+  Menubar,
+  MenubarMenu,
+  MenubarTrigger,
 } from '@ui';
 import { use, useState } from 'react';
-import { ComponentOption, RuiAppSpec, RuiPageSpec } from 'rui-core';
-import { type StringOptions } from 'rui-core/app';
+import { RuiAppSpec, RuiPageSpec } from 'rui-core';
 import { EditorPageWrapper } from '../../../components/EditorPageWrapper';
 import EditorSidebar from '../../../components/EditorSidebar';
+import { OptionsEditor } from '../../../components/optionsEditor/OptionsEditor';
+import { PageSettingsDialog } from '../../../components/PageSettingsDialog';
 import {
   ComponentOptionsContext,
   ComponentOptionsContextType,
 } from '../../../context/ComponentOptionsContext';
 import { PageContext } from '../../../context/PageContext';
-import { OptionsEditor } from '../../../components/optionsEditor/OptionsEditor';
 
 function useApp(props: { id: string }) {
   const query = useQuery({
@@ -50,6 +51,13 @@ export default function Index({ params }: { params: Promise<{ id: string }> }) {
       >
         <PageContext.Provider value={[page, setPage]}>
           <EditorSidebar app={app}>
+            <Menubar>
+              <MenubarMenu>
+                <PageSettingsDialog key={page?.id} page={page}>
+                  <MenubarTrigger>Page Settings</MenubarTrigger>
+                </PageSettingsDialog>
+              </MenubarMenu>
+            </Menubar>
             {page && <EditorPageWrapper page={page} />}
             <Drawer
               modal={false}
