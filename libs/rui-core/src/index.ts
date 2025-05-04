@@ -31,3 +31,4 @@ export * from './spec/data/DataValueSpec';
 export * from './spec/data/PathValueSpec';
 export * from './spec/data/QueryValueSpec';
 export * from './spec/GeneralOptionSpec';
+export * from './spec/RouteSpec';

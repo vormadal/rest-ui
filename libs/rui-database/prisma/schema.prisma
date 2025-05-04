@@ -25,6 +25,7 @@ model App {
 model Page {
   id         String      @id @default(auto()) @map("_id") @db.ObjectId
   name       String
+  showInMenu Boolean     @default(true)
   route      Route
   components Component[]
   options    Json?
@@ -64,7 +65,14 @@ type Endpoint {
 
 type Route {
   template   String
-  parameters DataMapping[]
+  parameters RouteParameter[]
+}
+
+type RouteParameter {
+  in       String
+  name     String
+  type     String
+  required Boolean
 }
 
 type DataMapping {

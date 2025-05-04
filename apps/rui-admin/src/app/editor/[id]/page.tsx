@@ -11,7 +11,7 @@ import {
   MenubarMenu,
   MenubarTrigger,
 } from '@ui';
-import { use, useState } from 'react';
+import { use, useEffect, useState } from 'react';
 import { RuiAppSpec, RuiPageSpec } from 'rui-core';
 import { EditorPageWrapper } from '../../../components/EditorPageWrapper';
 import EditorSidebar from '../../../components/EditorSidebar';
@@ -22,6 +22,7 @@ import {
   ComponentOptionsContextType,
 } from '../../../context/ComponentOptionsContext';
 import { PageContext } from '../../../context/PageContext';
+import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 
 function useApp(props: { id: string }) {
   const query = useQuery({
@@ -39,17 +40,43 @@ function useApp(props: { id: string }) {
 
 export default function Index({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
+
+  const navigate = useRouter();
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+
   const [componentOptions, setComponentOptions] =
     useState<ComponentOptionsContextType | null>(null);
   const [app] = useApp({ id });
   const [page, setPage] = useState<RuiPageSpec | null>(null);
+
+  useEffect(() => {
+    if (app) {
+      const pageId = searchParams.get('pageId') ?? null;
+      const page = app.pages.find((page) => page.id === pageId);
+      setPage(page ?? null);
+    }
+  }, [searchParams, app]);
 
   return (
     <>
       <ComponentOptionsContext.Provider
         value={[componentOptions, setComponentOptions]}
       >
-        <PageContext.Provider value={[page, setPage]}>
+        <PageContext.Provider
+          value={[
+            page,
+            (newPage: RuiPageSpec | null) => {
+              const params = new URLSearchParams(searchParams.toString());
+              if (!newPage) {
+                params.delete('pageId');
+              } else {
+                params.set('pageId', newPage.id);
+              }
+              navigate.replace(`${pathname}?${params.toString()}`);
+            },
+          ]}
+        >
           <EditorSidebar app={app}>
             <Menubar>
               <MenubarMenu>
