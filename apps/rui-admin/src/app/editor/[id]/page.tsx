@@ -80,9 +80,11 @@ export default function Index({ params }: { params: Promise<{ id: string }> }) {
           <EditorSidebar app={app}>
             <Menubar>
               <MenubarMenu>
-                <PageSettingsDialog key={page?.id} page={page}>
-                  <MenubarTrigger>Page Settings</MenubarTrigger>
-                </PageSettingsDialog>
+                {page && (
+                  <PageSettingsDialog key={page?.id} page={page}>
+                    <MenubarTrigger>Page Settings</MenubarTrigger>
+                  </PageSettingsDialog>
+                )}
               </MenubarMenu>
             </Menubar>
             {page && <EditorPageWrapper page={page} />}

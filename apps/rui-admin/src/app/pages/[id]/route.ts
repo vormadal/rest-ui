@@ -4,18 +4,16 @@ const repository = PageRepository.getInstance();
 
 export async function PUT(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  const { id } = params;
+  const { id } = await params;
   const body = await request.json();
   
+  console.log('Updating page with id:', id, 'and body:', body);
   const updatedPage = await repository.updatePage(id, {
     name: body.name,
     showInMenu: body.showInMenu,
-    route: {
-      template: body.route,
-      parameters: body.parameters
-    }
+    route: body.route,
   });
   
   return Response.json(updatedPage);

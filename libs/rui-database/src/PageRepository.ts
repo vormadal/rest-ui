@@ -73,6 +73,7 @@ export class PageRepository {
       }>
     }
   }) {
+    console.log('Updating page', pageId, data);
     const updatedPage = await this.client.page.update({
       where: {
         id: pageId
@@ -88,7 +89,7 @@ export class PageRepository {
             in: param.in,
             required: param.required,
           }))
-        } as Prisma.JsonObject : undefined
+        } : undefined
       }
     });
 

@@ -72,7 +72,7 @@ export class AppRepository {
       where: { id: appId },
     });
   }
-  
+
   toDto(
     app: Prisma.AppGetPayload<{
       include: { pages: true };
@@ -93,9 +93,11 @@ export class AppRepository {
         options: page.options as GeneralOptionSpec,
         route: {
           template: page.route.template,
-          parameters: page.route.parameters.map((parameter) => ({
-            source: parameter.source as DataValueSpec,
-            target: parameter.target as DataValueSpec,
+          parameters: page.route.parameters.map((param) => ({
+            name: param.name,
+            type: param.type,
+            in: param.in as 'path' | 'query',
+            required: param.required,
           })),
         },
       })),

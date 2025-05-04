@@ -18,7 +18,7 @@ import {
 import { PlusCircle, X } from 'lucide-react';
 import { FieldArrayWithId, useFieldArray, useForm } from 'react-hook-form';
 import { RuiPageSpec, RouteParameter } from 'rui-core';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 type Props = {
   page?: RuiPageSpec | null;
@@ -34,7 +34,7 @@ function extractPathParameters(
   const matches = route.match(regex);
   const parameters = matches ? matches.map((match) => match.slice(1, -1)) : [];
 
-  return [
+  const result = [
     ...existingParams,
     ...parameters
       .filter((x) => !existingParams.find((y) => y.name === x))
@@ -44,10 +44,15 @@ function extractPathParameters(
         required: true,
         in: 'path',
       })),
+    // ...existingParams.filter((x) => x.in !== 'path' && x.name !== ''),
   ];
+
+  console.log('Extracted parameters:', result);
+  return result;
 }
 
 export function PageSettingsDialog({ page, children }: Props) {
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { control, watch, ...form } = useForm({
     defaultValues: {
       name: page?.name ?? '',
@@ -121,8 +126,41 @@ export function PageSettingsDialog({ page, children }: Props) {
     }
   }, [route, replace]);
 
-  const onSubmit = (data: any) => {
-    console.log('Form submitted:', data);
+  const onSubmit = async (data: any) => {
+    if (!page?.id) return;
+
+    try {
+      setIsSubmitting(true);
+
+      const response = await fetch(`/pages/${page.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: data.name,
+          showInMenu: data.showInMenu,
+          route: {
+            template: data.route,
+            parameters: data.parameters,
+          },
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update page');
+      }
+
+      const updatedPage = await response.json();
+      console.log('Page updated successfully:', updatedPage);
+
+      // Close dialog after successful submission
+      document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
+    } catch (error) {
+      console.error('Error updating page:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -227,7 +265,7 @@ export function PageSettingsDialog({ page, children }: Props) {
 
                 {parameterFields.map((field, index) => (
                   <ParameterComponent
-                    key={field.id}
+                    key={field.name}
                     field={field}
                     index={index}
                     control={control}
