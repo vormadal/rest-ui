@@ -1,0 +1,13 @@
+{
+  "name": "rui-react-config",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/rui-react-config/src",
+  "projectType": "library",
+  "implicitDependencies": [
+    "ui",
+    "rui-core"
+  ],
+  "tags": [],
+  "// targets": "to see all targets run: nx show project rui-react-config --web",
+  "targets": {}
+}

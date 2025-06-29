@@ -1,5 +1,6 @@
 {
     "git.ignoreLimitWarning": true,
+    "chat.agent.enabled": true,
     "files.associations": {
         "*.css": "tailwindcss"
     }

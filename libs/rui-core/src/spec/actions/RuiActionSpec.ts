@@ -1,8 +1,8 @@
+import { RuiApiActionSpec } from './RuiApiActionSpec';
+import { RuiCompositeActionSpec } from './RuiCompositeActionSpec';
+import { RuiRedirectActionSpec } from './RuiRedirectActionSpec';
 
-export interface RuiActionSpec {
-  type: string
-  /**
-   * Should be set if used for a button
-   */
-  label?: string
-}
+export type RuiActionSpec =
+  | RuiApiActionSpec
+  | RuiCompositeActionSpec
+  | RuiRedirectActionSpec;

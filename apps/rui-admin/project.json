@@ -6,7 +6,9 @@
   "implicitDependencies": [
     "rui-core",
     "ui",
-    "rui-generator"
+    "rui-generator",
+    "rui-react-config",
+    "rui-database"
   ],
   "tags": [],
   "// targets": "to see all targets run: nx show project rui-admin --web",

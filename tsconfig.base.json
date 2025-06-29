@@ -10,16 +10,21 @@
     "importHelpers": true,
     "target": "es2015",
     "module": "esnext",
-    "lib": ["es2020", "dom"],
+    "lib": ["es2021", "dom"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@rest-ui/ui/*": ["libs/ui/src/*"],
       "@ui": ["libs/ui/src/components/ui/index.ts"],
       "@ui/*": ["libs/ui/src/*"],
       "rui-core": ["libs/rui-core/src/index.ts"],
-      "rui-generator": ["libs/rui-generator/src/index.ts"]
+      "rui-core/app": ["libs/rui-core/src/app/index.ts"],
+      "rui-database": ["libs/rui-database/src/index.ts"],
+      "rui-generator": ["libs/rui-generator/src/index.ts"],
+      "rui-react-config": ["libs/rui-react-config/src/index.ts"],
+      "rui-react-config/components": [
+        "libs/rui-react-config/src/components/index.ts"
+      ]
     }
   },
   "exclude": ["node_modules", "tmp"]
