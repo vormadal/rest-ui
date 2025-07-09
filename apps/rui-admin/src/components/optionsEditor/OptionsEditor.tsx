@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { ComponentOptionsContextType } from '../../context/ComponentOptionsContext';
 import { StringOptionEditor } from './StringOptionEditor';
+import { NumberOptionEditor } from './NumberOptionEditor';
+import { EndpointOptionEditor } from './EndpointOptionEditor';
 import { Button } from '@ui';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { ComponentSpec } from 'rui-core';
@@ -46,7 +48,7 @@ export function OptionsEditor({
   });
   const [values, setValues] = useState(componentOptions.spec.options ?? {});
 
-  const handleChange = (name: string, value: string) => {
+  const handleChange = (name: string, value: string | number) => {
     setValues((prevValues) => ({ ...prevValues, [name]: value }));
   };
 
@@ -71,6 +73,17 @@ export function OptionsEditor({
             />
           );
         }
+        if (option.type === 'number') {
+          return (
+            <NumberOptionEditor
+              key={option.name}
+              option={option}
+              value={(values[option.name] ?? 0) as number}
+              onChange={(value: number) => handleChange(option.name, value)}
+            />
+          );
+        }
+        return null;
       })}
       <Button variant="outline" color="primary" onClick={handleSave}>
         Save Options

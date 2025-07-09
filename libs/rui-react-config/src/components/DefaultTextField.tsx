@@ -25,6 +25,7 @@ function DefaultTextFieldComponent({ context }: ComponentProps) {
 const DefaultTextField: ComponentConfiguration<ReactRuiComponent> = {
   component: DefaultTextFieldComponent,
   name: 'field:string:default',
+  dataType: 'string',
   alias: ['field:integer:int32', 'field:number:double'],
   options: [
     { name: 'name', type: 'string' },

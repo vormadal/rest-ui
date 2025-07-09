@@ -14,9 +14,14 @@ function ActionBarButtonComponent({ context }: ComponentProps) {
   const config = context.config as ActionComponent<ReactRuiComponent>;
 
   const label = config.getOption<string>('label');
+  const priority = config.getOption<number>('priority') || 0;
+  
   return (
     <NavigationMenu>
-      <NavigationMenuItem onClick={() => config.exec(context)}>
+      <NavigationMenuItem 
+        onClick={() => config.exec(context)}
+        style={{ order: priority }} // Use priority for ordering
+      >
         <NavigationMenuLink className={navigationMenuTriggerStyle()}>
           {label}
         </NavigationMenuLink>
@@ -28,7 +33,10 @@ function ActionBarButtonComponent({ context }: ComponentProps) {
 const ActionBarButton: ComponentConfiguration<ReactRuiComponent> = {
   name: 'action-bar:button:default',
   component: ActionBarButtonComponent,
-  options: [optionEditorFactory.string('label')],
+  options: [
+    optionEditorFactory.string('label'),
+    optionEditorFactory.number('priority', { min: 0, max: 100, step: 1 })
+  ],
 };
 
 export default ActionBarButton;
